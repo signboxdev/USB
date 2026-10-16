@@ -14,6 +14,7 @@ npm run build
 
 - `index.html`
 - `styles.css`
+- `logo.gif`
 - `favicon.ico`
 - `favicon-32.png`
 - `apple-touch-icon.png`
@@ -57,6 +58,7 @@ A push to `main` runs `.github/workflows/deploy.yml`. It runs `npm run validate`
 
 - `index.html`
 - `styles.css`
+- `logo.gif`
 - `favicon.ico`
 - `favicon-32.png`
 - `apple-touch-icon.png`

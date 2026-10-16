@@ -16,6 +16,7 @@ const types = {
   ".xml": "application/xml; charset=utf-8",
   ".ico": "image/x-icon",
   ".png": "image/png",
+  ".gif": "image/gif",
   ".webmanifest": "application/manifest+json",
 };
 

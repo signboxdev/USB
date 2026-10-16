@@ -83,13 +83,31 @@ body {
   min-width: 0;
 }
 
-.mast h1 {
-  margin: 1.15rem 0 0;
-  max-width: 12ch;
-  font-weight: 600;
-  font-size: clamp(2.35rem, 9vw, 3.4rem);
-  line-height: 0.96;
-  letter-spacing: -0.045em;
+.logo {
+  display: inline-block;
+  line-height: 0;
+  background: #000;
+  text-decoration: none;
+}
+
+.logo img {
+  display: block;
+  width: 100px;
+  height: auto;
+  background: #000;
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
 }
 
 .dek {
@@ -319,6 +337,7 @@ h2 {
 }
 
 a.service:focus-visible,
+.logo:focus-visible,
 .skip:focus-visible {
   outline: 2px solid #fff;
   outline-offset: 3px;
@@ -398,6 +417,10 @@ code {
   .mast {
     padding-bottom: 2.25rem;
     margin-bottom: 1.5rem;
+  }
+
+  .logo img {
+    width: 140px;
   }
 
   .card {

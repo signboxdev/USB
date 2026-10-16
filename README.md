@@ -1,1 +1,91 @@
-# USB
+# Unfamiliar Sound Byte
+
+A private catalog of every song, album, and playlist posted in the Unfamiliar Sound Byte group chat. The site is a static page for [unfamiliarsoundbyte.com](https://unfamiliarsoundbyte.com). There is no search, no sort control, and no playlist builder. Newest posts come first.
+
+`data/catalog.json` is the only source of truth. `npm run build` throws away `dist/` and writes the site again from that file.
+
+## Add an entry
+
+Open `data/catalog.json` and add an object to `entries`. Order in the file does not matter. Nullable fields stay in the object and are set to `null`; do not leave them out.
+
+```json
+{
+  "id": "glass-elevator",
+  "type": "track",
+  "title": "glass elevator (demo)",
+  "artist": "the paper moons",
+  "album": "night shift sketches",
+  "posted_by": "mira",
+  "posted_at": "2026-03-14T21:18:00-04:00",
+  "source_service": "spotify",
+  "source_url": "https://open.spotify.com/track/exGlassElevatorDemo",
+  "spotify_url": "https://open.spotify.com/track/exGlassElevatorDemo",
+  "apple_music_url": "https://music.apple.com/us/song/glass-elevator-demo/0000000001",
+  "match_status": "matched",
+  "artwork_url": null,
+  "notes": null
+}
+```
+
+Then check it and rebuild:
+
+```bash
+npm install
+npm run validate
+npm run build
+```
+
+`id` is a lowercase slug (`glass-elevator`) and must be unique. `posted_at` is ISO 8601 with seconds and an offset, for example `2026-03-14T21:18:00-04:00` or a trailing `Z`. No fractional seconds. The page shows that clock time, not the server's timezone. The shop chrome is lowercase; titles, artists, and names stay as typed.
+
+### Removing the sample rows
+
+The three shipped entries are fake. Each has `"notes": "example"`, and the page stamps them **example**. Delete those three objects when the real crate starts. Any other `notes` string is printed under the card.
+
+## Schema
+
+`data/catalog.schema.json` is JSON Schema draft 2020-12. The catalog is:
+
+```json
+{ "version": 1, "entries": [] }
+```
+
+`version` must be `1`.
+
+| Field | Type | Meaning |
+| --- | --- | --- |
+| `id` | string | Stable unique slug: lowercase letters, digits, hyphens. |
+| `type` | `track` \| `album` \| `playlist` | What was posted. |
+| `title` | string | Name of the track, album, or playlist. |
+| `artist` | string | Performer. For a playlist, the curator or the name the chat used. |
+| `album` | string or null | Album title. Use null when there isn't one. An album entry may leave this null; the card then uses the title as the album name. A track or playlist with null shows "not listed". |
+| `posted_by` | string | Who sent it in the chat. |
+| `posted_at` | string | ISO 8601 datetime with a numeric offset or `Z`. |
+| `source_service` | `spotify` \| `apple_music` | Which service the chat link used. |
+| `source_url` | https URL | The link that was posted. Spotify links are `https://open.spotify.com/...`. Apple Music links are `https://music.apple.com/...`. |
+| `spotify_url` | URL or null | Same recording on Spotify, or null if that side is missing. |
+| `apple_music_url` | URL or null | Same recording on Apple Music, or null if that side is missing. |
+| `match_status` | `matched` \| `unmatched` \| `source_only` | See below. |
+| `artwork_url` | https URL or null | Optional art. Null draws a monogram sleeve and makes no extra request. |
+| `notes` | string or null | A short note. The exact value `example` marks seed data. |
+
+`match_status` has to agree with the two store links:
+
+- `matched` — both `spotify_url` and `apple_music_url` are set. The card links to both and marks which one came from the chat.
+- `unmatched` — someone tried to find the other service and exactly one URL is null. That side is drawn as a dashed **unmatched** chip, not a link.
+- `source_only` — only the service that was posted is filled in; the other was not looked up. The missing side still says **unmatched**, and the line under the chips says "source only".
+
+The URL for `source_service` is always required. A Spotify post cannot have `spotify_url: null`.
+
+`npm run validate` checks `data/catalog.json` against the schema and rejects duplicate ids. `npm run build` runs that check before it writes `dist/`. A failed check leaves the previous `dist/` in place.
+
+## Preview
+
+```bash
+npm run preview
+```
+
+Serves `dist/` at [http://127.0.0.1:47321](http://127.0.0.1:47321). Set `PORT` to use another port. There is no client-side JavaScript and no analytics. Links send no referrer. The page includes `<meta name="robots" content="noindex,nofollow">`, and `robots.txt` is `Disallow: /`.
+
+## Deploy
+
+Upload the files inside `dist/`, not the rest of the repo. Steps for Hostinger are in [DEPLOY.md](DEPLOY.md).

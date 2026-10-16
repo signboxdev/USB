@@ -192,7 +192,10 @@ export function renderPage(catalog) {
     <a class="skip" href="#crate">skip to the crate</a>
     <div class="wrap">
       <header class="mast">
-        <h1>unfamiliar sound byte</h1>
+        <a class="logo" href="/">
+          <img src="logo.gif" alt="Unfamiliar Sound Byte" width="360" height="360">
+        </a>
+        <h1 class="sr-only">Unfamiliar Sound Byte</h1>
         <p class="count">${crateSummary(entries.length)}</p>
       </header>
       <main id="crate">
@@ -221,6 +224,7 @@ export function renderSitemap() {
 function copyStatic(dist) {
   for (const name of [
     "styles.css",
+    "logo.gif",
     "robots.txt",
     "favicon.ico",
     "favicon-32.png",

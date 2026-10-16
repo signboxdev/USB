@@ -86,7 +86,7 @@ npm run preview
 
 Serves `dist/` at [http://127.0.0.1:47321](http://127.0.0.1:47321). Set `PORT` to use another port. There is no client-side JavaScript and no analytics. Links send no referrer.
 
-The built page is meant to be indexed. Its title is Unfamiliar Sound Byte, the description is “Unfamiliar Sound Byte, the revolutionary group chat for music”, and the canonical URL is `https://unfamiliarsoundbyte.com/`. The same title, description, and URL are repeated as Open Graph and Twitter card tags. `npm run build` writes `dist/sitemap.xml` with that canonical URL. `robots.txt` allows all crawlers and points at `https://unfamiliarsoundbyte.com/sitemap.xml`.
+The built page is meant to be indexed. Its title is Unfamiliar Sound Byte, the description is “Unfamiliar Sound Byte, the revolutionary group chat for music”, and the canonical URL is `https://unfamiliarsoundbyte.com/`. The same title, description, and URL are repeated as Open Graph and Twitter card tags. The share image is `https://unfamiliarsoundbyte.com/og-image.png` (`og:image` and `twitter:image`, 1200×630), and the Twitter card is `summary_large_image`. `npm run build` writes `dist/sitemap.xml` with that canonical URL. `robots.txt` allows all crawlers and points at `https://unfamiliarsoundbyte.com/sitemap.xml`.
 
 ## Deploy
 

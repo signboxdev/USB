@@ -38,7 +38,7 @@ jobs:
         run: |
           cd dist
           find . -type f -printf '%P\n' | LC_ALL=C sort > /tmp/dist-files
-          printf '%s\n' apple-touch-icon.png favicon-32.png favicon.ico icon-512.png index.html logo.gif og-image.png robots.txt site.webmanifest sitemap.xml styles.css > /tmp/expected-files
+          printf '%s\n' apple-touch-icon.png coverflow.js favicon-32.png favicon.ico icon-512.png index.html logo.gif og-image.png robots.txt site.webmanifest sitemap.xml styles.css > /tmp/expected-files
           diff -u /tmp/expected-files /tmp/dist-files
 
       - name: Force-publish dist to deploy

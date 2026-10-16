@@ -7,6 +7,8 @@ const SITE_ORIGIN = "https://unfamiliarsoundbyte.com";
 const CANONICAL_URL = `${SITE_ORIGIN}/`;
 const PAGE_TITLE = "Unfamiliar Sound Byte";
 const PAGE_DESCRIPTION = "Unfamiliar Sound Byte, the revolutionary group chat for music";
+const SHARE_IMAGE_URL = `${SITE_ORIGIN}/og-image.png`;
+const SHARE_IMAGE_ALT = "Unfamiliar Sound Byte wordmark on black";
 
 const MONTHS = ["jan", "feb", "mar", "apr", "may", "jun", "jul", "aug", "sep", "oct", "nov", "dec"];
 const ARTICLES = new Set(["the", "a", "an"]);
@@ -170,9 +172,14 @@ export function renderPage(catalog) {
     <meta property="og:title" content="${PAGE_TITLE}">
     <meta property="og:description" content="${PAGE_DESCRIPTION}">
     <meta property="og:url" content="${CANONICAL_URL}">
-    <meta name="twitter:card" content="summary">
+    <meta property="og:image" content="${SHARE_IMAGE_URL}">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+    <meta property="og:image:alt" content="${escapeHtml(SHARE_IMAGE_ALT)}">
+    <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:title" content="${PAGE_TITLE}">
     <meta name="twitter:description" content="${PAGE_DESCRIPTION}">
+    <meta name="twitter:image" content="${SHARE_IMAGE_URL}">
     <meta name="theme-color" content="#000000">
     <meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src 'self'; img-src 'self' https:; manifest-src 'self'; base-uri 'none'; form-action 'none'">
     <link rel="stylesheet" href="styles.css">
@@ -219,6 +226,7 @@ function copyStatic(dist) {
     "favicon-32.png",
     "apple-touch-icon.png",
     "icon-512.png",
+    "og-image.png",
     "site.webmanifest",
   ]) {
     fs.copyFileSync(path.join(repoRoot, "src", name), path.join(dist, name));

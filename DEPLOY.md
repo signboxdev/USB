@@ -18,6 +18,7 @@ npm run build
 - `favicon-32.png`
 - `apple-touch-icon.png`
 - `icon-512.png`
+- `og-image.png`
 - `site.webmanifest`
 - `robots.txt`
 - `sitemap.xml`
@@ -48,6 +49,7 @@ On Shared or Cloud hosting, that zip is the static-site archive (`index.html` at
 - `https://unfamiliarsoundbyte.com/robots.txt` allows all crawlers and includes `Sitemap: https://unfamiliarsoundbyte.com/sitemap.xml`.
 - `https://unfamiliarsoundbyte.com/sitemap.xml` lists `https://unfamiliarsoundbyte.com/`.
 - View source has the title Unfamiliar Sound Byte, the description “Unfamiliar Sound Byte, the revolutionary group chat for music”, a canonical link to `https://unfamiliarsoundbyte.com/`, and Open Graph and Twitter card tags. There is no `noindex` meta.
+- The only `og:image` and the `twitter:image` are `https://unfamiliarsoundbyte.com/og-image.png`, with width 1200, height 630, and `twitter:card` set to `summary_large_image`.
 
 ## GitHub auto-deploy (Premium, static)
 
@@ -59,6 +61,7 @@ A push to `main` runs `.github/workflows/deploy.yml`. It runs `npm run validate`
 - `favicon-32.png`
 - `apple-touch-icon.png`
 - `icon-512.png`
+- `og-image.png`
 - `site.webmanifest`
 - `robots.txt`
 - `sitemap.xml`

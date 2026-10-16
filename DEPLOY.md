@@ -14,11 +14,15 @@ npm run build
 
 - `index.html`
 - `styles.css`
-- `favicon.svg`
+- `favicon.ico`
+- `favicon-32.png`
+- `apple-touch-icon.png`
+- `icon-512.png`
+- `site.webmanifest`
 - `robots.txt`
 - `sitemap.xml`
 
-`index.html`, `robots.txt`, and `sitemap.xml` have to sit at the site root, not inside a `dist` folder. Do not upload `data/catalog.json`.
+`index.html`, `robots.txt`, `sitemap.xml`, and the icon files have to sit at the site root, not inside a `dist` folder. Do not upload `data/catalog.json`.
 
 ## hPanel
 
@@ -51,11 +55,15 @@ A push to `main` runs `.github/workflows/deploy.yml`. It runs `npm run validate`
 
 - `index.html`
 - `styles.css`
-- `favicon.svg`
+- `favicon.ico`
+- `favicon-32.png`
+- `apple-touch-icon.png`
+- `icon-512.png`
+- `site.webmanifest`
 - `robots.txt`
 - `sitemap.xml`
 
-Hostinger watches `deploy` and copies that branch into the site. It does not run the build. `data/catalog.json` stays off the server because `deploy` contains only those five files.
+Hostinger watches `deploy` and copies that branch into the site. It does not run the build. `data/catalog.json` stays off the server because `deploy` contains only those built files.
 
 In hPanel: Websites → unfamiliarsoundbyte.com → Advanced → Git.
 

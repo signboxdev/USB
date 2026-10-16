@@ -14,6 +14,7 @@ npm run build
 
 - `index.html`
 - `styles.css`
+- `coverflow.js`
 - `logo.gif`
 - `favicon.ico`
 - `favicon-32.png`
@@ -58,6 +59,7 @@ A push to `main` runs `.github/workflows/deploy.yml`. It runs `npm run validate`
 
 - `index.html`
 - `styles.css`
+- `coverflow.js`
 - `logo.gif`
 - `favicon.ico`
 - `favicon-32.png`

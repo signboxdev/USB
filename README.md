@@ -1,6 +1,6 @@
 # Unfamiliar Sound Byte
 
-A public catalog of every song, album, and playlist posted in the Unfamiliar Sound Byte group chat. The site is a static page for [unfamiliarsoundbyte.com](https://unfamiliarsoundbyte.com). There is no search, no sort control, and no playlist builder. Newest posts come first.
+A public catalog of every song, album, and playlist posted in the Unfamiliar Sound Byte group chat. The site is a static page for [unfamiliarsoundbyte.com](https://unfamiliarsoundbyte.com). There is no search, no sort control, and no playlist builder. Newest posts come first, as a cover flow of the artwork and then again as cards.
 
 `data/catalog.json` is the only source of truth. `npm run build` throws away `dist/` and writes the site again from that file.
 
@@ -84,7 +84,11 @@ The URL for `source_service` is always required. A Spotify post cannot have `spo
 npm run preview
 ```
 
-Serves `dist/` at [http://127.0.0.1:47321](http://127.0.0.1:47321). Set `PORT` to use another port. There is no client-side JavaScript and no analytics. Links send no referrer.
+Serves `dist/` at [http://127.0.0.1:47321](http://127.0.0.1:47321). Set `PORT` to use another port. There is no analytics. Links send no referrer.
+
+The cover flow is `src/coverflow.js`, a plain script with no dependencies. It reads the covers the build wrote from `data/catalog.json`, newest in the center. Drag or swipe, scroll horizontally, press the arrow keys, or click a side cover to bring that sleeve to the center. The line under the centered cover is the title, the artist, who posted it, and the Spotify and Apple Music links (a missing link stays an unmatched chip). `prefers-reduced-motion` turns the glide off. An entry with no `artwork_url` gets a dark sleeve instead of an image request.
+
+`npm run build` appends `?v=` and a short SHA-256 of the file to `styles.css`, `coverflow.js`, and `logo.gif` in the generated HTML. Hostinger caches those assets for a week; the query string changes when the file does, so a phone picks up the new copy.
 
 The built page is meant to be indexed. Its title is Unfamiliar Sound Byte, the description is “Unfamiliar Sound Byte, the revolutionary group chat for music”, and the canonical URL is `https://unfamiliarsoundbyte.com/`. The same title, description, and URL are repeated as Open Graph and Twitter card tags. The share image is `https://unfamiliarsoundbyte.com/og-image.png` (`og:image` and `twitter:image`, 1200×630), and the Twitter card is `summary_large_image`. `npm run build` writes `dist/sitemap.xml` with that canonical URL. `robots.txt` allows all crawlers and points at `https://unfamiliarsoundbyte.com/sitemap.xml`.
 

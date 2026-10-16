@@ -1,3 +1,4 @@
+import crypto from "node:crypto";
 import fs from "node:fs";
 import path from "node:path";
 import { pathToFileURL } from "node:url";
@@ -149,6 +150,79 @@ function crateSummary(count) {
   return `<span class="num">${count}</span> in the crate · newest first`;
 }
 
+function assetVersion(filename) {
+  const bytes = fs.readFileSync(path.join(repoRoot, "src", filename));
+  return crypto.createHash("sha256").update(bytes).digest("hex").slice(0, 8);
+}
+
+function versionedAsset(filename) {
+  return `${filename}?v=${assetVersion(filename)}`;
+}
+
+function flowService(label, url) {
+  if (!url) {
+    return `<li><span class="service is-unmatched"><span class="name">${label}</span><span class="tag">unmatched</span></span></li>`;
+  }
+  return `<li><a class="service" href="${httpsUrl(url, label)}"><span class="name">${label}</span></a></li>`;
+}
+
+function coverImage(entry, index, reflect) {
+  const lazy = index > 1 ? " loading=\"lazy\"" : "";
+  const priority = !reflect && index === 0 ? " fetchpriority=\"high\"" : "";
+  return `<img src="${httpsUrl(entry.artwork_url, "artwork")}" alt="" width="600" height="600" draggable="false" decoding="async"${priority}${lazy}>`;
+}
+
+function renderCoverFlow(entries) {
+  if (entries.length === 0) return "";
+  const covers = entries
+    .map((entry, index) => {
+      const current = index === 0 ? " aria-current=\"true\"" : "";
+      const summary = `${entry.title}, ${entry.artist}, posted by ${entry.posted_by}`;
+      const sleeve = entry.artwork_url
+        ? `<span class="flow-sleeve">${coverImage(entry, index, false)}</span>`
+        : `<span class="flow-sleeve is-blank"><span class="flow-mark">${escapeHtml(monogram(entry.artist))}</span></span>`;
+      const reflect = entry.artwork_url
+        ? `<span class="flow-reflect" aria-hidden="true">${coverImage(entry, index, true)}</span>`
+        : `<span class="flow-reflect is-blank" aria-hidden="true"></span>`;
+      return `          <li class="flow-cover">
+            <button type="button" class="flow-select" data-index="${index}" data-summary="${escapeHtml(summary)}" aria-label="${escapeHtml(`${entry.title} by ${entry.artist}`)}"${current}>
+              ${sleeve}
+              ${reflect}
+            </button>
+          </li>`;
+    })
+    .join("\n");
+  const panels = entries
+    .map((entry, index) => {
+      const hidden = index === 0 ? "" : " hidden";
+      return `          <div class="flow-panel"${hidden}>
+            <p class="flow-title">${escapeHtml(entry.title)}</p>
+            <p class="flow-artist">${escapeHtml(entry.artist)}</p>
+            <p class="flow-who">posted by <strong>${escapeHtml(entry.posted_by)}</strong></p>
+            <ul class="flow-services">
+              ${flowService("spotify", entry.spotify_url)}
+              ${flowService("apple music", entry.apple_music_url)}
+            </ul>
+          </div>`;
+    })
+    .join("\n");
+  const live = escapeHtml(`${entries[0].title}, ${entries[0].artist}, posted by ${entries[0].posted_by}`);
+
+  return `      <section class="flow" data-coverflow aria-roledescription="carousel" aria-label="album covers">
+        <h2 class="sr-only">album covers</h2>
+        <div class="flow-stage">
+          <ol class="flow-covers">
+${covers}
+          </ol>
+        </div>
+        <div class="flow-readout">
+          <p class="sr-only" id="flow-live" aria-live="polite" aria-atomic="true">${live}</p>
+${panels}
+        </div>
+      </section>
+`;
+}
+
 export function renderPage(catalog) {
   const entries = [...catalog.entries].sort(
     (a, b) => postedInstant(b.posted_at) - postedInstant(a.posted_at) || a.id.localeCompare(b.id),
@@ -157,6 +231,10 @@ export function renderPage(catalog) {
   const list = entries.length
     ? `<ol class="crate">\n${entries.map((entry) => renderEntry(entry, numbers.get(entry.id))).join("\n")}\n    </ol>`
     : `<p class="empty-crate">the crate is empty. add an entry to <code>data/catalog.json</code>, then run <code>npm run build</code>.</p>`;
+  const flow = renderCoverFlow(entries);
+  const styleHref = versionedAsset("styles.css");
+  const logoSrc = versionedAsset("logo.gif");
+  const scriptSrc = versionedAsset("coverflow.js");
 
   return `<!DOCTYPE html>
 <html lang="en">
@@ -181,8 +259,8 @@ export function renderPage(catalog) {
     <meta name="twitter:description" content="${PAGE_DESCRIPTION}">
     <meta name="twitter:image" content="${SHARE_IMAGE_URL}">
     <meta name="theme-color" content="#000000">
-    <meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src 'self'; img-src 'self' https:; manifest-src 'self'; base-uri 'none'; form-action 'none'">
-    <link rel="stylesheet" href="styles.css">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' https:; manifest-src 'self'; base-uri 'none'; form-action 'none'">
+    <link rel="stylesheet" href="${styleHref}">
     <link rel="icon" href="/favicon.ico" sizes="any">
     <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png">
     <link rel="apple-touch-icon" href="/apple-touch-icon.png">
@@ -193,12 +271,12 @@ export function renderPage(catalog) {
     <div class="wrap">
       <header class="mast">
         <a class="logo" href="/">
-          <img src="logo.gif" alt="Unfamiliar Sound Byte" width="360" height="360">
+          <img src="${logoSrc}" alt="Unfamiliar Sound Byte" width="360" height="360">
         </a>
         <h1 class="sr-only">Unfamiliar Sound Byte</h1>
         <p class="count">${crateSummary(entries.length)}</p>
       </header>
-      <main id="crate">
+${flow}      <main id="crate">
         ${list}
       </main>
       <footer class="colophon">
@@ -206,6 +284,7 @@ export function renderPage(catalog) {
         <p>rebuilt from data/catalog.json.</p>
       </footer>
     </div>
+    <script src="${scriptSrc}" defer></script>
   </body>
 </html>
 `;
@@ -224,6 +303,7 @@ export function renderSitemap() {
 function copyStatic(dist) {
   for (const name of [
     "styles.css",
+    "coverflow.js",
     "logo.gif",
     "robots.txt",
     "favicon.ico",

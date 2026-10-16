@@ -180,11 +180,7 @@ export function renderPage(catalog) {
     <a class="skip" href="#crate">skip to the crate</a>
     <div class="wrap">
       <header class="mast">
-        <div class="mast-top">
-          <p>unfamiliarsoundbyte.com</p>
-        </div>
         <h1>unfamiliar sound byte</h1>
-        <p class="dek">every song, album, and playlist posted in the group chat, kept in one crate.</p>
         <p class="count">${crateSummary(entries.length)}</p>
       </header>
       <main id="crate">

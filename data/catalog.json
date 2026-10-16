@@ -2,6 +2,22 @@
   "version": 1,
   "entries": [
     {
+      "id": "4388ca2f-e0ff-43f9-95ce-a14ad90eb899",
+      "type": "track",
+      "title": "Tuscan Leather",
+      "artist": "Drake",
+      "album": "Nothing Was the Same (Deluxe)",
+      "posted_by": "Luke",
+      "posted_at": "2026-10-16T15:04:30-04:00",
+      "source_service": "spotify",
+      "source_url": "https://open.spotify.com/track/69gz9onZQNVw55cMQsaYii",
+      "spotify_url": "https://open.spotify.com/track/69gz9onZQNVw55cMQsaYii",
+      "apple_music_url": "https://music.apple.com/ca/album/tuscan-leather/1440819797?i=1440820038",
+      "match_status": "matched",
+      "artwork_url": "https://is1-ssl.mzstatic.com/image/thumb/Music115/v4/60/e8/d1/60e8d144-2b8e-cbdc-9ff8-beaf9f4868b1/00602537542345.rgb.jpg/600x600bb.jpg",
+      "notes": null
+    },
+    {
       "id": "8ee74436-8c27-4d38-bbd8-442db98ad874",
       "type": "track",
       "title": "Motivation",

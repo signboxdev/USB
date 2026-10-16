@@ -37,8 +37,8 @@ jobs:
       - name: Check dist files
         run: |
           cd dist
-          find . -type f -printf '%P\n' | sort > /tmp/dist-files
-          printf '%s\n' favicon.svg index.html robots.txt sitemap.xml styles.css > /tmp/expected-files
+          find . -type f -printf '%P\n' | LC_ALL=C sort > /tmp/dist-files
+          printf '%s\n' apple-touch-icon.png favicon-32.png favicon.ico icon-512.png index.html robots.txt site.webmanifest sitemap.xml styles.css > /tmp/expected-files
           diff -u /tmp/expected-files /tmp/dist-files
 
       - name: Force-publish dist to deploy

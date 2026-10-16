@@ -169,9 +169,12 @@ export function renderPage(catalog) {
     <meta name="twitter:title" content="${PAGE_TITLE}">
     <meta name="twitter:description" content="${PAGE_DESCRIPTION}">
     <meta name="theme-color" content="#000000">
-    <meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src 'self'; img-src 'self' https:; base-uri 'none'; form-action 'none'">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src 'self'; img-src 'self' https:; manifest-src 'self'; base-uri 'none'; form-action 'none'">
     <link rel="stylesheet" href="styles.css">
-    <link rel="icon" href="favicon.svg" type="image/svg+xml">
+    <link rel="icon" href="/favicon.ico" sizes="any">
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png">
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+    <link rel="manifest" href="/site.webmanifest">
   </head>
   <body>
     <a class="skip" href="#crate">skip to the crate</a>
@@ -179,7 +182,6 @@ export function renderPage(catalog) {
       <header class="mast">
         <div class="mast-top">
           <p>unfamiliarsoundbyte.com</p>
-          <p>public</p>
         </div>
         <h1>unfamiliar sound byte</h1>
         <p class="dek">every song, album, and playlist posted in the group chat, kept in one crate.</p>
@@ -209,7 +211,15 @@ export function renderSitemap() {
 }
 
 function copyStatic(dist) {
-  for (const name of ["styles.css", "favicon.svg", "robots.txt"]) {
+  for (const name of [
+    "styles.css",
+    "robots.txt",
+    "favicon.ico",
+    "favicon-32.png",
+    "apple-touch-icon.png",
+    "icon-512.png",
+    "site.webmanifest",
+  ]) {
     fs.copyFileSync(path.join(repoRoot, "src", name), path.join(dist, name));
   }
 }

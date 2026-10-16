@@ -14,6 +14,9 @@ const types = {
   ".svg": "image/svg+xml",
   ".txt": "text/plain; charset=utf-8",
   ".xml": "application/xml; charset=utf-8",
+  ".ico": "image/x-icon",
+  ".png": "image/png",
+  ".webmanifest": "application/manifest+json",
 };
 
 if (!Number.isInteger(port) || port < 1 || port > 65535) {

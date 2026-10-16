@@ -143,6 +143,7 @@ body {
 .thumb {
   width: 4.75rem;
   height: 4.75rem;
+  aspect-ratio: 1;
   flex: none;
   display: grid;
   place-items: center;

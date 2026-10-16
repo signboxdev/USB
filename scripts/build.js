@@ -103,9 +103,14 @@ function notesBlock(entry) {
   return "";
 }
 
+function artworkAlt(entry) {
+  const subject = entry.album || entry.title;
+  return `Cover art for ${subject} by ${entry.artist}`;
+}
+
 function renderEntry(entry, number) {
   const artwork = entry.artwork_url
-    ? `<img src="${httpsUrl(entry.artwork_url, "artwork")}" alt="">`
+    ? `<img src="${httpsUrl(entry.artwork_url, "artwork")}" alt="${escapeHtml(artworkAlt(entry))}" width="600" height="600" loading="lazy" decoding="async">`
     : `<span class="monogram">${escapeHtml(monogram(entry.artist))}</span>`;
   const spotify = serviceCell("spotify", entry.spotify_url, entry.source_service === "spotify");
   const apple = serviceCell(
@@ -180,11 +185,7 @@ export function renderPage(catalog) {
     <a class="skip" href="#crate">skip to the crate</a>
     <div class="wrap">
       <header class="mast">
-        <div class="mast-top">
-          <p>unfamiliarsoundbyte.com</p>
-        </div>
         <h1>unfamiliar sound byte</h1>
-        <p class="dek">every song, album, and playlist posted in the group chat, kept in one crate.</p>
         <p class="count">${crateSummary(entries.length)}</p>
       </header>
       <main id="crate">

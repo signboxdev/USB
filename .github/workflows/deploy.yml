@@ -1,0 +1,51 @@
+name: Publish deploy branch
+
+on:
+  push:
+    branches:
+      - main
+
+permissions:
+  contents: write
+
+concurrency:
+  group: publish-deploy
+  cancel-in-progress: false
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out
+        uses: actions/checkout@v4
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install
+        run: npm ci
+
+      - name: Validate
+        run: npm run validate
+
+      - name: Build
+        run: npm run build
+
+      - name: Check dist files
+        run: |
+          cd dist
+          find . -type f -printf '%P\n' | sort > /tmp/dist-files
+          printf '%s\n' favicon.svg index.html robots.txt sitemap.xml styles.css > /tmp/expected-files
+          diff -u /tmp/expected-files /tmp/dist-files
+
+      - name: Force-publish dist to deploy
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./dist
+          publish_branch: deploy
+          force_orphan: true
+          disable_nojekyll: true

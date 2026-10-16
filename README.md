@@ -90,4 +90,4 @@ The built page is meant to be indexed. Its title is Unfamiliar Sound Byte, the d
 
 ## Deploy
 
-Upload the files inside `dist/`, not the rest of the repo. Steps for Hostinger are in [DEPLOY.md](DEPLOY.md).
+A push to `main` publishes the files inside `dist/` to the `deploy` branch. Hostinger copies that branch into the site. The hPanel settings are in [DEPLOY.md](DEPLOY.md).

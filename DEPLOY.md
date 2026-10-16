@@ -47,48 +47,23 @@ On Shared or Cloud hosting, that zip is the static-site archive (`index.html` at
 
 ## GitHub auto-deploy (Premium, static)
 
-Premium hosting can pull [signboxdev/USB](https://github.com/signboxdev/USB) and replace the live files on every push. In hPanel: Websites → unfamiliarsoundbyte.com → Advanced → Git → Connect with GitHub. Install the Hostinger GitHub App and grant it this repository.
+A push to `main` runs `.github/workflows/deploy.yml`. It runs `npm run validate` and `npm run build`, then force-publishes the contents of `dist/` to the root of the `deploy` branch:
 
-That deploy copies one branch into a directory on the server (the site root, `public_html`, unless you change it) and serves those files. It does not run `npm install` or `npm run build`. Whatever is committed on the branch is what the site serves, so `index.html` has to be at the root of the branch Hostinger watches. `data/catalog.json` should not be in that tree.
+- `index.html`
+- `styles.css`
+- `favicon.svg`
+- `robots.txt`
+- `sitemap.xml`
 
-`.github/workflows/ci.yml` runs `npm run validate` and `npm run build` on every push and on pull requests. A bad catalog fails there. The workflow does not publish the site.
+Hostinger watches `deploy` and copies that branch into the site. It does not run the build. `data/catalog.json` stays off the server because `deploy` contains only those five files.
 
-### Build onto a deploy branch
+In hPanel: Websites → unfamiliarsoundbyte.com → Advanced → Git.
 
-Leave `main` as the source. `dist/` stays gitignored. After a green build, publish the files inside `dist/` as the root of a `deploy` branch, and point Hostinger at that branch.
-
-```bash
-npm ci
-npm run validate
-npm run build
-rm -rf /tmp/usb-deploy
-mkdir /tmp/usb-deploy
-cp dist/index.html dist/styles.css dist/favicon.svg dist/robots.txt dist/sitemap.xml /tmp/usb-deploy/
-git -C /tmp/usb-deploy init -b deploy
-git -C /tmp/usb-deploy add index.html styles.css favicon.svg robots.txt sitemap.xml
-git -C /tmp/usb-deploy commit -m "Publish dist"
-git -C /tmp/usb-deploy remote add origin https://github.com/signboxdev/USB.git
-git -C /tmp/usb-deploy push --force origin deploy
-```
-
-In hPanel set:
-
-- Repository: `signboxdev/USB`
+- Repository: `https://github.com/signboxdev/USB.git`
 - Branch: `deploy`
-- Deploy directory: `public_html`
-- Auto-deployment: on
+- Install directory: leave this empty. The files then land in `public_html`, and the install directory has to be empty before the first deploy.
+- Auto-deploy webhook: enabled.
 
-A push to `deploy` replaces those files at the site root. A push to `main` updates the catalog source and runs the check. Publish `deploy` again when that change should go live. The branch holds only the built page, including `sitemap.xml`, so `data/catalog.json` never lands on the server.
+A later push to `main` rebuilds `deploy`. The webhook tells Hostinger, and Hostinger replaces the files in `public_html`.
 
-### Commit the build output
-
-Premium will not run the build, so the branch Hostinger watches has to already contain the page. To keep a single branch:
-
-1. Remove the `dist/` line from `.gitignore`.
-2. Run `npm run validate` and `npm run build`.
-3. Copy `index.html`, `styles.css`, `favicon.svg`, `robots.txt`, and `sitemap.xml` from `dist/` to the repository root and commit them on the branch Hostinger watches.
-4. In hPanel, connect that branch (`main`, if that is the one you push) and set the deploy directory to `public_html`. Auto-deployment stays on.
-
-Hostinger copies the whole branch into `public_html`. With those files at the root, the homepage is `index.html` and the sitemap is `sitemap.xml`. The same copy also includes `data/catalog.json`. The `deploy` branch above contains only the built files, so the catalog stays off the server.
-
-Committing the `dist/` directory and leaving the files inside it puts the page at `dist/index.html`. Copy them to the branch root before Hostinger pulls.
+`.github/workflows/ci.yml` runs the same validate and build on every push and on pull requests. It does not publish.

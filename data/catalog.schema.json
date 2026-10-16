@@ -1,0 +1,228 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://unfamiliarsoundbyte.com/schema/catalog.json",
+  "title": "Unfamiliar Sound Byte catalog",
+  "description": "Every track, album, and playlist posted in the Unfamiliar Sound Byte group chat.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["version", "entries"],
+  "properties": {
+    "version": {
+      "const": 1,
+      "description": "Catalog schema version. Only 1 is accepted."
+    },
+    "entries": {
+      "type": "array",
+      "description": "One object per link posted in the chat. File order is ignored; the site sorts by posted_at.",
+      "items": { "$ref": "#/$defs/entry" }
+    }
+  },
+  "$defs": {
+    "entry": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "type",
+        "title",
+        "artist",
+        "album",
+        "posted_by",
+        "posted_at",
+        "source_service",
+        "source_url",
+        "spotify_url",
+        "apple_music_url",
+        "match_status",
+        "artwork_url",
+        "notes"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 80,
+          "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$",
+          "description": "Stable lowercase slug, unique within entries."
+        },
+        "type": {
+          "enum": ["track", "album", "playlist"],
+          "description": "What was posted."
+        },
+        "title": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 300
+        },
+        "artist": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 300,
+          "description": "Performer. For a playlist, the curator or the name the chat used."
+        },
+        "album": {
+          "description": "Album title, or null when there is none. Album entries may leave this null; the title is the album.",
+          "anyOf": [
+            { "type": "null" },
+            { "type": "string", "minLength": 1, "maxLength": 300 }
+          ]
+        },
+        "posted_by": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 80,
+          "description": "Who sent the link in the chat."
+        },
+        "posted_at": {
+          "type": "string",
+          "format": "date-time",
+          "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(Z|[+-]\\d{2}:\\d{2})$",
+          "description": "When it was posted. ISO 8601 with seconds and a numeric offset or Z. No fractional seconds."
+        },
+        "source_service": {
+          "enum": ["spotify", "apple_music"],
+          "description": "Which service the chat link pointed at."
+        },
+        "source_url": {
+          "type": "string",
+          "format": "uri",
+          "pattern": "^https://\\S+$",
+          "description": "The link that was actually posted. Must be https on the source service host."
+        },
+        "spotify_url": {
+          "description": "Spotify URL for the same recording, or null when it is missing.",
+          "anyOf": [
+            { "type": "null" },
+            {
+              "type": "string",
+              "format": "uri",
+              "pattern": "^https://open\\.spotify\\.com/\\S+$"
+            }
+          ]
+        },
+        "apple_music_url": {
+          "description": "Apple Music URL for the same recording, or null when it is missing.",
+          "anyOf": [
+            { "type": "null" },
+            {
+              "type": "string",
+              "format": "uri",
+              "pattern": "^https://music\\.apple\\.com/\\S+$"
+            }
+          ]
+        },
+        "match_status": {
+          "enum": ["matched", "unmatched", "source_only"],
+          "description": "matched: both store links are set. unmatched: a cross-service lookup was tried and exactly one store link is missing. source_only: only the posted service is filled in; the other was not looked up."
+        },
+        "artwork_url": {
+          "description": "Optional https image. Null draws a monogram sleeve instead, which keeps the page free of extra requests.",
+          "anyOf": [
+            { "type": "null" },
+            { "type": "string", "format": "uri", "pattern": "^https://\\S+$" }
+          ]
+        },
+        "notes": {
+          "description": "Short note, or null. The exact string \"example\" marks seed data: the page stamps it and it is meant to be deleted.",
+          "anyOf": [
+            { "type": "null" },
+            { "type": "string", "maxLength": 500 }
+          ]
+        }
+      },
+      "allOf": [
+        {
+          "if": {
+            "type": "object",
+            "properties": { "source_service": { "const": "spotify" } },
+            "required": ["source_service"]
+          },
+          "then": {
+            "properties": {
+              "source_url": { "type": "string", "pattern": "^https://open\\.spotify\\.com/\\S+$" },
+              "spotify_url": { "type": "string", "minLength": 1 }
+            }
+          }
+        },
+        {
+          "if": {
+            "type": "object",
+            "properties": { "source_service": { "const": "apple_music" } },
+            "required": ["source_service"]
+          },
+          "then": {
+            "properties": {
+              "source_url": { "type": "string", "pattern": "^https://music\\.apple\\.com/\\S+$" },
+              "apple_music_url": { "type": "string", "minLength": 1 }
+            }
+          }
+        },
+        {
+          "if": {
+            "type": "object",
+            "properties": { "match_status": { "const": "matched" } },
+            "required": ["match_status"]
+          },
+          "then": {
+            "properties": {
+              "spotify_url": { "type": "string", "minLength": 1 },
+              "apple_music_url": { "type": "string", "minLength": 1 }
+            }
+          }
+        },
+        {
+          "if": {
+            "type": "object",
+            "properties": { "match_status": { "const": "unmatched" } },
+            "required": ["match_status"]
+          },
+          "then": {
+            "oneOf": [
+              {
+                "properties": {
+                  "spotify_url": { "type": "string", "minLength": 1 },
+                  "apple_music_url": { "type": "null" }
+                },
+                "required": ["spotify_url", "apple_music_url"]
+              },
+              {
+                "properties": {
+                  "spotify_url": { "type": "null" },
+                  "apple_music_url": { "type": "string", "minLength": 1 }
+                },
+                "required": ["spotify_url", "apple_music_url"]
+              }
+            ]
+          }
+        },
+        {
+          "if": {
+            "type": "object",
+            "properties": { "match_status": { "const": "source_only" } },
+            "required": ["match_status"]
+          },
+          "then": {
+            "oneOf": [
+              {
+                "properties": {
+                  "source_service": { "const": "spotify" },
+                  "spotify_url": { "type": "string", "minLength": 1 },
+                  "apple_music_url": { "type": "null" }
+                },
+                "required": ["source_service", "spotify_url", "apple_music_url"]
+              },
+              {
+                "properties": {
+                  "source_service": { "const": "apple_music" },
+                  "spotify_url": { "type": "null" },
+                  "apple_music_url": { "type": "string", "minLength": 1 }
+                },
+                "required": ["source_service", "spotify_url", "apple_music_url"]
+              }
+            ]
+          }
+        }
+      ]
+    }
+  }
+}

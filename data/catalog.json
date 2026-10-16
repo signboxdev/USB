@@ -2,52 +2,20 @@
   "version": 1,
   "entries": [
     {
-      "id": "ex-late-bus",
-      "type": "playlist",
-      "title": "late bus, side b",
-      "artist": "nico",
-      "album": null,
-      "posted_by": "nico",
-      "posted_at": "2026-10-02T19:40:00-04:00",
-      "source_service": "apple_music",
-      "source_url": "https://music.apple.com/us/playlist/late-bus-side-b/pl.exlatebus",
-      "spotify_url": null,
-      "apple_music_url": "https://music.apple.com/us/playlist/late-bus-side-b/pl.exlatebus",
-      "match_status": "source_only",
-      "artwork_url": null,
-      "notes": "example"
-    },
-    {
-      "id": "ex-salt-library",
-      "type": "album",
-      "title": "salt library",
-      "artist": "june harbor",
-      "album": null,
-      "posted_by": "devon",
-      "posted_at": "2026-07-18T11:05:00-07:00",
-      "source_service": "spotify",
-      "source_url": "https://open.spotify.com/album/exSaltLibrary",
-      "spotify_url": "https://open.spotify.com/album/exSaltLibrary",
-      "apple_music_url": null,
-      "match_status": "unmatched",
-      "artwork_url": null,
-      "notes": "example"
-    },
-    {
-      "id": "ex-glass-elevator",
+      "id": "8ee74436-8c27-4d38-bbd8-442db98ad874",
       "type": "track",
-      "title": "glass elevator (demo)",
-      "artist": "the paper moons",
-      "album": "night shift sketches",
-      "posted_by": "mira",
-      "posted_at": "2026-03-14T21:18:00-04:00",
+      "title": "Motivation",
+      "artist": "Clams Casino",
+      "album": "Instrumentals",
+      "posted_by": "Evan",
+      "posted_at": "2026-10-16T14:37:34-04:00",
       "source_service": "spotify",
-      "source_url": "https://open.spotify.com/track/exGlassElevatorDemo",
-      "spotify_url": "https://open.spotify.com/track/exGlassElevatorDemo",
-      "apple_music_url": "https://music.apple.com/us/song/glass-elevator-demo/0000000001",
+      "source_url": "https://open.spotify.com/track/6mqBM2MtZhsMkVnT0JZLAM",
+      "spotify_url": "https://open.spotify.com/track/6mqBM2MtZhsMkVnT0JZLAM",
+      "apple_music_url": "https://music.apple.com/ca/album/motivation/1334853828?i=1334853844",
       "match_status": "matched",
       "artwork_url": null,
-      "notes": "example"
+      "notes": null
     }
   ]
 }

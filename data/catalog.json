@@ -2,6 +2,23 @@
   "version": 1,
   "entries": [
     {
+      "id": "0C9BA200-444A-4695-AADD-D05D84423A7B",
+      "type": "track",
+      "title": "G'D Up",
+      "artist": "G-Unit",
+      "album": "Beg For Mercy",
+      "year": 2003,
+      "postedBy": "Evan",
+      "postedAt": "2026-10-16T17:07:58-04:00",
+      "sourceService": "spotify",
+      "sourceUrl": "https://open.spotify.com/track/7yBHF3ehNxm6E3MVY3SWCR",
+      "spotifyUrl": "https://open.spotify.com/track/7yBHF3ehNxm6E3MVY3SWCR",
+      "appleMusicUrl": "https://music.apple.com/ca/album/gd-up-explicit/1444176849?i=1444177430",
+      "matchStatus": "matched",
+      "matchSource": "itunes-search",
+      "artworkUrl": "https://is1-ssl.mzstatic.com/image/thumb/Music124/v4/3e/66/ab/3e66ab5a-0be1-dca9-85d5-053530ede25a/00602498614983.rgb.jpg/600x600bb.jpg"
+    },
+    {
       "id": "4388ca2f-e0ff-43f9-95ce-a14ad90eb899",
       "type": "track",
       "title": "Tuscan Leather",

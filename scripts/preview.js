@@ -13,6 +13,7 @@ const types = {
   ".css": "text/css; charset=utf-8",
   ".svg": "image/svg+xml",
   ".txt": "text/plain; charset=utf-8",
+  ".xml": "application/xml; charset=utf-8",
 };
 
 if (!Number.isInteger(port) || port < 1 || port > 65535) {
@@ -33,7 +34,6 @@ function send(res, status, body, type = "text/plain; charset=utf-8") {
     "Cache-Control": "no-store",
     "X-Content-Type-Options": "nosniff",
     "Referrer-Policy": "no-referrer",
-    "X-Robots-Tag": "noindex, nofollow",
   });
   res.end(body);
 }

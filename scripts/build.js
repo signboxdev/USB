@@ -3,6 +3,11 @@ import path from "node:path";
 import { pathToFileURL } from "node:url";
 import { assertValidCatalog, repoRoot } from "./catalog.js";
 
+const SITE_ORIGIN = "https://unfamiliarsoundbyte.com";
+const CANONICAL_URL = `${SITE_ORIGIN}/`;
+const PAGE_TITLE = "Unfamiliar Sound Byte";
+const PAGE_DESCRIPTION = "Unfamiliar Sound Byte, the revolutionary group chat for music";
+
 const MONTHS = ["jan", "feb", "mar", "apr", "may", "jun", "jul", "aug", "sep", "oct", "nov", "dec"];
 const ARTICLES = new Set(["the", "a", "an"]);
 const MATCH_LABEL = {
@@ -151,12 +156,20 @@ export function renderPage(catalog) {
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="robots" content="noindex,nofollow">
     <meta name="referrer" content="no-referrer">
-    <meta name="description" content="Private catalog of songs, albums, and playlists posted in the Unfamiliar Sound Byte group chat.">
+    <title>${PAGE_TITLE}</title>
+    <meta name="description" content="${PAGE_DESCRIPTION}">
+    <link rel="canonical" href="${CANONICAL_URL}">
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="${PAGE_TITLE}">
+    <meta property="og:title" content="${PAGE_TITLE}">
+    <meta property="og:description" content="${PAGE_DESCRIPTION}">
+    <meta property="og:url" content="${CANONICAL_URL}">
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:title" content="${PAGE_TITLE}">
+    <meta name="twitter:description" content="${PAGE_DESCRIPTION}">
     <meta name="theme-color" content="#000000">
     <meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src 'self'; img-src 'self' https:; base-uri 'none'; form-action 'none'">
-    <title>unfamiliar sound byte</title>
     <link rel="stylesheet" href="styles.css">
     <link rel="icon" href="favicon.svg" type="image/svg+xml">
   </head>
@@ -166,7 +179,7 @@ export function renderPage(catalog) {
       <header class="mast">
         <div class="mast-top">
           <p>unfamiliarsoundbyte.com</p>
-          <p>not indexed</p>
+          <p>public</p>
         </div>
         <h1>unfamiliar sound byte</h1>
         <p class="dek">every song, album, and playlist posted in the group chat, kept in one crate.</p>
@@ -177,11 +190,21 @@ export function renderPage(catalog) {
       </main>
       <footer class="colophon">
         <p>unfamiliar sound byte · catalog version ${escapeHtml(catalog.version)}</p>
-        <p>rebuilt from data/catalog.json. private to the group chat.</p>
+        <p>rebuilt from data/catalog.json.</p>
       </footer>
     </div>
   </body>
 </html>
+`;
+}
+
+export function renderSitemap() {
+  return `<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <url>
+    <loc>${CANONICAL_URL}</loc>
+  </url>
+</urlset>
 `;
 }
 
@@ -198,8 +221,9 @@ function main() {
   fs.rmSync(dist, { recursive: true, force: true });
   fs.mkdirSync(dist, { recursive: true });
   fs.writeFileSync(path.join(dist, "index.html"), html);
+  fs.writeFileSync(path.join(dist, "sitemap.xml"), renderSitemap());
   copyStatic(dist);
-  console.log(`built dist/index.html (${catalog.entries.length} entries)`);
+  console.log(`built dist/index.html and dist/sitemap.xml (${catalog.entries.length} entries)`);
 }
 
 const invokedDirectly = process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href;

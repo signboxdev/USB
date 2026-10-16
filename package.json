@@ -2,7 +2,7 @@
   "name": "unfamiliar-sound-byte",
   "version": "1.0.0",
   "private": true,
-  "description": "Private static catalog of the Unfamiliar Sound Byte group chat.",
+  "description": "Public static catalog of the Unfamiliar Sound Byte group chat.",
   "type": "module",
   "engines": {
     "node": ">=20"

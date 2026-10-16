@@ -16,14 +16,15 @@ npm run build
 - `styles.css`
 - `favicon.svg`
 - `robots.txt`
+- `sitemap.xml`
 
-`index.html` and `robots.txt` have to sit at the site root, not inside a `dist` folder. Do not upload `data/catalog.json`.
+`index.html`, `robots.txt`, and `sitemap.xml` have to sit at the site root, not inside a `dist` folder. Do not upload `data/catalog.json`.
 
 ## hPanel
 
 1. Websites → unfamiliarsoundbyte.com → File Manager.
 2. Open `public_html`.
-3. Upload the four files from `dist/`.
+3. Upload every file from `dist/`.
 4. If an old page sticks, clear the website cache in hPanel and reload.
 
 ## Zip deploy
@@ -40,8 +41,9 @@ On Shared or Cloud hosting, that zip is the static-site archive (`index.html` at
 
 - The homepage shows the crate, including title, artist, album, who posted, the date, and both store chips.
 - A missing store link reads **unmatched**.
-- `https://unfamiliarsoundbyte.com/robots.txt` is `Disallow: /`.
-- View source contains `<meta name="robots" content="noindex,nofollow">`.
+- `https://unfamiliarsoundbyte.com/robots.txt` allows all crawlers and includes `Sitemap: https://unfamiliarsoundbyte.com/sitemap.xml`.
+- `https://unfamiliarsoundbyte.com/sitemap.xml` lists `https://unfamiliarsoundbyte.com/`.
+- View source has the title Unfamiliar Sound Byte, the description “Unfamiliar Sound Byte, the revolutionary group chat for music”, a canonical link to `https://unfamiliarsoundbyte.com/`, and Open Graph and Twitter card tags. There is no `noindex` meta.
 
 ## GitHub auto-deploy (Premium, static)
 
@@ -53,7 +55,7 @@ That deploy copies one branch into a directory on the server (the site root, `pu
 
 ### Build onto a deploy branch
 
-Leave `main` as the source. `dist/` stays gitignored. After a green build, publish the four files inside `dist/` as the root of a `deploy` branch, and point Hostinger at that branch.
+Leave `main` as the source. `dist/` stays gitignored. After a green build, publish the files inside `dist/` as the root of a `deploy` branch, and point Hostinger at that branch.
 
 ```bash
 npm ci
@@ -61,9 +63,9 @@ npm run validate
 npm run build
 rm -rf /tmp/usb-deploy
 mkdir /tmp/usb-deploy
-cp dist/index.html dist/styles.css dist/favicon.svg dist/robots.txt /tmp/usb-deploy/
+cp dist/index.html dist/styles.css dist/favicon.svg dist/robots.txt dist/sitemap.xml /tmp/usb-deploy/
 git -C /tmp/usb-deploy init -b deploy
-git -C /tmp/usb-deploy add index.html styles.css favicon.svg robots.txt
+git -C /tmp/usb-deploy add index.html styles.css favicon.svg robots.txt sitemap.xml
 git -C /tmp/usb-deploy commit -m "Publish dist"
 git -C /tmp/usb-deploy remote add origin https://github.com/signboxdev/USB.git
 git -C /tmp/usb-deploy push --force origin deploy
@@ -76,7 +78,7 @@ In hPanel set:
 - Deploy directory: `public_html`
 - Auto-deployment: on
 
-A push to `deploy` replaces those four files at the site root. A push to `main` updates the catalog source and runs the check. Publish `deploy` again when that change should go live. The branch holds only the built page, so `data/catalog.json` never lands on the server.
+A push to `deploy` replaces those files at the site root. A push to `main` updates the catalog source and runs the check. Publish `deploy` again when that change should go live. The branch holds only the built page, including `sitemap.xml`, so `data/catalog.json` never lands on the server.
 
 ### Commit the build output
 
@@ -84,9 +86,9 @@ Premium will not run the build, so the branch Hostinger watches has to already c
 
 1. Remove the `dist/` line from `.gitignore`.
 2. Run `npm run validate` and `npm run build`.
-3. Copy `index.html`, `styles.css`, `favicon.svg`, and `robots.txt` from `dist/` to the repository root and commit them on the branch Hostinger watches.
+3. Copy `index.html`, `styles.css`, `favicon.svg`, `robots.txt`, and `sitemap.xml` from `dist/` to the repository root and commit them on the branch Hostinger watches.
 4. In hPanel, connect that branch (`main`, if that is the one you push) and set the deploy directory to `public_html`. Auto-deployment stays on.
 
-Hostinger copies the whole branch into `public_html`. With those four files at the root, the homepage is `index.html`. The same copy also includes `data/catalog.json`. The `deploy` branch above contains only the four built files, so the catalog stays off the server.
+Hostinger copies the whole branch into `public_html`. With those files at the root, the homepage is `index.html` and the sitemap is `sitemap.xml`. The same copy also includes `data/catalog.json`. The `deploy` branch above contains only the built files, so the catalog stays off the server.
 
 Committing the `dist/` directory and leaving the files inside it puts the page at `dist/index.html`. Copy them to the branch root before Hostinger pulls.

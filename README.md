@@ -1,6 +1,6 @@
 # Unfamiliar Sound Byte
 
-A private catalog of every song, album, and playlist posted in the Unfamiliar Sound Byte group chat. The site is a static page for [unfamiliarsoundbyte.com](https://unfamiliarsoundbyte.com). There is no search, no sort control, and no playlist builder. Newest posts come first.
+A public catalog of every song, album, and playlist posted in the Unfamiliar Sound Byte group chat. The site is a static page for [unfamiliarsoundbyte.com](https://unfamiliarsoundbyte.com). There is no search, no sort control, and no playlist builder. Newest posts come first.
 
 `data/catalog.json` is the only source of truth. `npm run build` throws away `dist/` and writes the site again from that file.
 
@@ -84,7 +84,9 @@ The URL for `source_service` is always required. A Spotify post cannot have `spo
 npm run preview
 ```
 
-Serves `dist/` at [http://127.0.0.1:47321](http://127.0.0.1:47321). Set `PORT` to use another port. There is no client-side JavaScript and no analytics. Links send no referrer. The page includes `<meta name="robots" content="noindex,nofollow">`, and `robots.txt` is `Disallow: /`.
+Serves `dist/` at [http://127.0.0.1:47321](http://127.0.0.1:47321). Set `PORT` to use another port. There is no client-side JavaScript and no analytics. Links send no referrer.
+
+The built page is meant to be indexed. Its title is Unfamiliar Sound Byte, the description is “Unfamiliar Sound Byte, the revolutionary group chat for music”, and the canonical URL is `https://unfamiliarsoundbyte.com/`. The same title, description, and URL are repeated as Open Graph and Twitter card tags. `npm run build` writes `dist/sitemap.xml` with that canonical URL. `robots.txt` allows all crawlers and points at `https://unfamiliarsoundbyte.com/sitemap.xml`.
 
 ## Deploy
 

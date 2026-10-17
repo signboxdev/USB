@@ -132,9 +132,14 @@ function artworkAlt(entry) {
   return `Cover art for ${subject} by ${entry.artist}`;
 }
 
-function renderEntry(entry, number, { includeNotes = true } = {}) {
+// First screenful of list thumbs: eager so iOS Safari / headless Chrome don't
+// leave in-viewport covers as empty black squares until a scroll gesture.
+const EAGER_LIST_ARTWORK = 10;
+
+function renderEntry(entry, number, { includeNotes = true, listIndex = 0 } = {}) {
+  const loading = listIndex < EAGER_LIST_ARTWORK ? "eager" : "lazy";
   const artwork = entry.artwork_url
-    ? `<img src="${httpsUrl(entry.artwork_url, "artwork")}" alt="${escapeHtml(artworkAlt(entry))}" width="600" height="600" loading="lazy" decoding="async">`
+    ? `<img src="${httpsUrl(entry.artwork_url, "artwork")}" alt="${escapeHtml(artworkAlt(entry))}" width="600" height="600" loading="${loading}" decoding="async">`
     : `<span class="monogram">${escapeHtml(monogram(entry.artist))}</span>`;
   const links = [
     storeLink("spotify", entry.spotify_url, entry.title),
@@ -347,7 +352,9 @@ function renderCrateList(entries, numbers, { includeNotes = true } = {}) {
     return `<p class="empty-crate">the crate is empty. add an entry to <code>data/catalog.json</code>, then run <code>npm run build</code>.</p>`;
   }
   return `<ol class="crate">\n${entries
-    .map((entry) => renderEntry(entry, numbers.get(entry.id), { includeNotes }))
+    .map((entry, listIndex) =>
+      renderEntry(entry, numbers.get(entry.id), { includeNotes, listIndex }),
+    )
     .join("\n")}\n    </ol>`;
 }
 

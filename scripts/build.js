@@ -301,7 +301,10 @@ export function renderSitemap() {
 }
 
 function copyStatic(dist) {
+  // Explicit names. A directory walk that skips names starting with "." would
+  // drop .htaccess, so the dotfile is listed here on purpose.
   for (const name of [
+    ".htaccess",
     "styles.css",
     "coverflow.js",
     "logo.gif",
@@ -313,7 +316,9 @@ function copyStatic(dist) {
     "og-image.png",
     "site.webmanifest",
   ]) {
-    fs.copyFileSync(path.join(repoRoot, "src", name), path.join(dist, name));
+    const from = path.join(repoRoot, "src", name);
+    if (!fs.existsSync(from)) throw new Error(`missing src/${name}`);
+    fs.copyFileSync(from, path.join(dist, name));
   }
 }
 

@@ -134,6 +134,33 @@ body {
   font-size: 0.95rem;
 }
 
+.poster-name {
+  margin: 1.15rem 0 0;
+  font-weight: 650;
+  font-size: 1.35rem;
+  line-height: 1.15;
+  letter-spacing: -0.02em;
+}
+
+.poster {
+  color: inherit;
+  font-weight: 600;
+  text-decoration: none;
+  text-underline-offset: 0.18em;
+  text-decoration-thickness: 1px;
+  -webkit-tap-highlight-color: transparent;
+}
+
+@media (hover: hover) {
+  .poster:hover {
+    text-decoration: underline;
+  }
+}
+
+.poster:active {
+  text-decoration: underline;
+}
+
 .flow {
   --cover: clamp(128px, 38vw, 168px);
   position: relative;
@@ -359,11 +386,6 @@ body {
   font-size: 0.86rem;
 }
 
-.flow-who strong {
-  color: var(--text);
-  font-weight: 600;
-}
-
 .flow-who time,
 .posted time {
   text-transform: none;
@@ -510,9 +532,9 @@ h2 {
   text-overflow: ellipsis;
 }
 
-.posted strong {
+.posted .poster,
+.flow-who .poster {
   color: var(--text);
-  font-weight: 600;
 }
 
 .services {
@@ -591,7 +613,8 @@ h2 {
 a.service:focus-visible,
 a.icon-btn:focus-visible,
 .logo:focus-visible,
-.skip:focus-visible {
+.skip:focus-visible,
+.poster:focus-visible {
   outline: 2px solid #fff;
   outline-offset: 3px;
 }
@@ -648,6 +671,11 @@ code {
 
   .count {
     margin-top: 0.4rem;
+  }
+
+  .poster-name {
+    margin-top: 0.85rem;
+    font-size: 1.2rem;
   }
 
   .mast {
@@ -744,6 +772,11 @@ code {
   .mast {
     padding-bottom: 1rem;
     margin-bottom: 0.25rem;
+  }
+
+  .poster-name {
+    margin-top: 1.5rem;
+    font-size: 1.55rem;
   }
 
   .logo img {

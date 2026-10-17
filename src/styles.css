@@ -135,7 +135,7 @@ body {
 }
 
 .flow {
-  --cover: clamp(164px, 56vw, 220px);
+  --cover: clamp(128px, 38vw, 168px);
   position: relative;
   z-index: 0;
   margin: 0.35rem -1.15rem 1.6rem;
@@ -147,9 +147,10 @@ body {
 .flow-stage {
   position: relative;
   height: calc(var(--cover) * 1.44 + 18px);
-  perspective: 980px;
+  perspective: 1800px;
   perspective-origin: 50% 42%;
   transform-style: preserve-3d;
+  /* Vertical pans stay with the page. Horizontal drags are handled in coverflow.js. */
   touch-action: pan-y;
   cursor: grab;
 }
@@ -173,32 +174,68 @@ body {
   left: 50%;
   width: var(--cover);
   margin-left: calc(var(--cover) / -2);
-  transform: translate3d(0, 0, 70px);
+  transform: translate3d(0, 0, 36px);
   transform-style: preserve-3d;
 }
 
-/* Initial placement matches coverflow.js: step 0.78, stack 0.34, rotate 58deg. */
+/* Before script: step 1.06, stack 0.18, rotate 68deg, center forward and sides set back. */
 .flow-cover:nth-child(1) {
-  z-index: 40;
-  transform: translate3d(0, 0, 70px) rotateY(0deg);
+  z-index: 100;
+  transform: translate3d(0, 0, 36px) rotateY(0deg);
 }
 
 .flow-cover:nth-child(2) {
-  z-index: 30;
-  transform: translate3d(78%, 0, -28px) rotateY(-58deg);
+  z-index: 90;
+  transform: translate3d(106%, 0, -76px) rotateY(-68deg);
 }
 
 .flow-cover:nth-child(3) {
-  z-index: 20;
-  transform: translate3d(112%, 0, -44px) rotateY(-58deg);
+  z-index: 80;
+  transform: translate3d(124%, 0, -80px) rotateY(-68deg);
 }
 
-.flow-cover:nth-child(n + 4) {
-  z-index: 10;
-  transform: translate3d(146%, 0, -60px) rotateY(-58deg);
+.flow-cover:nth-child(4) {
+  z-index: 70;
+  transform: translate3d(142%, 0, -84px) rotateY(-68deg);
 }
 
-.flow.is-ready:not(.is-dragging):not(.is-instant) .flow-cover {
+.flow-cover:nth-child(5) {
+  z-index: 60;
+  transform: translate3d(160%, 0, -88px) rotateY(-68deg);
+}
+
+.flow-cover:nth-child(n + 6) {
+  z-index: 50;
+  transform: translate3d(178%, 0, -92px) rotateY(-68deg);
+}
+
+@media (max-width: 619px) {
+  .flow-cover:nth-child(1) {
+    transform: translate3d(0, 0, 36px) rotateY(0deg);
+  }
+
+  .flow-cover:nth-child(2) {
+    transform: translate3d(90%, 0, -118px) rotateY(-70deg);
+  }
+
+  .flow-cover:nth-child(3) {
+    transform: translate3d(106%, 0, -122px) rotateY(-70deg);
+  }
+
+  .flow-cover:nth-child(4) {
+    transform: translate3d(122%, 0, -126px) rotateY(-70deg);
+  }
+
+  .flow-cover:nth-child(5) {
+    transform: translate3d(138%, 0, -130px) rotateY(-70deg);
+  }
+
+  .flow-cover:nth-child(n + 6) {
+    transform: translate3d(154%, 0, -134px) rotateY(-70deg);
+  }
+}
+
+.flow.is-ready:not(.is-dragging):not(.is-gliding):not(.is-instant) .flow-cover {
   transition: transform 480ms cubic-bezier(0.16, 0.84, 0.3, 1), opacity 480ms ease;
 }
 
@@ -626,7 +663,7 @@ code {
   }
 
   .flow {
-    --cover: clamp(210px, 30vw, 260px);
+    --cover: clamp(200px, 28vw, 236px);
     margin-inline: -1.5rem;
     margin-bottom: 2.1rem;
   }
@@ -666,7 +703,7 @@ code {
   .card,
   .service,
   .flow-cover,
-  .flow.is-ready:not(.is-dragging):not(.is-instant) .flow-cover {
+  .flow.is-ready:not(.is-dragging):not(.is-gliding):not(.is-instant) .flow-cover {
     transition: none;
   }
 }

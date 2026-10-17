@@ -2,6 +2,22 @@
   "version": 1,
   "entries": [
     {
+      "id": "c05b1f12-2f7a-4814-9ce7-5965edb89c83",
+      "type": "track",
+      "title": "YOU'RE THE ONE (feat. Syd)",
+      "artist": "KAYTRANADA, Syd",
+      "album": "99.9%",
+      "posted_by": "Evan",
+      "posted_at": "2026-10-17T13:46:26-04:00",
+      "source_service": "spotify",
+      "source_url": "https://open.spotify.com/track/2kYf8lZWXI4Ajd7ZhVhKhu",
+      "spotify_url": "https://open.spotify.com/track/2kYf8lZWXI4Ajd7ZhVhKhu",
+      "apple_music_url": "https://music.apple.com/ca/album/youre-the-one-feat-syd/1712918496?i=1712918657",
+      "match_status": "matched",
+      "artwork_url": "https://is1-ssl.mzstatic.com/image/thumb/Music126/v4/43/1b/e0/431be08c-8e4e-1c81-74d9-c0a8928f9578/0617465698255.jpg/600x600bb.jpg",
+      "notes": null
+    },
+    {
       "id": "d4fc9c6c-9080-4097-8f81-e8b08f6ab59a",
       "type": "track",
       "title": "I Wanna Be Adored - Remastered 2009",

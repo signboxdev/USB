@@ -14,8 +14,10 @@ const SHARE_IMAGE_ALT = "Unfamiliar Sound Byte wordmark on black";
 const MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
 const WEEKDAYS = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 const ARTICLES = new Set(["the", "a", "an"]);
-const SPOTIFY_ICON = `<svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="8.15" fill="none" stroke="currentColor" stroke-width="1.7"/><path d="M7.55 9.85c2.35-.78 5.15-.68 7.55.55M7.7 12.15c1.95-.58 4.35-.48 6.45.52M8.05 14.35c1.5-.4 3.25-.32 4.75.42" fill="none" stroke="currentColor" stroke-width="1.45" stroke-linecap="round"/></svg>`;
-const APPLE_MUSIC_ICON = `<svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" focusable="false"><path fill="currentColor" d="M9.15 17.85a2.2 2.2 0 1 1-1.45-2.06V7.35l8.55-1.95v8.35a2.2 2.2 0 1 1-1.45-2.06V7.15l-5.65 1.28v9.42z"/></svg>`;
+// Brand marks fill their own color so they stay recognizable on the dark UI
+// and after the icon-btn hover invert (which only flips currentColor).
+const SPOTIFY_ICON = `<svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" focusable="false"><path fill="#1ED760" d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm5.521 17.34c-.24.359-.66.48-1.021.24-2.82-1.74-6.36-2.101-10.561-1.141-.418.122-.78-.179-.9-.539-.12-.421.18-.78.54-.9 4.56-1.021 8.52-.6 11.64 1.32.42.18.479.659.301 1.02zm1.44-3.3c-.301.42-.841.6-1.262.3-3.239-1.98-8.159-2.58-11.939-1.38-.479.12-1.02-.12-1.14-.6-.12-.48.12-1.021.6-1.141C9.6 9.9 15 10.561 18.72 12.84c.361.181.54.78.241 1.2zm.12-3.36C15.24 8.4 8.82 8.16 5.16 9.301c-.6.179-1.2-.181-1.38-.721-.18-.601.18-1.2.72-1.381 4.26-1.26 11.28-1.02 15.721 1.621.539.3.719 1.02.419 1.56-.299.421-1.02.599-1.559.3z"/></svg>`;
+const APPLE_MUSIC_ICON = `<svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" focusable="false"><rect width="24" height="24" rx="5.4" fill="#FA243C"/><path fill="#fff" d="M16.35 4.42c-.24-.12-.52-.12-.76-.02l-6.85 2.72A1.05 1.05 0 0 0 8.1 8.1v7.7a2.45 2.45 0 1 0 1.55 2.28V9.2l5.95-2.36v6.55a2.45 2.45 0 1 0 1.55 2.28V5.35c0-.38-.22-.72-.55-.93z"/></svg>`;
 
 export function escapeHtml(value) {
   return String(value)
@@ -94,11 +96,11 @@ function byline(entry) {
   return `<p class="byline"><span class="artist">${escapeHtml(entry.artist)}</span><span class="sep" aria-hidden="true">·</span>${albumHtml}</p>`;
 }
 
-function storeLink(kind, url, title) {
+function storeLink(kind, url) {
   if (!url) return "";
   const name = kind === "spotify" ? "Spotify" : "Apple Music";
   const icon = kind === "spotify" ? SPOTIFY_ICON : APPLE_MUSIC_ICON;
-  const label = `Listen to ${title} on ${name}`;
+  const label = kind === "spotify" ? "Open on Spotify" : "Open on Apple Music";
   return `<li><a class="icon-btn" href="${httpsUrl(url, name)}" aria-label="${escapeHtml(label)}">${icon}</a></li>`;
 }
 
@@ -142,8 +144,8 @@ function renderEntry(entry, number, { includeNotes = true, listIndex = 0 } = {})
     ? `<img src="${httpsUrl(entry.artwork_url, "artwork")}" alt="${escapeHtml(artworkAlt(entry))}" width="600" height="600" loading="${loading}" decoding="async">`
     : `<span class="monogram">${escapeHtml(monogram(entry.artist))}</span>`;
   const links = [
-    storeLink("spotify", entry.spotify_url, entry.title),
-    storeLink("apple", entry.apple_music_url, entry.title),
+    storeLink("spotify", entry.spotify_url),
+    storeLink("apple", entry.apple_music_url),
   ].filter(Boolean);
   const services = links.length ? `<ul class="services">\n            ${links.join("\n            ")}\n          </ul>` : "";
   const notes = includeNotes ? notesBlock(entry) : "";

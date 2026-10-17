@@ -1,0 +1,24 @@
+# Cache policy for the static site.
+# HTTPS stays where the host already redirects HTTP (the CDN 301). This file
+# does not rewrite requests and does not change that redirect.
+
+<IfModule mod_setenvif.c>
+  # "/" is served as index.html. Match both so the directory index revalidates.
+  SetEnvIf Request_URI "(^/$|\.html$)" usb_html
+</IfModule>
+
+<IfModule mod_headers.c>
+  # HTML must revalidate. A missing Cache-Control lets Safari cache index.html
+  # heuristically and keep loading the previous coverflow.js?v= after a deploy.
+  Header set Cache-Control "no-cache" env=usb_html
+
+  <FilesMatch "\.(html|htm)$">
+    Header set Cache-Control "no-cache"
+  </FilesMatch>
+
+  # Fingerprinted assets: styles.css?v= coverflow.js?v= logo.gif?v=
+  # The query string changes when the file changes, so the bytes can stay cached.
+  <FilesMatch "\.(css|js|gif)$">
+    Header set Cache-Control "public, max-age=31536000, immutable"
+  </FilesMatch>
+</IfModule>

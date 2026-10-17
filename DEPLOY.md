@@ -12,6 +12,7 @@ npm run build
 
 `dist/` then contains only:
 
+- `.htaccess`
 - `index.html`
 - `styles.css`
 - `coverflow.js`
@@ -25,7 +26,7 @@ npm run build
 - `robots.txt`
 - `sitemap.xml`
 
-`index.html`, `robots.txt`, `sitemap.xml`, and the icon files have to sit at the site root, not inside a `dist` folder. Do not upload `data/catalog.json`.
+`index.html`, `.htaccess`, `robots.txt`, `sitemap.xml`, and the icon files have to sit at the site root, not inside a `dist` folder. Do not upload `data/catalog.json`. `.htaccess` sends `Cache-Control: no-cache` for HTML so a deploy is not stuck behind Safari's heuristic cache, and a long cache for the fingerprinted css, js, and gif files. It does not change the host's HTTPS redirect.
 
 ## hPanel
 
@@ -57,6 +58,7 @@ On Shared or Cloud hosting, that zip is the static-site archive (`index.html` at
 
 A push to `main` runs `.github/workflows/deploy.yml`. It runs `npm run validate` and `npm run build`, then force-publishes the contents of `dist/` to the root of the `deploy` branch:
 
+- `.htaccess`
 - `index.html`
 - `styles.css`
 - `coverflow.js`

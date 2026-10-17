@@ -18,7 +18,8 @@
   let pack = 0.18;
 
   // Direction lock. Until the finger has moved LOCK_PX, the gesture is undecided.
-  // A tie goes to vertical so anything that is not clearly horizontal scrolls the page.
+  // A tie at the very start can be vertical. A thumb arcs, so a flick that is
+  // sideways by the time the finger lifts is still a horizontal gesture.
   const LOCK_PX = 10;
 
   // Inertia. `index` is a continuous album position, not a whole step.
@@ -56,6 +57,60 @@
   let wheelTimer = 0;
   let wheelBucket = 0;
   let wheelSamples = [];
+  let ignoreTimer = 0;
+
+  const debugOn = (() => {
+    try {
+      return new URLSearchParams(window.location.search).get("debug") === "1";
+    } catch {
+      return false;
+    }
+  })();
+  const debugState = { lock: "none", samples: 0, velocity: "—", path: "none" };
+  let debugEl = null;
+
+  function renderDebug() {
+    if (!debugEl) return;
+    const lock = drag ? drag.axis || "undecided" : debugState.lock;
+    const samples = drag ? drag.samples.length : debugState.samples;
+    debugEl.textContent = [
+      "lock: " + lock,
+      "samples: " + samples,
+      "velocity: " + debugState.velocity,
+      "path: " + debugState.path,
+    ].join("\n");
+  }
+
+  function note(path, velocity, samples, lock) {
+    debugState.path = path;
+    if (typeof velocity === "number" && Number.isFinite(velocity)) debugState.velocity = velocity.toFixed(2);
+    if (typeof samples === "number") debugState.samples = samples;
+    if (lock) debugState.lock = lock;
+    renderDebug();
+  }
+
+  function armIgnoreClick() {
+    ignoreClick = true;
+    window.clearTimeout(ignoreTimer);
+    const clear = () => {
+      if (phase === "drag" || phase === "coast" || phase === "spring") {
+        ignoreTimer = window.setTimeout(clear, 180);
+        return;
+      }
+      ignoreClick = false;
+    };
+    ignoreTimer = window.setTimeout(clear, 700);
+  }
+
+  function horizontalIntent(dx, dy) {
+    return Math.abs(dx) >= LOCK_PX && Math.abs(dx) >= Math.abs(dy) * 0.75;
+  }
+
+  function freezeTransitions() {
+    buttons.forEach((button) => {
+      button.closest(".flow-cover").style.transition = "none";
+    });
+  }
 
   function clamp(value) {
     return Math.min(maxIndex, Math.max(0, value));
@@ -114,9 +169,11 @@
 
   function paint() {
     if (!coverWidth) measure();
+    const hold = phase === "drag" || phase === "coast" || phase === "spring" || phase === "wheel";
     buttons.forEach((button, item) => {
       const cover = button.closest(".flow-cover");
       const spot = place(item - index);
+      if (hold) cover.style.transition = "none";
       cover.style.transform = `translate3d(${Math.round(spot.x)}px, 0, ${Math.round(spot.z)}px) rotateY(${spot.rot.toFixed(2)}deg)`;
       cover.style.zIndex = String(1000 - Math.round(Math.abs(item - index) * 10));
       cover.style.opacity = spot.opacity < 1 ? spot.opacity.toFixed(3) : "";
@@ -137,6 +194,7 @@
   }
 
   function markGliding() {
+    freezeTransitions();
     root.classList.add("is-gliding");
     root.classList.remove("is-dragging");
   }
@@ -245,6 +303,14 @@
     }
     raf = 0;
     root.classList.remove("is-gliding", "is-dragging");
+    // Drop the inline transition only after this frame's transform is committed,
+    // so restoring the stylesheet transition does not replay the settle.
+    window.requestAnimationFrame(() => {
+      if (phase !== "idle") return;
+      buttons.forEach((button) => {
+        button.closest(".flow-cover").style.transition = "";
+      });
+    });
   }
 
   function release(speed) {
@@ -258,37 +324,49 @@
     startCoast();
   }
 
-  // Prefer the event's own timestamp. iOS delivers a burst of touchmoves in one
-  // turn, so performance.now() inside the handler is the same for all of them
-  // and the speed collapses to 0.
-  function eventTime(event) {
-    const now = performance.now();
+  // event.timeStamp and performance.now() stay on their own clocks. iOS Safari's
+  // touchend.timeStamp uses a different origin from performance.now() (and sometimes
+  // from the touchmove stamps). Subtracting those values made every flick look
+  // paused, so release() took the settle spring — one cover, fixed ease, no coast.
+  function eventStamp(event) {
     const stamp = event && event.timeStamp;
-    if (typeof stamp === "number" && Number.isFinite(stamp) && Math.abs(stamp - now) < 5000) return stamp;
-    return now;
+    if (typeof stamp === "number" && Number.isFinite(stamp) && stamp > 0) return stamp;
+    return performance.now();
   }
 
-  function pushSample(samples, x, t) {
+  function pushSample(samples, x, stamp, now) {
     const prev = samples[samples.length - 1];
-    if (prev && t < prev.t) t = prev.t;
-    // A release often repeats the last point. Keeping it stretches the window
-    // and makes a fast flick look like it stopped.
+    if (prev) {
+      const gap = stamp - prev.stamp;
+      if (!(gap >= 0 && gap < 2000)) stamp = prev.stamp + Math.max(0, now - prev.now);
+    }
+    // A stationary touchmove repeats the last coordinate. Keeping it stretches
+    // the window and makes a fast flick look like it stopped.
     if (prev && Math.abs(x - prev.x) < 1) return;
-    samples.push({ x, t });
-    const cutoff = t - SAMPLE_MS;
-    while (samples.length > 2 && samples[0].t < cutoff) samples.shift();
+    samples.push({ x, stamp, now });
+    while (samples.length > 2 && stamp - samples[0].stamp > SAMPLE_MS) samples.shift();
   }
 
-  function speedFrom(samples, upTime) {
+  function speedFrom(samples, lastEventNow, upNow, sawMove) {
     if (samples.length < 2) return 0;
+    // Time since the last touchmove, on performance.now() only. A stationary
+    // sample refreshes lastEventNow without entering the velocity window, so a
+    // touchend 60–120ms later still counts as a flick. touchend.timeStamp is
+    // not read here.
+    if (sawMove && upNow - lastEventNow > RELEASE_GAP) return 0;
     const last = samples[samples.length - 1];
-    if (upTime - last.t > RELEASE_GAP) return 0;
-    const recent = samples.filter((sample) => last.t - sample.t <= SAMPLE_MS);
-    const first = recent[0];
+    const stampSpan = last.stamp - samples[0].stamp;
+    const useStamp = stampSpan >= 8 && stampSpan < 2000;
+    const recent = samples.filter((sample) => {
+      const age = useStamp ? last.stamp - sample.stamp : last.now - sample.now;
+      return age >= 0 && age <= SAMPLE_MS;
+    });
+    const windowed = recent.length >= 2 ? recent : samples;
+    const first = windowed[0];
     const dx = first.x - last.x;
     if (Math.abs(dx) < 2) return 0;
-    let dt = last.t - first.t;
-    if (!(dt >= 8)) dt = Math.max(16, (recent.length - 1) * 16);
+    let dt = useStamp ? last.stamp - first.stamp : last.now - first.now;
+    if (!(dt >= 8)) dt = Math.max(16, (windowed.length - 1) * 16);
     return (dx / span()) / (dt / 1000);
   }
 
@@ -315,25 +393,34 @@
 
   let cancelTimer = 0;
 
-  function beginDrag(id, kind, x, y, t) {
+  function beginDrag(id, kind, x, y, stamp, now) {
+    stopLoop();
+    window.clearTimeout(wheelTimer);
+    wheelTimer = 0;
+    if (phase === "coast" || phase === "spring" || phase === "wheel") phase = "drag";
+    velocity = 0;
     drag = {
       id,
       kind,
-      x,
-      y,
+      originX: x,
+      originY: y,
+      originStamp: stamp,
+      originNow: now,
       startIndex: index,
+      grabIndex: index,
       moved: false,
       axis: null,
-      samples: [{ x, t }],
+      sawMove: false,
+      lastEventNow: now,
+      samples: [{ x, stamp, now }],
     };
   }
 
-  function claimHorizontal(x, t) {
+  function claimHorizontal() {
+    if (drag.axis === "x") return;
     drag.axis = "x";
     drag.moved = true;
-    drag.startIndex = index;
-    drag.x = x;
-    drag.samples = [{ x, t }];
+    drag.grabIndex = index;
     window.clearTimeout(wheelTimer);
     wheelTimer = 0;
     window.clearTimeout(cancelTimer);
@@ -341,53 +428,90 @@
     stopLoop();
     phase = "drag";
     velocity = 0;
+    freezeTransitions();
     root.classList.add("is-dragging");
     root.classList.remove("is-gliding");
   }
 
-  function finishDrag(info, upTime, point) {
+  // Touch never recenters on the cover under the finger once the finger has
+  // actually moved. That path was goTo(one cover) plus the 480ms CSS ease.
+  function promoteSwipe(info, upNow, point) {
+    if (info.kind !== "touch" || !point || info.axis === "x") return;
+    const dx = point.x - info.originX;
+    const dy = point.y - info.originY;
+    if (!horizontalIntent(dx, dy)) return;
+    const endStamp = info.originStamp + Math.max(0, upNow - info.originNow);
+    pushSample(info.samples, point.x, endStamp, upNow);
+    info.axis = "x";
+    info.moved = true;
+    info.grabIndex = info.startIndex;
+    freezeTransitions();
+    root.classList.add("is-dragging");
+    root.classList.remove("is-gliding");
+    phase = "drag";
+    index = resist(info.startIndex - dx / span());
+  }
+
+  function finishDrag(info, upNow, point) {
     if (drag === info) drag = null;
     window.clearTimeout(cancelTimer);
     cancelTimer = 0;
-    if (info.axis === "y") {
-      ignoreClick = true;
-      return;
-    }
+    promoteSwipe(info, upNow, point);
+    // Any touch, including a tap, owns the follow-up click. Otherwise iOS
+    // synthesizes a click on the button and goTo() pulls the row back to it.
+    if (info.kind === "touch") armIgnoreClick();
+
     if (!info.moved) {
+      if (info.axis === "y") {
+        note("vertical", 0, info.samples.length, "y");
+        if (phase === "drag") release(0);
+        return;
+      }
       if (point) {
         const picked = coverIndexAt(point.x, point.y);
         if (picked !== null) {
-          ignoreClick = true;
+          if (info.kind !== "touch") armIgnoreClick();
+          note("tap", 0, info.samples.length, "none");
           goTo(picked);
+          return;
         }
       }
+      if (phase === "drag") {
+        phase = "idle";
+        velocity = 0;
+        root.classList.remove("is-dragging", "is-gliding");
+      }
+      note("none", 0, info.samples.length, info.axis || "none");
       return;
     }
-    ignoreClick = true;
-    root.classList.remove("is-dragging");
+
+    if (info.kind !== "touch") armIgnoreClick();
     if (reducedMotion.matches) {
+      note("snap", 0, info.samples.length, "x");
       snap(Math.round(index));
       return;
     }
-    release(speedFrom(info.samples, upTime));
+    const speed = clampSpeed(speedFrom(info.samples, info.lastEventNow, upNow, info.sawMove));
+    note(Math.abs(speed) < SNAP_AT ? "spring" : "coast", speed, info.samples.length, "x");
+    release(speed);
   }
 
-  function trackDrag(x, y, t) {
-    const dx = x - drag.x;
-    const dy = y - drag.y;
-    if (!drag.axis) {
-      if (Math.hypot(dx, dy) < LOCK_PX) return false;
-      // Only a clearly horizontal move claims the gesture. Otherwise the page scrolls.
-      if (!(Math.abs(dx) > Math.abs(dy))) {
-        drag.axis = "y";
+  function trackDrag(x, y, stamp, now) {
+    pushSample(drag.samples, x, stamp, now);
+    const dx = x - drag.originX;
+    const dy = y - drag.originY;
+    if (drag.axis !== "x") {
+      if (!horizontalIntent(dx, dy)) {
+        // Tentative only. A later sample can still lock horizontal.
+        if (Math.hypot(dx, dy) >= LOCK_PX && Math.abs(dy) > Math.abs(dx)) drag.axis = "y";
+        renderDebug();
         return false;
       }
-      claimHorizontal(x, t);
-      return true;
+      claimHorizontal();
     }
-    pushSample(drag.samples, x, t);
-    index = resist(drag.startIndex - dx / span());
+    index = resist(drag.grabIndex - (x - drag.originX) / span());
     paint();
+    renderDebug();
     return true;
   }
 
@@ -397,7 +521,7 @@
     "pointerdown",
     (event) => {
       if (event.pointerType === "touch" || event.button !== 0 || drag) return;
-      beginDrag(event.pointerId, "mouse", event.clientX, event.clientY, eventTime(event));
+      beginDrag(event.pointerId, "mouse", event.clientX, event.clientY, eventStamp(event), performance.now());
     },
     { passive: true },
   );
@@ -405,8 +529,10 @@
   stage.addEventListener(
     "pointermove",
     (event) => {
-      if (!drag || drag.kind !== "mouse" || event.pointerId !== drag.id || drag.axis === "y") return;
-      const horizontal = trackDrag(event.clientX, event.clientY, eventTime(event));
+      if (!drag || drag.kind !== "mouse" || event.pointerId !== drag.id) return;
+      drag.sawMove = true;
+      drag.lastEventNow = performance.now();
+      const horizontal = trackDrag(event.clientX, event.clientY, eventStamp(event), drag.lastEventNow);
       if (!horizontal) return;
       if (drag.moved) {
         try {
@@ -424,7 +550,7 @@
     "pointerup",
     (event) => {
       if (!drag || drag.kind !== "mouse" || event.pointerId !== drag.id) return;
-      finishDrag(drag, eventTime(event), { x: event.clientX, y: event.clientY });
+      finishDrag(drag, performance.now(), { x: event.clientX, y: event.clientY });
     },
     { passive: true },
   );
@@ -433,17 +559,18 @@
     "pointercancel",
     (event) => {
       if (event.pointerType === "touch") {
-        // iOS can cancel the pointer and never deliver pointerup. If the touch
-        // stream also stops, coast from the moves we already have.
+        // iOS can cancel the pointer and never deliver touchend. Wait long
+        // enough that a real touchend (often 60–120ms after the last move)
+        // wins; this is only the fallback when the touch stream dies.
         if (!drag || drag.kind !== "touch" || drag.axis !== "x") return;
         const info = drag;
-        const t = eventTime(event);
+        const now = performance.now();
         window.clearTimeout(cancelTimer);
         cancelTimer = window.setTimeout(() => {
           cancelTimer = 0;
           if (drag !== info) return;
-          finishDrag(info, t, { x: event.clientX, y: event.clientY });
-        }, 70);
+          finishDrag(info, now, { x: event.clientX, y: event.clientY });
+        }, 400);
         return;
       }
       if (!drag || drag.kind !== "mouse" || event.pointerId !== drag.id) return;
@@ -451,7 +578,7 @@
         drag = null;
         return;
       }
-      finishDrag(drag, eventTime(event), null);
+      finishDrag(drag, performance.now(), null);
     },
     { passive: true },
   );
@@ -464,58 +591,73 @@
     return null;
   }
 
+  // Non-passive. A passive touchstart lets Safari take the gesture and deliver
+  // only touchend, which used to fall through to the one-cover tap path.
   stage.addEventListener(
     "touchstart",
     (event) => {
       if (drag || event.touches.length !== 1) return;
       const touch = event.touches[0];
-      beginDrag(touch.identifier, "touch", touch.clientX, touch.clientY, eventTime(event));
+      beginDrag(touch.identifier, "touch", touch.clientX, touch.clientY, eventStamp(event), performance.now());
     },
-    { passive: true },
+    { passive: false, capture: true },
   );
 
-  // Non-passive for the whole gesture. preventDefault is only called after the
-  // move has locked horizontal, so a vertical pan still scrolls the page.
+  // preventDefault only after the gesture locks horizontal, so a vertical pan
+  // still scrolls the page. A vertical-first sample does not give up: the lock
+  // can still become horizontal.
   stage.addEventListener(
     "touchmove",
     (event) => {
       if (!drag || drag.kind !== "touch") return;
       const touch = touchById(event.touches, drag.id);
-      if (!touch || drag.axis === "y") return;
+      if (!touch) return;
+      drag.sawMove = true;
+      drag.lastEventNow = performance.now();
       window.clearTimeout(cancelTimer);
       cancelTimer = 0;
-      const horizontal = trackDrag(touch.clientX, touch.clientY, eventTime(event));
+      const horizontal = trackDrag(touch.clientX, touch.clientY, eventStamp(event), drag.lastEventNow);
       if (horizontal && event.cancelable) event.preventDefault();
     },
-    { passive: false },
+    { passive: false, capture: true },
   );
 
   function endTouch(event) {
     if (!drag || drag.kind !== "touch") return;
     const touch = touchById(event.changedTouches, drag.id);
-    // Do not record this point. iOS repeats the last coordinate with no movement.
-    // touchcancel on some engines lists no point; still coast from the moves we have.
     if (!touch) {
-      if (event.type === "touchcancel") finishDrag(drag, eventTime(event), null);
+      if (event.type === "touchcancel") finishDrag(drag, performance.now(), null);
       return;
     }
-    finishDrag(drag, eventTime(event), { x: touch.clientX, y: touch.clientY });
+    const dx = touch.clientX - drag.originX;
+    const dy = touch.clientY - drag.originY;
+    const willDrag = drag.axis === "x" || drag.moved || horizontalIntent(dx, dy);
+    if (willDrag && event.cancelable) event.preventDefault();
+    finishDrag(drag, performance.now(), { x: touch.clientX, y: touch.clientY });
   }
 
-  stage.addEventListener("touchend", endTouch, { passive: true });
-  stage.addEventListener("touchcancel", endTouch, { passive: true });
+  stage.addEventListener("touchend", endTouch, { passive: false, capture: true });
+  stage.addEventListener("touchcancel", endTouch, { passive: true, capture: true });
 
-  stage.addEventListener("click", (event) => {
-    if (ignoreClick) {
-      ignoreClick = false;
-      return;
-    }
-    const button = event.target.closest(".flow-select");
-    if (!button || !stage.contains(button)) return;
-    const next = Number(button.dataset.index);
-    if (!Number.isInteger(next)) return;
-    goTo(next);
-  });
+  stage.addEventListener(
+    "click",
+    (event) => {
+      if (ignoreClick) {
+        ignoreClick = false;
+        window.clearTimeout(ignoreTimer);
+        event.preventDefault();
+        event.stopPropagation();
+        return;
+      }
+      const button = event.target.closest(".flow-select");
+      if (!button || !stage.contains(button)) return;
+      const next = Number(button.dataset.index);
+      if (!Number.isInteger(next)) return;
+      note("click", 0, 0, "none");
+      goTo(next);
+    },
+    true,
+  );
 
   function endWheel() {
     wheelTimer = 0;
@@ -562,6 +704,7 @@
       const now = performance.now();
       stopLoop();
       phase = "wheel";
+      freezeTransitions();
       root.classList.add("is-gliding");
 
       const deltaIndex = dx / span();
@@ -600,6 +743,35 @@
     window.requestAnimationFrame(() => root.classList.remove("is-instant"));
   });
   resize.observe(stage);
+
+  stage.style.touchAction = "pan-y";
+  stage.querySelectorAll("*").forEach((el) => {
+    el.style.touchAction = "pan-y";
+  });
+
+  if (debugOn) {
+    debugEl = document.createElement("div");
+    debugEl.setAttribute("data-coverflow-debug", "");
+    debugEl.setAttribute("aria-hidden", "true");
+    debugEl.style.cssText = [
+      "position:fixed",
+      "z-index:10000",
+      "left:12px",
+      "right:12px",
+      "bottom:max(12px, env(safe-area-inset-bottom))",
+      "margin:0",
+      "padding:10px 12px",
+      "background:#000",
+      "color:#b6ff4a",
+      "border:1px solid #b6ff4a",
+      "border-radius:8px",
+      "font:13px/1.35 ui-monospace, SFMono-Regular, monospace",
+      "white-space:pre",
+      "pointer-events:none",
+    ].join(";");
+    document.body.appendChild(debugEl);
+    renderDebug();
+  }
 
   measure();
   paint();

@@ -104,14 +104,6 @@ function storeLink(kind, url) {
   return `<li><a class="icon-btn" href="${httpsUrl(url, name)}" aria-label="${escapeHtml(label)}">${icon}</a></li>`;
 }
 
-function notesBlock(entry) {
-  if (entry.notes === "example") {
-    return `<p class="example-row"><span class="stamp">example</span></p>`;
-  }
-  if (entry.notes) return `<p class="notes">${escapeHtml(entry.notes)}</p>`;
-  return "";
-}
-
 export function posterSlug(name) {
   const slug = String(name)
     .trim()
@@ -138,7 +130,7 @@ function artworkAlt(entry) {
 // leave in-viewport covers as empty black squares until a scroll gesture.
 const EAGER_LIST_ARTWORK = 10;
 
-function renderEntry(entry, number, { includeNotes = true, listIndex = 0 } = {}) {
+function renderEntry(entry, number, { listIndex = 0 } = {}) {
   const loading = listIndex < EAGER_LIST_ARTWORK ? "eager" : "lazy";
   const artwork = entry.artwork_url
     ? `<img src="${httpsUrl(entry.artwork_url, "artwork")}" alt="${escapeHtml(artworkAlt(entry))}" width="600" height="600" loading="${loading}" decoding="async">`
@@ -148,7 +140,6 @@ function renderEntry(entry, number, { includeNotes = true, listIndex = 0 } = {})
     storeLink("apple", entry.apple_music_url),
   ].filter(Boolean);
   const services = links.length ? `<ul class="services">\n            ${links.join("\n            ")}\n          </ul>` : "";
-  const notes = includeNotes ? notesBlock(entry) : "";
 
   return `      <li>
         <article class="card" id="${escapeHtml(entry.id)}" data-type="${escapeHtml(entry.type)}">
@@ -162,7 +153,6 @@ function renderEntry(entry, number, { includeNotes = true, listIndex = 0 } = {})
             </div>
             ${services}
           </div>
-          ${notes}
         </article>
       </li>`;
 }
@@ -349,14 +339,12 @@ ${flowHtml}      <main id="crate">
 `;
 }
 
-function renderCrateList(entries, numbers, { includeNotes = true } = {}) {
+function renderCrateList(entries, numbers) {
   if (entries.length === 0) {
     return `<p class="empty-crate">the crate is empty. add an entry to <code>data/catalog.json</code>, then run <code>npm run build</code>.</p>`;
   }
   return `<ol class="crate">\n${entries
-    .map((entry, listIndex) =>
-      renderEntry(entry, numbers.get(entry.id), { includeNotes, listIndex }),
-    )
+    .map((entry, listIndex) => renderEntry(entry, numbers.get(entry.id), { listIndex }))
     .join("\n")}\n    </ol>`;
 }
 
@@ -370,7 +358,7 @@ export function renderPage(catalog) {
     mastHeading: `<h1 class="sr-only">Unfamiliar Sound Byte</h1>`,
     countHtml: crateSummary(entries.length),
     flow: renderCoverFlow(entries),
-    list: renderCrateList(entries, numbers, { includeNotes: true }),
+    list: renderCrateList(entries, numbers),
     catalogVersion: catalog.version,
   });
 }
@@ -389,7 +377,7 @@ export function renderPosterPage(catalog, poster) {
     mastHeading: `<h1 class="poster-name">${escapeHtml(poster.name)}</h1>`,
     countHtml: posterSummary(entries.length),
     flow: renderCoverFlow(entries),
-    list: renderCrateList(entries, numbers, { includeNotes: false }),
+    list: renderCrateList(entries, numbers),
     catalogVersion: catalog.version,
   });
 }

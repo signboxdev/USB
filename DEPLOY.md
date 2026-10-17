@@ -47,8 +47,8 @@ On Shared or Cloud hosting, that zip is the static-site archive (`index.html` at
 
 ## Check
 
-- The homepage shows the crate, including title, artist, album, who posted, the date, and both store chips.
-- A missing store link reads **unmatched**.
+- The homepage shows the crate, including title, artist, album, who posted, the date (no time-zone label), and a store link for each URL the entry has.
+- A missing store link is omitted. The page does not print matched or unmatched.
 - `https://unfamiliarsoundbyte.com/robots.txt` allows all crawlers and includes `Sitemap: https://unfamiliarsoundbyte.com/sitemap.xml`.
 - `https://unfamiliarsoundbyte.com/sitemap.xml` lists `https://unfamiliarsoundbyte.com/`.
 - View source has the title Unfamiliar Sound Byte, the description “Unfamiliar Sound Byte, the revolutionary group chat for music”, a canonical link to `https://unfamiliarsoundbyte.com/`, and Open Graph and Twitter card tags. There is no `noindex` meta.

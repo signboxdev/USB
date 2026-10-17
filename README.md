@@ -35,7 +35,7 @@ npm run validate
 npm run build
 ```
 
-`id` is a lowercase slug (`glass-elevator`) and must be unique. `posted_at` is ISO 8601 with seconds and an offset, for example `2026-03-14T21:18:00-04:00` or a trailing `Z`. No fractional seconds. The page shows that clock time, not the server's timezone. The shop chrome is lowercase; titles, artists, and names stay as typed.
+`id` is a lowercase slug (`glass-elevator`) and must be unique. `posted_at` is ISO 8601 with seconds and an offset, for example `2026-03-14T21:18:00-04:00` or a trailing `Z`. No fractional seconds. The page shows that clock time, not the server's timezone, and it does not print a zone label. A post at `2026-10-16T21:09:00-04:00` reads `Fri, Oct 16, 2026 · 9:09 PM`. The shop chrome is lowercase; titles, artists, names, and the date stay as typed, and no stylesheet lowercases the date.
 
 ### Removing the sample rows
 
@@ -70,9 +70,11 @@ The three shipped entries are fake. Each has `"notes": "example"`, and the page 
 
 `match_status` has to agree with the two store links:
 
-- `matched` — both `spotify_url` and `apple_music_url` are set. The card links to both and marks which one came from the chat.
-- `unmatched` — someone tried to find the other service and exactly one URL is null. That side is drawn as a dashed **unmatched** chip, not a link.
-- `source_only` — only the service that was posted is filled in; the other was not looked up. The missing side still says **unmatched**, and the line under the chips says "source only".
+- `matched` — both `spotify_url` and `apple_music_url` are set. The card links to both.
+- `unmatched` — someone tried to find the other service and exactly one URL is null. The page shows only the link that exists.
+- `source_only` — only the service that was posted is filled in; the other was not looked up. The page shows only that link.
+
+`match_status` stays in the catalog. The public page does not print matched, unmatched, or source only.
 
 The URL for `source_service` is always required. A Spotify post cannot have `spotify_url: null`.
 
@@ -86,7 +88,7 @@ npm run preview
 
 Serves `dist/` at [http://127.0.0.1:47321](http://127.0.0.1:47321). Set `PORT` to use another port. There is no analytics. Links send no referrer.
 
-The cover flow is `src/coverflow.js`, a plain script with no dependencies. It reads the covers the build wrote from `data/catalog.json`, newest in the center. Drag or swipe, scroll horizontally, press the arrow keys, or click a side cover to bring that sleeve to the center. The line under the centered cover is the title, the artist, who posted it, and the Spotify and Apple Music links (a missing link stays an unmatched chip). `prefers-reduced-motion` turns the glide off. An entry with no `artwork_url` gets a dark sleeve instead of an image request.
+The cover flow is `src/coverflow.js`, a plain script with no dependencies. It reads the covers the build wrote from `data/catalog.json`, newest in the center. Drag or swipe, scroll horizontally, press the arrow keys, or click a side cover to bring that sleeve to the center. The line under the centered cover is the title, the artist, who posted it, the posted date, and the Spotify and Apple Music links that exist. `prefers-reduced-motion` turns the glide off. An entry with no `artwork_url` gets a dark sleeve instead of an image request.
 
 `npm run build` appends `?v=` and a short SHA-256 of the file to `styles.css`, `coverflow.js`, and `logo.gif` in the generated HTML. Hostinger caches those assets for a week; the query string changes when the file does, so a phone picks up the new copy.
 

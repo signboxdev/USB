@@ -3,8 +3,9 @@
 # does not rewrite requests and does not change that redirect.
 
 <IfModule mod_setenvif.c>
-  # "/" is served as index.html. Match both so the directory index revalidates.
-  SetEnvIf Request_URI "(^/$|\.html$)" usb_html
+  # "/" and "/p/name/" are served as index.html. Match those and *.html so
+  # directory indexes revalidate the same way as explicit .html requests.
+  SetEnvIf Request_URI "(^/$|^/p/[^/]+/?$|\.html$)" usb_html
 </IfModule>
 
 <IfModule mod_headers.c>

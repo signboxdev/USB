@@ -774,6 +774,11 @@ code {
     margin-bottom: 0.25rem;
   }
 
+  .poster-name {
+    margin-top: 1.5rem;
+    font-size: 1.55rem;
+  }
+
   .logo img {
     width: 140px;
   }

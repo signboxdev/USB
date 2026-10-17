@@ -33,7 +33,12 @@
   const RUBBER_LIMIT = 0.45;
   const MAX_SPEED = 18;
   const WHEEL_QUIET_MS = 90;
-  const SAMPLE_MS = 70;
+  // Last ~100ms of real touchmove points. iOS often ends a flick with a
+  // stationary sample, or with touchend long enough after the last move that a
+  // short gap would look like the finger had already stopped.
+  const SAMPLE_MS = 100;
+  // iOS delivers touchend well after the last real move. A short gap is still a flick.
+  const RELEASE_GAP = 180;
 
   const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
   const maxIndex = buttons.length - 1;
@@ -253,16 +258,38 @@
     startCoast();
   }
 
+  // Prefer the event's own timestamp. iOS delivers a burst of touchmoves in one
+  // turn, so performance.now() inside the handler is the same for all of them
+  // and the speed collapses to 0.
+  function eventTime(event) {
+    const now = performance.now();
+    const stamp = event && event.timeStamp;
+    if (typeof stamp === "number" && Number.isFinite(stamp) && Math.abs(stamp - now) < 5000) return stamp;
+    return now;
+  }
+
+  function pushSample(samples, x, t) {
+    const prev = samples[samples.length - 1];
+    if (prev && t < prev.t) t = prev.t;
+    // A release often repeats the last point. Keeping it stretches the window
+    // and makes a fast flick look like it stopped.
+    if (prev && Math.abs(x - prev.x) < 1) return;
+    samples.push({ x, t });
+    const cutoff = t - SAMPLE_MS;
+    while (samples.length > 2 && samples[0].t < cutoff) samples.shift();
+  }
+
   function speedFrom(samples, upTime) {
     if (samples.length < 2) return 0;
     const last = samples[samples.length - 1];
-    if (upTime - last.t > 50) return 0;
+    if (upTime - last.t > RELEASE_GAP) return 0;
     const recent = samples.filter((sample) => last.t - sample.t <= SAMPLE_MS);
     const first = recent[0];
-    const dt = last.t - first.t;
-    if (dt < 12) return 0;
-    const albums = (first.x - last.x) / span();
-    return (albums / dt) * 1000;
+    const dx = first.x - last.x;
+    if (Math.abs(dx) < 2) return 0;
+    let dt = last.t - first.t;
+    if (!(dt >= 8)) dt = Math.max(16, (recent.length - 1) * 16);
+    return (dx / span()) / (dt / 1000);
   }
 
   // preserve-3d hit testing misses part of a rotated sleeve, so a tap uses the cover's box.
@@ -286,81 +313,53 @@
     if (active && stage.contains(active)) buttons[dest].focus();
   }
 
-  function lockHorizontal(event) {
+  let cancelTimer = 0;
+
+  function beginDrag(id, kind, x, y, t) {
+    drag = {
+      id,
+      kind,
+      x,
+      y,
+      startIndex: index,
+      moved: false,
+      axis: null,
+      samples: [{ x, t }],
+    };
+  }
+
+  function claimHorizontal(x, t) {
     drag.axis = "x";
     drag.moved = true;
     drag.startIndex = index;
-    drag.x = event.clientX;
-    drag.samples = [{ x: event.clientX, t: performance.now() }];
+    drag.x = x;
+    drag.samples = [{ x, t }];
     window.clearTimeout(wheelTimer);
     wheelTimer = 0;
+    window.clearTimeout(cancelTimer);
+    cancelTimer = 0;
     stopLoop();
     phase = "drag";
     velocity = 0;
     root.classList.add("is-dragging");
     root.classList.remove("is-gliding");
-    try {
-      stage.setPointerCapture(event.pointerId);
-    } catch {
-      /* The pointer can vanish before capture on a quick tap. */
-    }
   }
 
-  stage.addEventListener(
-    "pointerdown",
-    (event) => {
-      if (event.button !== 0 || drag) return;
-      drag = {
-        id: event.pointerId,
-        x: event.clientX,
-        y: event.clientY,
-        startIndex: index,
-        moved: false,
-        axis: null,
-        samples: [{ x: event.clientX, t: performance.now() }],
-      };
-    },
-    { passive: true },
-  );
-
-  stage.addEventListener(
-    "pointermove",
-    (event) => {
-      if (!drag || event.pointerId !== drag.id || drag.axis === "y") return;
-      const dx = event.clientX - drag.x;
-      const dy = event.clientY - drag.y;
-      if (!drag.axis) {
-        if (Math.hypot(dx, dy) < LOCK_PX) return;
-        // Only a clearly horizontal move claims the gesture. Otherwise the page scrolls.
-        if (Math.abs(dx) > Math.abs(dy)) lockHorizontal(event);
-        else {
-          drag.axis = "y";
-          return;
-        }
-      }
-      if (event.cancelable) event.preventDefault();
-      const now = performance.now();
-      drag.samples.push({ x: event.clientX, t: now });
-      if (drag.samples.length > 6) drag.samples.shift();
-      index = resist(drag.startIndex - (event.clientX - drag.x) / span());
-      paint();
-    },
-    { passive: false },
-  );
-
-  function endDrag(event) {
-    if (!drag || event.pointerId !== drag.id) return;
-    const info = drag;
-    drag = null;
+  function finishDrag(info, upTime, point) {
+    if (drag === info) drag = null;
+    window.clearTimeout(cancelTimer);
+    cancelTimer = 0;
     if (info.axis === "y") {
       ignoreClick = true;
       return;
     }
     if (!info.moved) {
-      const picked = coverIndexAt(event.clientX, event.clientY);
-      if (picked !== null) {
-        ignoreClick = true;
-        goTo(picked);
+      if (point) {
+        const picked = coverIndexAt(point.x, point.y);
+        if (picked !== null) {
+          ignoreClick = true;
+          goTo(picked);
+        }
       }
       return;
     }
@@ -370,24 +369,141 @@
       snap(Math.round(index));
       return;
     }
-    release(speedFrom(info.samples, performance.now()));
+    release(speedFrom(info.samples, upTime));
   }
 
-  stage.addEventListener("pointerup", endDrag, { passive: true });
+  function trackDrag(x, y, t) {
+    const dx = x - drag.x;
+    const dy = y - drag.y;
+    if (!drag.axis) {
+      if (Math.hypot(dx, dy) < LOCK_PX) return false;
+      // Only a clearly horizontal move claims the gesture. Otherwise the page scrolls.
+      if (!(Math.abs(dx) > Math.abs(dy))) {
+        drag.axis = "y";
+        return false;
+      }
+      claimHorizontal(x, t);
+      return true;
+    }
+    pushSample(drag.samples, x, t);
+    index = resist(drag.startIndex - dx / span());
+    paint();
+    return true;
+  }
+
+  // Mouse. Touch is handled on touch events: iOS does not honor preventDefault
+  // on pointermove, and pointercancel there replaces pointerup.
   stage.addEventListener(
-    "pointercancel",
+    "pointerdown",
     (event) => {
-      if (!drag || event.pointerId !== drag.id) return;
-      const info = drag;
-      drag = null;
-      if (info.axis !== "x") return;
-      ignoreClick = true;
-      root.classList.remove("is-dragging");
-      if (reducedMotion.matches) snap(Math.round(index));
-      else release(speedFrom(info.samples, performance.now()));
+      if (event.pointerType === "touch" || event.button !== 0 || drag) return;
+      beginDrag(event.pointerId, "mouse", event.clientX, event.clientY, eventTime(event));
     },
     { passive: true },
   );
+
+  stage.addEventListener(
+    "pointermove",
+    (event) => {
+      if (!drag || drag.kind !== "mouse" || event.pointerId !== drag.id || drag.axis === "y") return;
+      const horizontal = trackDrag(event.clientX, event.clientY, eventTime(event));
+      if (!horizontal) return;
+      if (drag.moved) {
+        try {
+          stage.setPointerCapture(event.pointerId);
+        } catch {
+          /* The pointer can vanish before capture on a quick tap. */
+        }
+      }
+      if (event.cancelable) event.preventDefault();
+    },
+    { passive: false },
+  );
+
+  stage.addEventListener(
+    "pointerup",
+    (event) => {
+      if (!drag || drag.kind !== "mouse" || event.pointerId !== drag.id) return;
+      finishDrag(drag, eventTime(event), { x: event.clientX, y: event.clientY });
+    },
+    { passive: true },
+  );
+
+  stage.addEventListener(
+    "pointercancel",
+    (event) => {
+      if (event.pointerType === "touch") {
+        // iOS can cancel the pointer and never deliver pointerup. If the touch
+        // stream also stops, coast from the moves we already have.
+        if (!drag || drag.kind !== "touch" || drag.axis !== "x") return;
+        const info = drag;
+        const t = eventTime(event);
+        window.clearTimeout(cancelTimer);
+        cancelTimer = window.setTimeout(() => {
+          cancelTimer = 0;
+          if (drag !== info) return;
+          finishDrag(info, t, { x: event.clientX, y: event.clientY });
+        }, 70);
+        return;
+      }
+      if (!drag || drag.kind !== "mouse" || event.pointerId !== drag.id) return;
+      if (drag.axis !== "x") {
+        drag = null;
+        return;
+      }
+      finishDrag(drag, eventTime(event), null);
+    },
+    { passive: true },
+  );
+
+  function touchById(list, id) {
+    if (!list) return null;
+    for (const touch of list) {
+      if (touch.identifier === id) return touch;
+    }
+    return null;
+  }
+
+  stage.addEventListener(
+    "touchstart",
+    (event) => {
+      if (drag || event.touches.length !== 1) return;
+      const touch = event.touches[0];
+      beginDrag(touch.identifier, "touch", touch.clientX, touch.clientY, eventTime(event));
+    },
+    { passive: true },
+  );
+
+  // Non-passive for the whole gesture. preventDefault is only called after the
+  // move has locked horizontal, so a vertical pan still scrolls the page.
+  stage.addEventListener(
+    "touchmove",
+    (event) => {
+      if (!drag || drag.kind !== "touch") return;
+      const touch = touchById(event.touches, drag.id);
+      if (!touch || drag.axis === "y") return;
+      window.clearTimeout(cancelTimer);
+      cancelTimer = 0;
+      const horizontal = trackDrag(touch.clientX, touch.clientY, eventTime(event));
+      if (horizontal && event.cancelable) event.preventDefault();
+    },
+    { passive: false },
+  );
+
+  function endTouch(event) {
+    if (!drag || drag.kind !== "touch") return;
+    const touch = touchById(event.changedTouches, drag.id);
+    // Do not record this point. iOS repeats the last coordinate with no movement.
+    // touchcancel on some engines lists no point; still coast from the moves we have.
+    if (!touch) {
+      if (event.type === "touchcancel") finishDrag(drag, eventTime(event), null);
+      return;
+    }
+    finishDrag(drag, eventTime(event), { x: touch.clientX, y: touch.clientY });
+  }
+
+  stage.addEventListener("touchend", endTouch, { passive: true });
+  stage.addEventListener("touchcancel", endTouch, { passive: true });
 
   stage.addEventListener("click", (event) => {
     if (ignoreClick) {

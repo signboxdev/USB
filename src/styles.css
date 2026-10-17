@@ -150,9 +150,19 @@ body {
   perspective: 1800px;
   perspective-origin: 50% 42%;
   transform-style: preserve-3d;
-  /* Vertical pans stay with the page. Horizontal drags are handled in coverflow.js. */
-  touch-action: pan-y;
   cursor: grab;
+}
+
+/* pan-y has to be on the element the finger hits. iOS ignores an ancestor-only value. */
+.flow-stage,
+.flow-covers,
+.flow-cover,
+.flow-select,
+.flow-sleeve,
+.flow-sleeve img,
+.flow-reflect,
+.flow-reflect img {
+  touch-action: pan-y;
 }
 
 .flow.is-dragging .flow-stage {
@@ -250,7 +260,6 @@ body {
   font: inherit;
   text-align: inherit;
   cursor: pointer;
-  touch-action: pan-y;
   -webkit-tap-highlight-color: transparent;
 }
 

@@ -110,12 +110,29 @@ function notesBlock(entry) {
   return "";
 }
 
+export function posterSlug(name) {
+  const slug = String(name)
+    .trim()
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "");
+  if (!slug) throw new Error(`posted_by has no usable slug: ${JSON.stringify(name)}`);
+  return slug;
+}
+
+function posterHref(name) {
+  return `/p/${posterSlug(name)}/`;
+}
+
+function posterLink(name) {
+  return `<a class="poster" href="${escapeHtml(posterHref(name))}">${escapeHtml(name)}</a>`;
+}
+
 function artworkAlt(entry) {
   const subject = entry.album || entry.title;
   return `Cover art for ${subject} by ${entry.artist}`;
 }
 
-function renderEntry(entry, number) {
+function renderEntry(entry, number, { includeNotes = true } = {}) {
   const artwork = entry.artwork_url
     ? `<img src="${httpsUrl(entry.artwork_url, "artwork")}" alt="${escapeHtml(artworkAlt(entry))}" width="600" height="600" loading="lazy" decoding="async">`
     : `<span class="monogram">${escapeHtml(monogram(entry.artist))}</span>`;
@@ -124,6 +141,7 @@ function renderEntry(entry, number) {
     storeLink("apple", entry.apple_music_url, entry.title),
   ].filter(Boolean);
   const services = links.length ? `<ul class="services">\n            ${links.join("\n            ")}\n          </ul>` : "";
+  const notes = includeNotes ? notesBlock(entry) : "";
 
   return `      <li>
         <article class="card" id="${escapeHtml(entry.id)}" data-type="${escapeHtml(entry.type)}">
@@ -133,11 +151,11 @@ function renderEntry(entry, number) {
               <p class="kind"><span>${escapeHtml(entry.type)}</span><span class="no">${number}</span></p>
               <h2>${escapeHtml(entry.title)}</h2>
               ${byline(entry)}
-              <p class="posted">posted by <strong>${escapeHtml(entry.posted_by)}</strong> · <time datetime="${escapeHtml(entry.posted_at)}">${formatPostedAt(entry.posted_at)}</time></p>
+              <p class="posted">posted by ${posterLink(entry.posted_by)} · <time datetime="${escapeHtml(entry.posted_at)}">${formatPostedAt(entry.posted_at)}</time></p>
             </div>
             ${services}
           </div>
-          ${notesBlock(entry)}
+          ${notes}
         </article>
       </li>`;
 }
@@ -148,13 +166,47 @@ function crateSummary(count) {
   return `<span class="num">${count}</span> in the crate · newest first`;
 }
 
+function posterSummary(count) {
+  if (count === 0) return "no songs yet";
+  if (count === 1) return `<span class="num">1</span> song · newest first`;
+  return `<span class="num">${count}</span> songs · newest first`;
+}
+
 function assetVersion(filename) {
   const bytes = fs.readFileSync(path.join(repoRoot, "src", filename));
   return crypto.createHash("sha256").update(bytes).digest("hex").slice(0, 8);
 }
 
 function versionedAsset(filename) {
-  return `${filename}?v=${assetVersion(filename)}`;
+  return `/${filename}?v=${assetVersion(filename)}`;
+}
+
+function sortNewestFirst(entries) {
+  return [...entries].sort(
+    (a, b) => postedInstant(b.posted_at) - postedInstant(a.posted_at) || a.id.localeCompare(b.id),
+  );
+}
+
+export function groupEntriesByPoster(entries) {
+  const bySlug = new Map();
+  for (const entry of entries) {
+    const slug = posterSlug(entry.posted_by);
+    const existing = bySlug.get(slug);
+    if (existing && existing.name !== entry.posted_by) {
+      throw new Error(
+        `posted_by slug collision for /p/${slug}/: "${existing.name}" and "${entry.posted_by}"`,
+      );
+    }
+    if (!existing) {
+      bySlug.set(slug, { name: entry.posted_by, slug, entries: [entry] });
+      continue;
+    }
+    existing.entries.push(entry);
+  }
+  for (const group of bySlug.values()) {
+    group.entries = sortNewestFirst(group.entries);
+  }
+  return [...bySlug.values()].sort((a, b) => a.slug.localeCompare(b.slug));
 }
 
 function flowService(label, url) {
@@ -194,7 +246,7 @@ function renderCoverFlow(entries) {
       return `          <div class="flow-panel"${hidden}>
             <p class="flow-title">${escapeHtml(entry.title)}</p>
             <p class="flow-artist">${escapeHtml(entry.artist)}</p>
-            <p class="flow-who">posted by <strong>${escapeHtml(entry.posted_by)}</strong> · <time datetime="${escapeHtml(entry.posted_at)}">${formatPostedAt(entry.posted_at)}</time></p>
+            <p class="flow-who">posted by ${posterLink(entry.posted_by)} · <time datetime="${escapeHtml(entry.posted_at)}">${formatPostedAt(entry.posted_at)}</time></p>
             <ul class="flow-services">
               ${flowService("spotify", entry.spotify_url)}
               ${flowService("apple music", entry.apple_music_url)}
@@ -221,18 +273,20 @@ ${panels}
 `;
 }
 
-export function renderPage(catalog) {
-  const entries = [...catalog.entries].sort(
-    (a, b) => postedInstant(b.posted_at) - postedInstant(a.posted_at) || a.id.localeCompare(b.id),
-  );
-  const numbers = acquisitionNumbers(entries);
-  const list = entries.length
-    ? `<ol class="crate">\n${entries.map((entry) => renderEntry(entry, numbers.get(entry.id))).join("\n")}\n    </ol>`
-    : `<p class="empty-crate">the crate is empty. add an entry to <code>data/catalog.json</code>, then run <code>npm run build</code>.</p>`;
-  const flow = renderCoverFlow(entries);
+function renderDocument({
+  title,
+  description,
+  canonicalUrl,
+  mastHeading,
+  countHtml,
+  flow,
+  list,
+  catalogVersion,
+}) {
   const styleHref = versionedAsset("styles.css");
   const logoSrc = versionedAsset("logo.gif");
   const scriptSrc = versionedAsset("coverflow.js");
+  const flowHtml = flow || "";
 
   return `<!DOCTYPE html>
 <html lang="en">
@@ -240,21 +294,21 @@ export function renderPage(catalog) {
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="referrer" content="no-referrer">
-    <title>${PAGE_TITLE}</title>
-    <meta name="description" content="${PAGE_DESCRIPTION}">
-    <link rel="canonical" href="${CANONICAL_URL}">
+    <title>${escapeHtml(title)}</title>
+    <meta name="description" content="${escapeHtml(description)}">
+    <link rel="canonical" href="${escapeHtml(canonicalUrl)}">
     <meta property="og:type" content="website">
     <meta property="og:site_name" content="${PAGE_TITLE}">
-    <meta property="og:title" content="${PAGE_TITLE}">
-    <meta property="og:description" content="${PAGE_DESCRIPTION}">
-    <meta property="og:url" content="${CANONICAL_URL}">
+    <meta property="og:title" content="${escapeHtml(title)}">
+    <meta property="og:description" content="${escapeHtml(description)}">
+    <meta property="og:url" content="${escapeHtml(canonicalUrl)}">
     <meta property="og:image" content="${SHARE_IMAGE_URL}">
     <meta property="og:image:width" content="1200">
     <meta property="og:image:height" content="630">
     <meta property="og:image:alt" content="${escapeHtml(SHARE_IMAGE_ALT)}">
     <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:title" content="${PAGE_TITLE}">
-    <meta name="twitter:description" content="${PAGE_DESCRIPTION}">
+    <meta name="twitter:title" content="${escapeHtml(title)}">
+    <meta name="twitter:description" content="${escapeHtml(description)}">
     <meta name="twitter:image" content="${SHARE_IMAGE_URL}">
     <meta name="theme-color" content="#000000">
     <meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' https:; manifest-src 'self'; base-uri 'none'; form-action 'none'">
@@ -271,14 +325,14 @@ export function renderPage(catalog) {
         <a class="logo" href="/">
           <img src="${logoSrc}" alt="Unfamiliar Sound Byte" width="360" height="360">
         </a>
-        <h1 class="sr-only">Unfamiliar Sound Byte</h1>
-        <p class="count">${crateSummary(entries.length)}</p>
+        ${mastHeading}
+        <p class="count">${countHtml}</p>
       </header>
-${flow}      <main id="crate">
+${flowHtml}      <main id="crate">
         ${list}
       </main>
       <footer class="colophon">
-        <p>unfamiliar sound byte · catalog version ${escapeHtml(catalog.version)}</p>
+        <p>unfamiliar sound byte · catalog version ${escapeHtml(catalogVersion)}</p>
         <p>rebuilt from data/catalog.json.</p>
       </footer>
     </div>
@@ -288,12 +342,63 @@ ${flow}      <main id="crate">
 `;
 }
 
-export function renderSitemap() {
+function renderCrateList(entries, numbers, { includeNotes = true } = {}) {
+  if (entries.length === 0) {
+    return `<p class="empty-crate">the crate is empty. add an entry to <code>data/catalog.json</code>, then run <code>npm run build</code>.</p>`;
+  }
+  return `<ol class="crate">\n${entries
+    .map((entry) => renderEntry(entry, numbers.get(entry.id), { includeNotes }))
+    .join("\n")}\n    </ol>`;
+}
+
+export function renderPage(catalog) {
+  const entries = sortNewestFirst(catalog.entries);
+  const numbers = acquisitionNumbers(entries);
+  return renderDocument({
+    title: PAGE_TITLE,
+    description: PAGE_DESCRIPTION,
+    canonicalUrl: CANONICAL_URL,
+    mastHeading: `<h1 class="sr-only">Unfamiliar Sound Byte</h1>`,
+    countHtml: crateSummary(entries.length),
+    flow: renderCoverFlow(entries),
+    list: renderCrateList(entries, numbers, { includeNotes: true }),
+    catalogVersion: catalog.version,
+  });
+}
+
+export function renderPosterPage(catalog, poster) {
+  const allEntries = sortNewestFirst(catalog.entries);
+  const numbers = acquisitionNumbers(allEntries);
+  const entries = poster.entries;
+  const title = `${poster.name} · ${PAGE_TITLE}`;
+  const description = `${poster.name}'s posts in Unfamiliar Sound Byte`;
+  const canonicalUrl = `${SITE_ORIGIN}${posterHref(poster.name)}`;
+  return renderDocument({
+    title,
+    description,
+    canonicalUrl,
+    mastHeading: `<h1 class="poster-name">${escapeHtml(poster.name)}</h1>`,
+    countHtml: posterSummary(entries.length),
+    flow: renderCoverFlow(entries),
+    list: renderCrateList(entries, numbers, { includeNotes: false }),
+    catalogVersion: catalog.version,
+  });
+}
+
+export function renderSitemap(posters = []) {
+  const urls = [
+    CANONICAL_URL,
+    ...posters.map((poster) => `${SITE_ORIGIN}${posterHref(poster.name)}`),
+  ];
   return `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-  <url>
-    <loc>${CANONICAL_URL}</loc>
-  </url>
+${urls
+  .map(
+    (loc) => `  <url>
+    <loc>${loc}</loc>
+  </url>`,
+  )
+  .join("\n")}
 </urlset>
 `;
 }
@@ -322,14 +427,23 @@ function copyStatic(dist) {
 
 function main() {
   const catalog = assertValidCatalog();
+  const posters = groupEntriesByPoster(catalog.entries);
   const html = renderPage(catalog);
   const dist = path.join(repoRoot, "dist");
   fs.rmSync(dist, { recursive: true, force: true });
   fs.mkdirSync(dist, { recursive: true });
   fs.writeFileSync(path.join(dist, "index.html"), html);
-  fs.writeFileSync(path.join(dist, "sitemap.xml"), renderSitemap());
+  for (const poster of posters) {
+    const dir = path.join(dist, "p", poster.slug);
+    fs.mkdirSync(dir, { recursive: true });
+    fs.writeFileSync(path.join(dir, "index.html"), renderPosterPage(catalog, poster));
+  }
+  fs.writeFileSync(path.join(dist, "sitemap.xml"), renderSitemap(posters));
   copyStatic(dist);
-  console.log(`built dist/index.html and dist/sitemap.xml (${catalog.entries.length} entries)`);
+  const slugList = posters.map((poster) => poster.slug).join(", ");
+  console.log(
+    `built dist/index.html, ${posters.length} poster pages (${slugList || "none"}), and dist/sitemap.xml (${catalog.entries.length} entries)`,
+  );
 }
 
 const invokedDirectly = process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href;

@@ -1,0 +1,837 @@
+:root {
+  --bg: #000;
+  --card: #111;
+  --card-hover: #171717;
+  --text: #f4f4f5;
+  --muted: #a1a1aa;
+  --line: rgba(255, 255, 255, 0.12);
+  --line-strong: rgba(255, 255, 255, 0.28);
+  --sans: Inter, "Segoe UI", system-ui, sans-serif;
+  --mono: "JetBrains Mono", "Cascadia Mono", ui-monospace, "Liberation Mono", monospace;
+  color-scheme: dark;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  background: var(--bg);
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--sans);
+  font-size: 1rem;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+::selection {
+  background: #fff;
+  color: #000;
+}
+
+.skip {
+  position: absolute;
+  left: 1rem;
+  top: -3rem;
+  padding: 0.45rem 0.7rem;
+  background: #fff;
+  color: #000;
+  font-size: 0.8rem;
+  text-decoration: none;
+}
+
+.skip:focus {
+  top: 0.75rem;
+  z-index: 2;
+}
+
+.wrap {
+  max-width: 46rem;
+  margin: 0 auto;
+  padding: 1.75rem 1.15rem 4rem;
+}
+
+.mast {
+  padding-bottom: 0.85rem;
+  margin-bottom: 0.2rem;
+}
+
+.mast-top,
+.colophon {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 0.45rem 1rem;
+  font-size: 0.72rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.mast-top p,
+.colophon p {
+  margin: 0;
+  min-width: 0;
+}
+
+.logo {
+  display: inline-block;
+  line-height: 0;
+  background: #000;
+  text-decoration: none;
+}
+
+.logo img {
+  display: block;
+  width: 100px;
+  height: auto;
+  background: #000;
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
+}
+
+.dek {
+  margin: 1.15rem 0 0;
+  max-width: 34rem;
+  color: var(--muted);
+  font-size: 1.02rem;
+  line-height: 1.55;
+}
+
+.count {
+  margin: 1.4rem 0 0;
+  color: var(--muted);
+  font-size: 0.78rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.count .num {
+  color: var(--text);
+  font-weight: 600;
+  letter-spacing: 0;
+  text-transform: none;
+  font-size: 0.95rem;
+}
+
+.poster-name {
+  margin: 1.15rem 0 0;
+  font-weight: 650;
+  font-size: 1.35rem;
+  line-height: 1.15;
+  letter-spacing: -0.02em;
+}
+
+.poster {
+  color: inherit;
+  font-weight: 600;
+  text-decoration: none;
+  text-underline-offset: 0.18em;
+  text-decoration-thickness: 1px;
+  -webkit-tap-highlight-color: transparent;
+}
+
+@media (hover: hover) {
+  .poster:hover {
+    text-decoration: underline;
+  }
+}
+
+.poster:active {
+  text-decoration: underline;
+}
+
+.flow {
+  --cover: clamp(128px, 38vw, 168px);
+  position: relative;
+  z-index: 0;
+  margin: 0.35rem -1.15rem 1.6rem;
+  overflow-x: clip;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+.flow-stage {
+  position: relative;
+  height: calc(var(--cover) * 1.44 + 18px);
+  perspective: 1800px;
+  perspective-origin: 50% 42%;
+  transform-style: preserve-3d;
+  cursor: grab;
+}
+
+/* pan-y has to be on the element the finger hits. iOS ignores an ancestor-only value,
+   including on the button and the image, so every descendant sets it. */
+.flow-stage,
+.flow-stage * {
+  touch-action: pan-y !important;
+}
+
+.flow.is-dragging .flow-stage {
+  cursor: grabbing;
+}
+
+.flow-covers {
+  list-style: none;
+  position: absolute;
+  inset: 0;
+  margin: 0;
+  padding: 0;
+  transform-style: preserve-3d;
+}
+
+.flow-cover {
+  position: absolute;
+  top: 8px;
+  left: 50%;
+  width: var(--cover);
+  margin-left: calc(var(--cover) / -2);
+  transform: translate3d(0, 0, 36px);
+  transform-style: preserve-3d;
+}
+
+/* Before script: step 1.06, stack 0.18, rotate 68deg, center forward and sides set back. */
+.flow-cover:nth-child(1) {
+  z-index: 100;
+  transform: translate3d(0, 0, 36px) rotateY(0deg);
+}
+
+.flow-cover:nth-child(2) {
+  z-index: 90;
+  transform: translate3d(106%, 0, -76px) rotateY(-68deg);
+}
+
+.flow-cover:nth-child(3) {
+  z-index: 80;
+  transform: translate3d(124%, 0, -80px) rotateY(-68deg);
+}
+
+.flow-cover:nth-child(4) {
+  z-index: 70;
+  transform: translate3d(142%, 0, -84px) rotateY(-68deg);
+}
+
+.flow-cover:nth-child(5) {
+  z-index: 60;
+  transform: translate3d(160%, 0, -88px) rotateY(-68deg);
+}
+
+.flow-cover:nth-child(n + 6) {
+  z-index: 50;
+  transform: translate3d(178%, 0, -92px) rotateY(-68deg);
+}
+
+@media (max-width: 619px) {
+  .flow-cover:nth-child(1) {
+    transform: translate3d(0, 0, 36px) rotateY(0deg);
+  }
+
+  .flow-cover:nth-child(2) {
+    transform: translate3d(90%, 0, -118px) rotateY(-70deg);
+  }
+
+  .flow-cover:nth-child(3) {
+    transform: translate3d(106%, 0, -122px) rotateY(-70deg);
+  }
+
+  .flow-cover:nth-child(4) {
+    transform: translate3d(122%, 0, -126px) rotateY(-70deg);
+  }
+
+  .flow-cover:nth-child(5) {
+    transform: translate3d(138%, 0, -130px) rotateY(-70deg);
+  }
+
+  .flow-cover:nth-child(n + 6) {
+    transform: translate3d(154%, 0, -134px) rotateY(-70deg);
+  }
+}
+
+.flow.is-ready:not(.is-dragging):not(.is-gliding):not(.is-instant) .flow-cover {
+  transition: transform 480ms cubic-bezier(0.16, 0.84, 0.3, 1), opacity 480ms ease;
+}
+
+/* Drag, coast, and spring write transforms from rAF. A CSS transition here
+   replays the move as one fixed 480ms ease and hides the coast. */
+.flow.is-dragging .flow-cover,
+.flow.is-gliding .flow-cover,
+.flow.is-instant .flow-cover {
+  transition: none !important;
+}
+
+.flow-select {
+  display: block;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  text-align: inherit;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.flow-select:focus {
+  outline: none;
+}
+
+.flow-select:focus-visible .flow-sleeve {
+  outline: 2px solid #fff;
+  outline-offset: 4px;
+}
+
+.flow-sleeve {
+  display: block;
+  aspect-ratio: 1;
+  overflow: hidden;
+  border-radius: 3px;
+  background: #0c0c0e;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.28),
+    0 0 0 1px rgba(255, 255, 255, 0.16),
+    0 22px 40px rgba(0, 0, 0, 0.55);
+}
+
+.flow-sleeve img,
+.flow-reflect img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  -webkit-user-drag: none;
+}
+
+.flow-sleeve.is-blank {
+  display: grid;
+  place-items: center;
+  background: radial-gradient(120% 90% at 50% 0%, #2c2c31 0%, #121214 48%, #070708 100%);
+}
+
+.flow-mark {
+  color: rgba(255, 255, 255, 0.72);
+  font-size: 1.05rem;
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  line-height: 1;
+}
+
+.flow-reflect {
+  display: block;
+  height: calc(var(--cover) * 0.4);
+  margin-top: 5px;
+  overflow: hidden;
+  pointer-events: none;
+  -webkit-mask-image: linear-gradient(to bottom, rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0) 76%);
+  mask-image: linear-gradient(to bottom, rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0) 76%);
+}
+
+.flow-reflect img {
+  object-position: center bottom;
+  transform: scaleY(-1);
+}
+
+.flow-reflect.is-blank {
+  border-radius: 3px;
+  background: linear-gradient(to bottom, rgba(255, 255, 255, 0.16), rgba(255, 255, 255, 0) 74%);
+}
+
+.flow-readout {
+  position: relative;
+  z-index: 2;
+  min-height: 9.25rem;
+  padding: 0.15rem 1.15rem 0;
+  text-align: center;
+}
+
+.flow-title {
+  margin: 0;
+  font-weight: 600;
+  font-size: clamp(1.35rem, 4vw, 1.7rem);
+  line-height: 1.15;
+  letter-spacing: -0.03em;
+  overflow-wrap: anywhere;
+}
+
+.flow-artist {
+  margin: 0.28rem 0 0;
+  color: #d4d4d8;
+  font-size: 0.98rem;
+}
+
+.flow-who {
+  margin: 0.4rem 0 0;
+  color: var(--muted);
+  font-size: 0.86rem;
+}
+
+.flow-who time,
+.posted time {
+  text-transform: none;
+  font-style: normal;
+}
+
+.flow-services {
+  list-style: none;
+  display: flex;
+  justify-content: center;
+  gap: 0.55rem;
+  max-width: 28rem;
+  margin: 0.9rem auto 0;
+  padding: 0;
+}
+
+.flow-services li {
+  flex: 1 1 0;
+  min-width: 0;
+  max-width: 13.5rem;
+}
+
+.flow-services .service {
+  justify-content: center;
+  gap: 0.55rem;
+}
+
+.crate {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.card {
+  background: transparent;
+  border: 0;
+  border-bottom: 1px solid var(--line);
+  border-radius: 0;
+  padding: 0.4rem 0;
+  transition: background-color 180ms ease;
+}
+
+.crate li:last-child .card {
+  border-bottom: 0;
+}
+
+.row {
+  display: flex;
+  gap: 0.7rem;
+  align-items: center;
+  min-width: 0;
+}
+
+.thumb {
+  width: 56px;
+  height: 56px;
+  aspect-ratio: 1;
+  flex: none;
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+  border-radius: 4px;
+  background: #000;
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.14);
+}
+
+.monogram {
+  color: var(--text);
+  font-size: 0.82rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  line-height: 1;
+}
+
+.thumb img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.copy {
+  min-width: 0;
+  flex: 1;
+  padding-top: 0;
+}
+
+.kind {
+  display: none;
+  align-items: baseline;
+  gap: 0.45rem;
+  margin: 0 0 0.12rem;
+  color: var(--muted);
+  font-size: 0.62rem;
+  font-weight: 500;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.kind .no {
+  color: var(--muted);
+  letter-spacing: 0.08em;
+}
+
+h2 {
+  margin: 0;
+  font-weight: 700;
+  font-size: 0.92rem;
+  line-height: 1.2;
+  letter-spacing: -0.02em;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.byline {
+  margin: 0.08rem 0 0;
+  color: var(--muted);
+  font-size: 0.75rem;
+  line-height: 1.25;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.byline .sep {
+  margin: 0 0.3rem;
+}
+
+.album.is-empty {
+  color: var(--muted);
+}
+
+.posted {
+  margin: 0.08rem 0 0;
+  color: var(--muted);
+  font-size: 0.68rem;
+  line-height: 1.25;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.posted .poster,
+.flow-who .poster {
+  color: var(--text);
+}
+
+.services {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex: none;
+  flex-direction: row;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+.services li {
+  flex: none;
+  min-width: 0;
+}
+
+.icon-btn {
+  display: grid;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  min-width: 36px;
+  min-height: 36px;
+  padding: 0;
+  border: 1px solid var(--line-strong);
+  border-radius: 999px;
+  color: var(--text);
+  background: transparent;
+  text-decoration: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.icon-btn svg {
+  display: block;
+  width: 16px;
+  height: 16px;
+}
+
+.service {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 0.75rem;
+  min-width: 0;
+  min-height: 2.75rem;
+  padding: 0.5rem 0.9rem;
+  border: 1px solid var(--line-strong);
+  border-radius: 0.75rem;
+  color: var(--text);
+  background: transparent;
+  text-decoration: none;
+  font-size: 0.84rem;
+  letter-spacing: 0.01em;
+  transition: background-color 160ms ease, color 160ms ease, border-color 160ms ease;
+}
+
+.service .name {
+  min-width: 0;
+}
+
+@media (hover: hover) {
+  .card:hover {
+    background: rgba(255, 255, 255, 0.035);
+  }
+
+  a.service:hover,
+  a.icon-btn:hover {
+    background: #fff;
+    border-color: #fff;
+    color: #000;
+  }
+}
+
+a.service:focus-visible,
+a.icon-btn:focus-visible,
+.logo:focus-visible,
+.skip:focus-visible,
+.poster:focus-visible {
+  outline: 2px solid #fff;
+  outline-offset: 3px;
+}
+
+.example-row {
+  margin: 0.35rem 0 0.15rem;
+}
+
+.stamp {
+  display: inline-block;
+  padding: 0.22rem 0.55rem 0.18rem;
+  border: 1px solid rgba(255, 255, 255, 0.28);
+  border-radius: 999px;
+  color: #d4d4d8;
+  font-size: 0.65rem;
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+
+.notes {
+  margin: 0.28rem 0 0.1rem;
+  color: var(--muted);
+  font-size: 0.75rem;
+  line-height: 1.35;
+}
+
+.empty-crate {
+  margin: 0;
+  padding: 1.5rem 0.15rem;
+  color: var(--muted);
+}
+
+code {
+  font-family: var(--mono);
+  font-size: 0.86em;
+  color: var(--text);
+}
+
+.colophon {
+  margin-top: 2rem;
+  padding-top: 1.1rem;
+  border-top: 1px solid var(--line);
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+@media (max-width: 600px) {
+  .wrap {
+    padding-top: 0.55rem;
+    padding-left: 0.5rem;
+    padding-right: 0.5rem;
+  }
+
+  .count {
+    margin-top: 0.4rem;
+  }
+
+  .poster-name {
+    margin-top: 0.85rem;
+    font-size: 1.2rem;
+  }
+
+  .mast {
+    padding-bottom: 0;
+  }
+
+  .flow {
+    margin-top: 0.15rem;
+    margin-left: -0.5rem;
+    margin-right: -0.5rem;
+    margin-bottom: 0.2rem;
+  }
+
+  .flow-readout {
+    padding-left: 0.5rem;
+    padding-right: 0.5rem;
+  }
+
+  .card {
+    padding: 0.12rem 0;
+  }
+
+  .row {
+    gap: 0.45rem;
+  }
+
+  .thumb {
+    width: 52px;
+    height: 52px;
+  }
+
+  .posted {
+    font-size: 0.64rem;
+    letter-spacing: -0.01em;
+  }
+
+  .services {
+    gap: 0.25rem;
+  }
+}
+
+@media (min-width: 601px) {
+  .card {
+    padding: 0.62rem 0.1rem;
+  }
+
+  .row {
+    gap: 0.9rem;
+  }
+
+  .thumb {
+    width: 64px;
+    height: 64px;
+    border-radius: 6px;
+  }
+
+  .kind {
+    display: flex;
+  }
+
+  h2 {
+    font-size: 1.08rem;
+    font-weight: 650;
+  }
+
+  .byline {
+    margin-top: 0.12rem;
+    font-size: 0.86rem;
+  }
+
+  .posted {
+    margin-top: 0.12rem;
+    font-size: 0.75rem;
+  }
+
+  .icon-btn {
+    width: 40px;
+    height: 40px;
+    min-width: 40px;
+    min-height: 40px;
+  }
+
+  .icon-btn svg {
+    width: 18px;
+    height: 18px;
+  }
+}
+
+@media (min-width: 760px) {
+  .wrap {
+    padding: 4rem 1.5rem 5rem;
+  }
+
+  .mast {
+    padding-bottom: 1rem;
+    margin-bottom: 0.25rem;
+  }
+
+  .poster-name {
+    margin-top: 1.5rem;
+    font-size: 1.55rem;
+  }
+
+  .logo img {
+    width: 140px;
+  }
+
+  .flow {
+    --cover: clamp(200px, 28vw, 236px);
+    margin-inline: -1.5rem;
+    margin-bottom: 2.1rem;
+  }
+
+  .flow-readout {
+    padding-inline: 1.5rem;
+  }
+
+  .flow-title {
+    font-size: 1.85rem;
+  }
+
+  .thumb {
+    width: 68px;
+    height: 68px;
+  }
+
+  h2 {
+    font-size: 1.12rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .card,
+  .service,
+  .icon-btn,
+  .flow-cover,
+  .flow.is-ready:not(.is-dragging):not(.is-gliding):not(.is-instant) .flow-cover {
+    transition: none;
+  }
+}
+
+@media print {
+  body {
+    background: #fff;
+    color: #000;
+  }
+
+  .card {
+    break-inside: avoid;
+    background: #fff;
+    border-color: #000;
+  }
+
+  a.service::after,
+  a.icon-btn::after {
+    content: "  " attr(href);
+    font-weight: 400;
+  }
+}

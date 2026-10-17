@@ -2,6 +2,22 @@
   "version": 1,
   "entries": [
     {
+      "id": "d4fc9c6c-9080-4097-8f81-e8b08f6ab59a",
+      "type": "track",
+      "title": "I Wanna Be Adored - Remastered 2009",
+      "artist": "The Stone Roses",
+      "album": "The Stone Roses",
+      "posted_by": "Dallas",
+      "posted_at": "2026-10-17T06:27:13-04:00",
+      "source_service": "spotify",
+      "source_url": "https://open.spotify.com/track/758wEKVqfYopJIHYWdLVd4",
+      "spotify_url": "https://open.spotify.com/track/758wEKVqfYopJIHYWdLVd4",
+      "apple_music_url": "https://music.apple.com/ca/album/i-wanna-be-adored-remastered-2009/322969529?i=322969530",
+      "match_status": "matched",
+      "artwork_url": "https://is1-ssl.mzstatic.com/image/thumb/Features115/v4/de/bd/71/debd715a-d49b-1ec8-6b4d-bf3f25e0e90b/dj.rldpqukx.jpg/600x600bb.jpg",
+      "notes": null
+    },
+    {
       "id": "471dc911-4fb3-48ed-94bc-2e1eee01d370",
       "type": "track",
       "title": "Memo",

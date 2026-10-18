@@ -278,6 +278,7 @@ function renderCoverFlow(entries) {
       const hidden = index === 0 ? "" : " hidden";
       return `          <div class="flow-panel"${hidden}>
             <p class="flow-title">${escapeHtml(entry.title)}</p>
+            <p class="flow-artist">${escapeHtml(entry.artist)}</p>
           </div>`;
     })
     .join("\n");

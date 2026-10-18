@@ -626,6 +626,22 @@
       "notes": null
     },
     {
+      "id": "b0d3f708-6394-4051-addd-311dd260ff9e",
+      "type": "track",
+      "title": "Midnight In Saqqara (Live)",
+      "artist": "Arc De Soleil",
+      "album": "Midnight In Saqqara (Live)",
+      "posted_by": "Chris",
+      "posted_at": "2026-09-17T08:27:00-04:00",
+      "source_service": "spotify",
+      "source_url": "https://open.spotify.com/track/7h7qcE16DtgHeXpXWUT5dN",
+      "spotify_url": "https://open.spotify.com/track/7h7qcE16DtgHeXpXWUT5dN",
+      "apple_music_url": null,
+      "match_status": "unmatched",
+      "artwork_url": "https://image-cdn-ak.spotifycdn.com/image/ab6742d3000053b77a60c3c9da1d0ca83b5d1a8c",
+      "notes": null
+    },
+    {
       "id": "ef35ac4e-8d8c-419e-a8fa-3bacf0e78d3a",
       "type": "track",
       "title": "Wailin'",

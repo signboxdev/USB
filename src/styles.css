@@ -864,12 +864,12 @@ code {
   }
 }
 
+/* Cover flow is omitted. Coast, spring, and the shuffle spin are rAF-driven
+   and keep gliding when Reduce Motion is on. */
 @media (prefers-reduced-motion: reduce) {
   .card,
   .service,
-  .icon-btn,
-  .flow-cover,
-  .flow.is-ready:not(.is-dragging):not(.is-gliding):not(.is-instant) .flow-cover {
+  .icon-btn {
     transition: none;
   }
 }

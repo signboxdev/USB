@@ -42,7 +42,6 @@
   // iOS delivers touchend well after the last real move. A short gap is still a flick.
   const RELEASE_GAP = 180;
 
-  const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
   const maxIndex = buttons.length - 1;
 
   // Random-track glide. Same rAF loop as coast/spring. Ease-out cubic
@@ -71,7 +70,6 @@
   let raf = 0;
   let lastFrame = 0;
   let wheelTimer = 0;
-  let wheelBucket = 0;
   let wheelSamples = [];
   let ignoreTimer = 0;
 
@@ -242,23 +240,10 @@
     spin = null;
   }
 
-  function snap(next) {
-    window.clearTimeout(wheelTimer);
-    wheelTimer = 0;
-    spin = null;
-    stopLoop();
-    index = clamp(next);
-    finishIdle();
-    root.classList.remove("is-gliding", "is-dragging");
-    paint();
-  }
-
+  // The glide is the feature, including on phones with Reduce Motion turned on.
+  // prefers-reduced-motion still quiets decorative transitions in the stylesheet.
   function goTo(next) {
     spin = null;
-    if (reducedMotion.matches) {
-      snap(next);
-      return;
-    }
     velocity = 0;
     startSpring(next);
   }
@@ -324,10 +309,6 @@
   }
 
   function armSpin(dest) {
-    if (reducedMotion.matches) {
-      snap(dest);
-      return;
-    }
     window.clearTimeout(wheelTimer);
     wheelTimer = 0;
     drag = null;
@@ -674,11 +655,6 @@
     }
 
     if (info.kind !== "touch") armIgnoreClick();
-    if (reducedMotion.matches) {
-      note("snap", 0, info.samples.length, "x");
-      snap(Math.round(index));
-      return;
-    }
     const speed = clampSpeed(speedFrom(info.samples, info.lastEventNow, upNow, info.sawMove));
     note(Math.abs(speed) < SNAP_AT ? "spring" : "coast", speed, info.samples.length, "x");
     release(speed);
@@ -879,15 +855,6 @@
       event.preventDefault();
       if (event.deltaMode === 1) dx *= 16;
       else if (event.deltaMode === 2) dx *= stage.clientWidth;
-
-      if (reducedMotion.matches) {
-        wheelBucket += dx;
-        if (Math.abs(wheelBucket) < 48) return;
-        const direction = wheelBucket > 0 ? 1 : -1;
-        wheelBucket = 0;
-        step(direction);
-        return;
-      }
 
       const now = performance.now();
       if (phase === "spin") velocity = clampSpeed(velocity);

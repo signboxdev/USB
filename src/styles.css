@@ -423,16 +423,16 @@ body {
 }
 
 .card {
-  background: transparent;
+  background: #000;
   border: 0;
-  border-bottom: 1px solid var(--line);
   border-radius: 0;
-  padding: 0.4rem 0;
+  padding: 0.55rem 0.55rem;
   transition: background-color 180ms ease;
 }
 
-.crate li:last-child .card {
-  border-bottom: 0;
+/* Subtle zebra bands so each song reads as its own strip. */
+.crate > li:nth-child(even) .card {
+  background: #121212;
 }
 
 .row {
@@ -598,8 +598,12 @@ h2 {
 }
 
 @media (hover: hover) {
-  .card:hover {
-    background: rgba(255, 255, 255, 0.035);
+  .crate > li:nth-child(odd) .card:hover {
+    background: #0a0a0a;
+  }
+
+  .crate > li:nth-child(even) .card:hover {
+    background: #1a1a1a;
   }
 
   a.service:hover,
@@ -695,7 +699,7 @@ code {
   }
 
   .card {
-    padding: 0.12rem 0;
+    padding: 0.3rem 0.45rem;
   }
 
   .row {
@@ -719,7 +723,7 @@ code {
 
 @media (min-width: 601px) {
   .card {
-    padding: 0.62rem 0.1rem;
+    padding: 0.75rem 0.65rem;
   }
 
   .row {
@@ -823,10 +827,10 @@ code {
     color: #000;
   }
 
-  .card {
+  .card,
+  .crate > li:nth-child(even) .card {
     break-inside: avoid;
     background: #fff;
-    border-color: #000;
   }
 
   a.service::after,

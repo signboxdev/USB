@@ -118,12 +118,22 @@ body {
   line-height: 1.55;
 }
 
-.count {
+.count-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.35rem;
   margin: 1.4rem 0 0;
+}
+
+.count {
+  margin: 0;
+  min-width: 0;
   color: var(--muted);
   font-size: 0.78rem;
   letter-spacing: 0.12em;
   text-transform: uppercase;
+  white-space: nowrap;
 }
 
 .count .num {
@@ -365,23 +375,6 @@ body {
   text-align: center;
 }
 
-.flow-title-slot {
-  width: 100%;
-}
-
-/* A few long titles wrap to two lines on a phone. Reserving that height
-   keeps the shuffle control from jumping while the row spins. Wider
-   layouts stay on one line, so the control sits directly under the title. */
-.flow-title-slot.has-random .flow-title {
-  min-height: 1.15em;
-}
-
-@media (max-width: 600px) {
-  .flow-title-slot.has-random .flow-title {
-    min-height: calc(2 * 1.15em);
-  }
-}
-
 .flow-title {
   margin: 0;
   font-weight: 600;
@@ -394,11 +387,12 @@ body {
 .flow-random {
   display: grid;
   place-items: center;
+  flex: none;
   width: 44px;
   height: 44px;
   min-width: 44px;
   min-height: 44px;
-  margin: 0 auto;
+  margin: 0;
   padding: 0;
   border: 0;
   border-radius: 999px;
@@ -732,7 +726,7 @@ code {
     padding-right: 0.5rem;
   }
 
-  .count {
+  .count-row {
     margin-top: 0.4rem;
   }
 

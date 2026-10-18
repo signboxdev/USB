@@ -165,6 +165,11 @@ function crateSummary(count) {
   return `<span class="num">${count}</span> in the crate · newest first`;
 }
 
+function randomTrackButton(count) {
+  if (count < 2) return "";
+  return `<button type="button" class="flow-random" aria-label="random track">${SHUFFLE_ICON}</button>`;
+}
+
 function posterSummary(count) {
   if (count === 0) return "no songs yet";
   if (count === 1) return `<span class="num">1</span> song · newest first`;
@@ -239,21 +244,11 @@ function renderCoverFlow(entries) {
           </li>`;
     })
     .join("\n");
-  const titles = entries
-    .map((entry, index) => {
-      const hidden = index === 0 ? "" : " hidden";
-      return `            <p class="flow-title"${hidden}>${escapeHtml(entry.title)}</p>`;
-    })
-    .join("\n");
-  const randomButton =
-    entries.length > 1
-      ? `            <button type="button" class="flow-random" aria-label="random track">${SHUFFLE_ICON}</button>\n`
-      : "";
-  const titleSlotClass = entries.length > 1 ? "flow-title-slot has-random" : "flow-title-slot";
   const panels = entries
     .map((entry, index) => {
       const hidden = index === 0 ? "" : " hidden";
       return `          <div class="flow-panel"${hidden}>
+            <p class="flow-title">${escapeHtml(entry.title)}</p>
             <p class="flow-artist">${escapeHtml(entry.artist)}</p>
             <p class="flow-who">posted by ${posterLink(entry.posted_by)} · <time datetime="${escapeHtml(entry.posted_at)}">${formatPostedAt(entry.posted_at)}</time></p>
             <ul class="flow-services">
@@ -276,9 +271,6 @@ ${covers}
         </div>
         <div class="flow-readout">
           <p class="sr-only" id="flow-live" aria-live="polite" aria-atomic="true">${live}</p>
-          <div class="${titleSlotClass}">
-${titles}
-${randomButton}          </div>
 ${panels}
         </div>
       </section>
@@ -291,6 +283,7 @@ function renderDocument({
   canonicalUrl,
   mastHeading,
   countHtml,
+  randomButton = "",
   flow,
   list,
   catalogVersion,
@@ -338,7 +331,10 @@ function renderDocument({
           <img src="${logoSrc}" alt="Unfamiliar Sound Byte" width="360" height="360">
         </a>
         ${mastHeading}
-        <p class="count">${countHtml}</p>
+        <div class="count-row">
+          <p class="count">${countHtml}</p>
+          ${randomButton}
+        </div>
       </header>
 ${flowHtml}      <main id="crate">
         ${list}
@@ -372,6 +368,7 @@ export function renderPage(catalog) {
     canonicalUrl: CANONICAL_URL,
     mastHeading: `<h1 class="sr-only">Unfamiliar Sound Byte</h1>`,
     countHtml: crateSummary(entries.length),
+    randomButton: randomTrackButton(entries.length),
     flow: renderCoverFlow(entries),
     list: renderCrateList(entries, numbers),
     catalogVersion: catalog.version,
@@ -391,6 +388,7 @@ export function renderPosterPage(catalog, poster) {
     canonicalUrl,
     mastHeading: `<h1 class="poster-name">${escapeHtml(poster.name)}</h1>`,
     countHtml: posterSummary(entries.length),
+    randomButton: randomTrackButton(entries.length),
     flow: renderCoverFlow(entries),
     list: renderCrateList(entries, numbers),
     catalogVersion: catalog.version,

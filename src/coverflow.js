@@ -5,8 +5,7 @@
   const stage = root.querySelector(".flow-stage");
   const buttons = [...root.querySelectorAll(".flow-select")];
   const panels = [...root.querySelectorAll(".flow-panel")];
-  const titles = [...root.querySelectorAll(".flow-title")];
-  const randomBtn = root.querySelector(".flow-random");
+  const randomBtn = document.querySelector(".flow-random");
   const live = root.querySelector("#flow-live");
   if (!stage || buttons.length === 0) return;
 
@@ -175,9 +174,6 @@
     shown = active;
     panels.forEach((panel, item) => {
       panel.hidden = item !== active;
-    });
-    titles.forEach((title, item) => {
-      title.hidden = item !== active;
     });
     buttons.forEach((button, item) => {
       if (item === active) button.setAttribute("aria-current", "true");

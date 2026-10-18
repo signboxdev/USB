@@ -5,6 +5,7 @@
   const stage = root.querySelector(".flow-stage");
   const buttons = [...root.querySelectorAll(".flow-select")];
   const panels = [...root.querySelectorAll(".flow-panel")];
+  const randomBtn = document.querySelector(".flow-random");
   const live = root.querySelector("#flow-live");
   if (!stage || buttons.length === 0) return;
 
@@ -44,9 +45,24 @@
   const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
   const maxIndex = buttons.length - 1;
 
+  // Random-track glide. Same rAF loop as coast/spring. Ease-out cubic
+  // (Hermite with end velocity 0 and start slope 3) so a long trip is a fast
+  // spin that lands exactly on the target. Duration is ~0.6s for one step and
+  // ~1.6s by 40 steps.
+  const SPIN_NEAR_S = 0.6;
+  const SPIN_FAR_S = 1.6;
+  const SPIN_FAR_STEPS = 40;
+  const SPIN_SLOPE = 3;
+
   let index = 0;
   let shown = 0;
   let coverWidth = 0;
+  let zBack = 76;
+  let spin = null;
+  const recentPicks = [];
+  const primedImages = new WeakSet();
+  const warmedSrc = new Set();
+  const warmers = [];
   let drag = null;
   let ignoreClick = false;
   let phase = "idle";
@@ -130,6 +146,7 @@
     tilt = narrow ? 70 : 68;
     stride = narrow ? 0.9 : 1.06;
     pack = narrow ? 0.16 : 0.18;
+    zBack = narrow ? 118 : 76;
   }
 
   function place(delta) {
@@ -140,7 +157,6 @@
         ? delta * coverWidth * stride
         : sign * coverWidth * (stride + (distance - 1) * pack);
     const rot = -sign * tilt * Math.min(distance, 1);
-    const zBack = stage.clientWidth < 620 ? 118 : 76;
     const z = distance <= 1 ? 36 - distance * (zBack + 36) : -zBack - Math.min(distance - 1, 14) * 4;
     const opacity = distance > 18 ? 0 : distance > 15 ? 1 - (distance - 15) / 3 : 1;
     return { x, rot, z, opacity };
@@ -169,7 +185,7 @@
 
   function paint() {
     if (!coverWidth) measure();
-    const hold = phase === "drag" || phase === "coast" || phase === "spring" || phase === "wheel";
+    const hold = phase === "drag" || phase === "coast" || phase === "spring" || phase === "wheel" || phase === "spin";
     buttons.forEach((button, item) => {
       const cover = button.closest(".flow-cover");
       const spot = place(item - index);
@@ -223,11 +239,13 @@
   function finishIdle() {
     phase = "idle";
     velocity = 0;
+    spin = null;
   }
 
   function snap(next) {
     window.clearTimeout(wheelTimer);
     wheelTimer = 0;
+    spin = null;
     stopLoop();
     index = clamp(next);
     finishIdle();
@@ -236,12 +254,164 @@
   }
 
   function goTo(next) {
+    spin = null;
     if (reducedMotion.matches) {
       snap(next);
       return;
     }
     velocity = 0;
     startSpring(next);
+  }
+
+  function spinSeconds(distance) {
+    const steps = Math.max(1, Math.abs(distance));
+    const t = Math.min(1, Math.log2(steps) / Math.log2(SPIN_FAR_STEPS));
+    return SPIN_NEAR_S + (SPIN_FAR_S - SPIN_NEAR_S) * t;
+  }
+
+  // Ease-out cubic when v0 is 3 * delta / duration. A same-direction velocity
+  // is kept only while the opening slope stays at or under that, so the glide
+  // never reverses or overshoots the record it is aiming at.
+  function planSpin(dest) {
+    const from = index;
+    const delta = dest - from;
+    const distance = Math.abs(delta);
+    if (distance < 0.0008) return null;
+    let duration = spinSeconds(distance);
+    let v0 = (SPIN_SLOPE * delta) / duration;
+    const sameWay = delta * velocity > 0 && Math.abs(velocity) > 0.08;
+    if (sameWay) {
+      const keepDuration = (SPIN_SLOPE * distance) / Math.abs(velocity);
+      if (keepDuration >= 0.34 && keepDuration <= SPIN_FAR_S) {
+        duration = keepDuration;
+        v0 = velocity;
+      } else if (keepDuration > SPIN_FAR_S) {
+        duration = SPIN_FAR_S;
+        const slope = (velocity * duration) / delta;
+        if (slope > 0 && slope <= SPIN_SLOPE) v0 = velocity;
+        else v0 = (SPIN_SLOPE * delta) / duration;
+      } else {
+        duration = Math.min(duration, 0.48);
+        v0 = (SPIN_SLOPE * delta) / duration;
+      }
+    }
+    if (!(duration > 0)) duration = SPIN_NEAR_S;
+    return { from, to: dest, start: performance.now(), duration, v0 };
+  }
+
+  function primeArtwork(from, to) {
+    const lo = Math.max(0, Math.floor(Math.min(from, to)) - 2);
+    const hi = Math.min(maxIndex, Math.ceil(Math.max(from, to)) + 2);
+    for (let item = lo; item <= hi; item += 1) {
+      buttons[item].querySelectorAll("img").forEach((img) => {
+        if (primedImages.has(img)) return;
+        primedImages.add(img);
+        const src = img.getAttribute("src");
+        if (!src) return;
+        // Lazy sleeves sit off to the side, so a fast spin would otherwise
+        // fly past an empty square. Kick the decode before they reach center.
+        img.loading = "eager";
+        if (!img.complete && !img.currentSrc) img.src = src;
+        if (typeof img.decode === "function") img.decode().catch(() => {});
+        if (warmedSrc.has(src)) return;
+        warmedSrc.add(src);
+        const warm = new Image();
+        warm.decoding = "async";
+        warm.src = src;
+        warmers.push(warm);
+      });
+    }
+  }
+
+  function armSpin(dest) {
+    if (reducedMotion.matches) {
+      snap(dest);
+      return;
+    }
+    window.clearTimeout(wheelTimer);
+    wheelTimer = 0;
+    drag = null;
+    const plan = planSpin(clamp(Math.round(dest)));
+    if (!plan) {
+      index = clamp(Math.round(dest));
+      spin = null;
+      finishIdle();
+      root.classList.remove("is-gliding", "is-dragging");
+      paint();
+      return;
+    }
+    spin = plan;
+    phase = "spin";
+    velocity = plan.v0;
+    markGliding();
+    primeArtwork(plan.from, plan.to);
+    note("spin", plan.v0, 0, "none");
+    ensureLoop();
+  }
+
+  function pickRandom() {
+    const count = buttons.length;
+    if (count < 2) return null;
+    const focused = clamp(Math.round(index));
+    const banned = new Set([focused]);
+    const preferred = [];
+    if (spin && spin.to !== focused) preferred.push(spin.to);
+    for (let item = recentPicks.length - 1; item >= 0 && preferred.length < 4; item -= 1) {
+      preferred.push(recentPicks[item]);
+    }
+    preferred.forEach((item) => {
+      if (banned.size >= count - 1) return;
+      banned.add(item);
+    });
+    const pool = [];
+    for (let item = 0; item < count; item += 1) {
+      if (!banned.has(item)) pool.push(item);
+    }
+    if (pool.length === 0) return null;
+    const choice = pool[Math.floor(Math.random() * pool.length)];
+    recentPicks.push(choice);
+    if (recentPicks.length > 6) recentPicks.shift();
+    return choice;
+  }
+
+  function onRandom(event) {
+    event.preventDefault();
+    const choice = pickRandom();
+    if (choice === null) return;
+    armSpin(choice);
+  }
+
+  function stepSpin(now) {
+    if (!spin) {
+      finishIdle();
+      return;
+    }
+    const elapsed = (now - spin.start) / 1000;
+    const spanT = spin.duration > 0 ? elapsed / spin.duration : 1;
+    if (spanT >= 1) {
+      index = spin.to;
+      velocity = 0;
+      spin = null;
+      finishIdle();
+      return;
+    }
+    const u = spanT < 0 ? 0 : spanT;
+    const from = spin.from;
+    const to = spin.to;
+    const tangent = spin.v0 * spin.duration;
+    const u2 = u * u;
+    const u3 = u2 * u;
+    const h00 = 2 * u3 - 3 * u2 + 1;
+    const h10 = u3 - 2 * u2 + u;
+    const h01 = -2 * u3 + 3 * u2;
+    let next = h00 * from + h10 * tangent + h01 * to;
+    if (to >= from) next = Math.min(to, Math.max(from, next));
+    else next = Math.max(to, Math.min(from, next));
+    index = next;
+    const dh00 = 6 * u2 - 6 * u;
+    const dh10 = 3 * u2 - 4 * u + 1;
+    const dh01 = -6 * u2 + 6 * u;
+    velocity = (dh00 * from + dh10 * tangent + dh01 * to) / spin.duration;
   }
 
   function stepCoast(dt) {
@@ -296,8 +466,9 @@
     lastFrame = now;
     if (phase === "coast") stepCoast(dt);
     else if (phase === "spring") stepSpring(dt);
+    else if (phase === "spin") stepSpin(now);
     paint();
-    if (phase === "coast" || phase === "spring") {
+    if (phase === "coast" || phase === "spring" || phase === "spin") {
       raf = requestAnimationFrame(frame);
       return;
     }
@@ -383,9 +554,18 @@
   }
 
   function step(direction) {
+    const spinning = phase === "spin";
+    const carried = spinning ? velocity : 0;
     const base = phase === "spring" ? target : clamp(Math.round(index));
     const dest = clamp(base + direction);
-    if (dest === base && phase !== "coast") return;
+    if (dest === base && phase !== "coast" && !spinning) return;
+    // A key at the end of the row still has to cancel a running spin.
+    if (dest === base && spinning) {
+      spin = null;
+      if (Math.abs(carried) >= SNAP_AT) release(carried);
+      else startSpring(base);
+      return;
+    }
     goTo(dest);
     const active = document.activeElement;
     if (active && stage.contains(active)) buttons[dest].focus();
@@ -394,10 +574,12 @@
   let cancelTimer = 0;
 
   function beginDrag(id, kind, x, y, stamp, now) {
+    const carried = phase === "spin" ? velocity : 0;
+    spin = null;
     stopLoop();
     window.clearTimeout(wheelTimer);
     wheelTimer = 0;
-    if (phase === "coast" || phase === "spring" || phase === "wheel") phase = "drag";
+    if (phase === "coast" || phase === "spring" || phase === "wheel" || phase === "spin") phase = "drag";
     velocity = 0;
     drag = {
       id,
@@ -412,6 +594,7 @@
       axis: null,
       sawMove: false,
       lastEventNow: now,
+      carried,
       samples: [{ x, stamp, now }],
     };
   }
@@ -463,8 +646,8 @@
 
     if (!info.moved) {
       if (info.axis === "y") {
-        note("vertical", 0, info.samples.length, "y");
-        if (phase === "drag") release(0);
+        note("vertical", info.carried || 0, info.samples.length, "y");
+        if (phase === "drag") release(info.carried || 0);
         return;
       }
       if (point) {
@@ -477,6 +660,11 @@
         }
       }
       if (phase === "drag") {
+        if (info.carried && Math.abs(info.carried) >= SNAP_AT) {
+          note("coast", info.carried, info.samples.length, info.axis || "none");
+          release(info.carried);
+          return;
+        }
         phase = "idle";
         velocity = 0;
         root.classList.remove("is-dragging", "is-gliding");
@@ -702,6 +890,8 @@
       }
 
       const now = performance.now();
+      if (phase === "spin") velocity = clampSpeed(velocity);
+      spin = null;
       stopLoop();
       phase = "wheel";
       freezeTransitions();
@@ -771,6 +961,11 @@
     ].join(";");
     document.body.appendChild(debugEl);
     renderDebug();
+  }
+
+  if (randomBtn) {
+    randomBtn.style.touchAction = "manipulation";
+    randomBtn.addEventListener("click", onRandom);
   }
 
   measure();

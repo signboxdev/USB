@@ -118,12 +118,22 @@ body {
   line-height: 1.55;
 }
 
-.count {
+.count-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.35rem;
   margin: 1.4rem 0 0;
+}
+
+.count {
+  margin: 0;
+  min-width: 0;
   color: var(--muted);
   font-size: 0.78rem;
   letter-spacing: 0.12em;
   text-transform: uppercase;
+  white-space: nowrap;
 }
 
 .count .num {
@@ -271,8 +281,8 @@ body {
   transition: transform 480ms cubic-bezier(0.16, 0.84, 0.3, 1), opacity 480ms ease;
 }
 
-/* Drag, coast, and spring write transforms from rAF. A CSS transition here
-   replays the move as one fixed 480ms ease and hides the coast. */
+/* Drag, coast, spring, and the random-track spin write transforms from rAF.
+   A CSS transition here replays the move as one fixed 480ms ease and hides the coast. */
 .flow.is-dragging .flow-cover,
 .flow.is-gliding .flow-cover,
 .flow.is-instant .flow-cover {
@@ -372,6 +382,45 @@ body {
   line-height: 1.15;
   letter-spacing: -0.03em;
   overflow-wrap: anywhere;
+}
+
+.flow-random {
+  display: grid;
+  place-items: center;
+  flex: none;
+  width: 44px;
+  height: 44px;
+  min-width: 44px;
+  min-height: 44px;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  border-radius: 999px;
+  background: transparent;
+  color: var(--muted);
+  cursor: pointer;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+  -webkit-touch-callout: none;
+}
+
+.flow-random svg {
+  display: block;
+  width: 18px;
+  height: 18px;
+}
+
+.flow-random:active {
+  color: var(--text);
+}
+
+.flow-random:focus {
+  outline: none;
+}
+
+.flow-random:focus-visible {
+  outline: 2px solid #fff;
+  outline-offset: 3px;
 }
 
 .flow-artist {
@@ -598,6 +647,10 @@ h2 {
 }
 
 @media (hover: hover) {
+  .flow-random:hover {
+    color: var(--text);
+  }
+
   .crate > li:nth-child(odd) .card:hover {
     background: #0a0a0a;
   }
@@ -673,7 +726,7 @@ code {
     padding-right: 0.5rem;
   }
 
-  .count {
+  .count-row {
     margin-top: 0.4rem;
   }
 

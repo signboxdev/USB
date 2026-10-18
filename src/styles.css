@@ -6,7 +6,7 @@
   --muted: #a1a1aa;
   --line: rgba(255, 255, 255, 0.12);
   --line-strong: rgba(255, 255, 255, 0.28);
-  --sans: Inter, "Segoe UI", system-ui, sans-serif;
+  --sans: Inter, "Segoe UI", "Noto Sans Khmer", system-ui, sans-serif;
   --mono: "JetBrains Mono", "Cascadia Mono", ui-monospace, "Liberation Mono", monospace;
   color-scheme: dark;
 }
@@ -185,8 +185,11 @@ body {
   position: relative;
   height: calc(var(--cover) * 1.44 + 18px);
   perspective: 1800px;
+  -webkit-perspective: 1800px;
   perspective-origin: 50% 42%;
+  -webkit-perspective-origin: 50% 42%;
   transform-style: preserve-3d;
+  -webkit-transform-style: preserve-3d;
   cursor: grab;
 }
 
@@ -208,6 +211,7 @@ body {
   margin: 0;
   padding: 0;
   transform-style: preserve-3d;
+  -webkit-transform-style: preserve-3d;
 }
 
 .flow-cover {
@@ -218,6 +222,19 @@ body {
   margin-left: calc(var(--cover) / -2);
   transform: translate3d(0, 0, 36px);
   transform-style: preserve-3d;
+  -webkit-transform-style: preserve-3d;
+}
+
+/* The square's rotateY is written from rAF. No CSS transition: a transition
+   would fight the frames, and WebKit drops backface-visibility on a
+   transitioned preserve-3d layer. */
+.flow-flip {
+  position: relative;
+  transform: rotateY(0deg);
+  -webkit-transform: rotateY(0deg);
+  transform-origin: center center;
+  transform-style: preserve-3d;
+  -webkit-transform-style: preserve-3d;
 }
 
 /* Before script: step 1.06, stack 0.18, rotate 68deg, center forward and sides set back. */
@@ -295,12 +312,22 @@ body {
   margin: 0;
   padding: 0;
   border: 0;
-  background: transparent;
+  background: #000;
   color: inherit;
   font: inherit;
   text-align: inherit;
   cursor: pointer;
+  opacity: 1;
   -webkit-tap-highlight-color: transparent;
+  transform: translateZ(1px);
+  -webkit-transform: translateZ(1px);
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
+}
+
+.flow-cover.is-showing-back .flow-select {
+  opacity: 0;
+  pointer-events: none;
 }
 
 .flow-select:focus {
@@ -317,7 +344,8 @@ body {
   aspect-ratio: 1;
   overflow: hidden;
   border-radius: 3px;
-  background: #0c0c0e;
+  background: #000;
+  opacity: 1;
   box-shadow:
     inset 0 1px 0 rgba(255, 255, 255, 0.28),
     0 0 0 1px rgba(255, 255, 255, 0.16),
@@ -330,6 +358,7 @@ body {
   width: 100%;
   height: 100%;
   object-fit: cover;
+  opacity: 1;
   -webkit-user-drag: none;
 }
 
@@ -367,11 +396,198 @@ body {
   background: linear-gradient(to bottom, rgba(255, 255, 255, 0.16), rgba(255, 255, 255, 0) 74%);
 }
 
+.flow-reflect {
+  transition: opacity 280ms ease;
+}
+
+.flow-cover.is-flipped .flow-reflect {
+  opacity: 0;
+}
+
+.flow-back {
+  position: absolute;
+  inset: 0;
+  display: block;
+  visibility: hidden;
+  opacity: 0;
+  transform: rotateY(180deg) translateZ(1px);
+  -webkit-transform: rotateY(180deg) translateZ(1px);
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
+  pointer-events: none;
+  border-radius: 3px;
+}
+
+/* Side covers, and the centre cover until the flip passes 90°, stay out of
+   the render tree. WebKit paints a preserve-3d back face through the art
+   even with backface-visibility: hidden. */
+.flow-back[hidden] {
+  display: none !important;
+}
+
+.flow-cover.is-showing-back .flow-back:not([hidden]) {
+  visibility: visible;
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.flow-back-card {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  overflow: hidden;
+  border-radius: 3px;
+  background: #0c0c0e;
+  color: var(--text);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.28),
+    0 0 0 1px rgba(255, 255, 255, 0.16),
+    0 22px 40px rgba(0, 0, 0, 0.55);
+}
+
+.flow-back-art {
+  position: absolute;
+  inset: -20%;
+  width: 140%;
+  height: 140%;
+  object-fit: cover;
+  opacity: 0.45;
+  transform: scale(1.08);
+  pointer-events: none;
+}
+
+.flow-cover.is-showing-back .flow-back-art {
+  filter: blur(14px) saturate(0.65);
+}
+
+.flow-back-card::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(180deg, rgba(0, 0, 0, 0.72) 0%, rgba(0, 0, 0, 0.86) 55%, rgba(0, 0, 0, 0.92) 100%);
+  pointer-events: none;
+}
+
+.flow-back-copy {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  max-height: 100%;
+  min-height: 0;
+  padding: 0.4rem 0.35rem;
+  gap: 0.08rem;
+  text-align: center;
+}
+
+.flow-back-title {
+  margin: 0;
+  flex: none;
+  width: 100%;
+  font-weight: 650;
+  font-size: 0.88rem;
+  line-height: 1.15;
+  letter-spacing: -0.02em;
+  text-align: center;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 3;
+  overflow: hidden;
+  overflow-wrap: break-word;
+}
+
+.flow-back-artist,
+.flow-back-album,
+.flow-back-who,
+.flow-back-when {
+  margin: 0;
+  flex: none;
+  width: 100%;
+  min-width: 0;
+  font-size: 0.7rem;
+  line-height: 1.2;
+  text-align: center;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.flow-back-artist {
+  color: #e4e4e7;
+}
+
+.flow-back-album,
+.flow-back-when,
+.flow-back-who {
+  color: #b4b4bc;
+}
+
+.flow-back-who .poster {
+  display: inline;
+  position: relative;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* 44px hit target without opening a gap in "posted by Drew". */
+.flow-back-who .poster::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 44px;
+  height: 44px;
+  transform: translate(-50%, -50%);
+}
+
+.flow-back-services {
+  list-style: none;
+  display: flex;
+  justify-content: center;
+  gap: 0.4rem;
+  margin: 0.15rem 0 0;
+  padding: 0;
+}
+
+.flow-back-services li {
+  flex: none;
+}
+
+.flow-stage .flow-back a {
+  touch-action: manipulation !important;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.flow-back .icon-btn {
+  width: 44px;
+  height: 44px;
+  min-width: 44px;
+  min-height: 44px;
+  touch-action: manipulation;
+}
+
+.flow-back .icon-btn svg {
+  width: 18px;
+  height: 18px;
+}
+
+.flow-back .icon-btn:active {
+  background: #fff;
+  border-color: #fff;
+  color: #000;
+}
+
 .flow-readout {
   position: relative;
   z-index: 2;
-  min-height: 9.25rem;
-  padding: 0.15rem 1.15rem 0;
+  min-height: 2.5rem;
+  padding: 0.35rem 1.15rem 0;
   text-align: center;
 }
 
@@ -582,7 +798,8 @@ h2 {
 }
 
 .posted .poster,
-.flow-who .poster {
+.flow-who .poster,
+.flow-back .poster {
   color: var(--text);
 }
 
@@ -854,6 +1071,23 @@ code {
     font-size: 1.85rem;
   }
 
+  .flow-back-copy {
+    padding: 0.85rem 0.8rem;
+    gap: 0.16rem;
+  }
+
+  .flow-back-title {
+    font-size: 1.08rem;
+    -webkit-line-clamp: 3;
+  }
+
+  .flow-back-artist,
+  .flow-back-album,
+  .flow-back-who,
+  .flow-back-when {
+    font-size: 0.78rem;
+  }
+
   .thumb {
     width: 68px;
     height: 68px;
@@ -864,8 +1098,9 @@ code {
   }
 }
 
-/* Cover flow is omitted. Coast, spring, and the shuffle spin are rAF-driven
-   and keep gliding when Reduce Motion is on. */
+/* Cover flow is omitted. Coast, spring, the shuffle spin, and the sleeve flip
+   keep moving when Reduce Motion is on. The flip is rAF-driven rotateY, so
+   this block must not cancel it. */
 @media (prefers-reduced-motion: reduce) {
   .card,
   .service,

@@ -62,6 +62,14 @@ export function formatPostedAt(iso) {
   return `${weekday}, ${MONTHS[Number(month) - 1]} ${Number(day)}, ${year} · ${hour}:${minute} ${suffix}`;
 }
 
+// Sleeve back: calendar date only, taken from the timestamp as written.
+function formatFlipDate(iso) {
+  const match = iso.match(/^(\d{4})-(\d{2})-(\d{2})T/);
+  if (!match) return escapeHtml(iso);
+  const [, year, month, day] = match;
+  return `${MONTHS[Number(month) - 1]} ${Number(day)}, ${year}`;
+}
+
 function monogram(artist) {
   const words = String(artist)
     .split(/\s+/)
@@ -213,9 +221,24 @@ export function groupEntriesByPoster(entries) {
   return [...bySlug.values()].sort((a, b) => a.slug.localeCompare(b.slug));
 }
 
-function flowService(label, url) {
+function flipStoreLink(kind, url) {
   if (!url) return "";
-  return `<li><a class="service" href="${httpsUrl(url, label)}"><span class="name">${label}</span></a></li>`;
+  const name = kind === "spotify" ? "Spotify" : "Apple Music";
+  const icon = kind === "spotify" ? SPOTIFY_ICON : APPLE_MUSIC_ICON;
+  const label = kind === "spotify" ? "Open on Spotify" : "Open on Apple Music";
+  return `<li><a class="icon-btn" href="${httpsUrl(url, name)}" rel="noreferrer" aria-label="${escapeHtml(label)}">${icon}</a></li>`;
+}
+
+function renderFlipBack(entry) {
+  const art = entry.artwork_url
+    ? `<img class="flow-back-art" src="${httpsUrl(entry.artwork_url, "artwork")}" alt="" width="600" height="600" draggable="false" decoding="async" loading="lazy">`
+    : "";
+  const album = entry.album ? `<p class="flow-back-album">${escapeHtml(entry.album)}</p>` : "";
+  const links = [flipStoreLink("spotify", entry.spotify_url), flipStoreLink("apple", entry.apple_music_url)].filter(
+    Boolean,
+  );
+  const services = links.length ? `<ul class="flow-back-services">${links.join("")}</ul>` : "";
+  return `<div class="flow-back-card">${art}<div class="flow-back-copy"><p class="flow-back-title">${escapeHtml(entry.title)}</p><p class="flow-back-artist">${escapeHtml(entry.artist)}</p>${album}<p class="flow-back-who">posted by ${posterLink(entry.posted_by)}</p><p class="flow-back-when"><time datetime="${escapeHtml(entry.posted_at)}">${formatFlipDate(entry.posted_at)}</time></p>${services}</div></div>`;
 }
 
 function coverImage(entry, index, reflect) {
@@ -236,11 +259,17 @@ function renderCoverFlow(entries) {
       const reflect = entry.artwork_url
         ? `<span class="flow-reflect" aria-hidden="true">${coverImage(entry, index, true)}</span>`
         : `<span class="flow-reflect is-blank" aria-hidden="true"></span>`;
+      const backId = `flow-back-${index}`;
       return `          <li class="flow-cover">
-            <button type="button" class="flow-select" data-index="${index}" data-summary="${escapeHtml(summary)}" aria-label="${escapeHtml(`${entry.title} by ${entry.artist}`)}"${current}>
-              ${sleeve}
-              ${reflect}
-            </button>
+            <div class="flow-flip">
+              <button type="button" class="flow-select" data-index="${index}" data-summary="${escapeHtml(summary)}" aria-expanded="false" aria-controls="${backId}" aria-label="${escapeHtml(`${entry.title} by ${entry.artist}`)}"${current}>
+                ${sleeve}
+              </button>
+              <div class="flow-back" id="${backId}" aria-hidden="true" inert>
+                ${renderFlipBack(entry)}
+              </div>
+            </div>
+            ${reflect}
           </li>`;
     })
     .join("\n");
@@ -249,12 +278,6 @@ function renderCoverFlow(entries) {
       const hidden = index === 0 ? "" : " hidden";
       return `          <div class="flow-panel"${hidden}>
             <p class="flow-title">${escapeHtml(entry.title)}</p>
-            <p class="flow-artist">${escapeHtml(entry.artist)}</p>
-            <p class="flow-who">posted by ${posterLink(entry.posted_by)} · <time datetime="${escapeHtml(entry.posted_at)}">${formatPostedAt(entry.posted_at)}</time></p>
-            <ul class="flow-services">
-              ${flowService("spotify", entry.spotify_url)}
-              ${flowService("apple music", entry.apple_music_url)}
-            </ul>
           </div>`;
     })
     .join("\n");

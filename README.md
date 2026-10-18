@@ -88,7 +88,7 @@ npm run preview
 
 Serves `dist/` at [http://127.0.0.1:47321](http://127.0.0.1:47321). Set `PORT` to use another port. There is no analytics. Links send no referrer.
 
-The cover flow is `src/coverflow.js`, a plain script with no dependencies. It reads the covers the build wrote from `data/catalog.json`, newest in the center. Drag or swipe, scroll horizontally, press the arrow keys, or click a side cover to bring that sleeve to the center. The line under the centered cover is the title, the artist, who posted it, the posted date, and the Spotify and Apple Music links that exist. Coasting, the settle spring, and the shuffle spin still glide when `prefers-reduced-motion` is set. An entry with no `artwork_url` gets a dark sleeve instead of an image request.
+The cover flow is `src/coverflow.js`, a plain script with no dependencies. It reads the covers the build wrote from `data/catalog.json`, newest in the center. Drag or swipe, scroll horizontally, press the arrow keys, or click a side cover to bring that sleeve to the center. The line under the centered cover is the song name. Tap that cover to flip it; the back shows the title, the artist, the album when there is one, who posted it, the date, and the Spotify and Apple Music buttons that exist. Coasting, the settle spring, the shuffle spin, and the flip still run when `prefers-reduced-motion` is set. An entry with no `artwork_url` gets a dark sleeve instead of an image request.
 
 `npm run build` appends `?v=` and a short SHA-256 of the file to `styles.css`, `coverflow.js`, and `logo.gif` in the generated HTML. Hostinger caches those assets for a week; the query string changes when the file does, so a phone picks up the new copy.
 

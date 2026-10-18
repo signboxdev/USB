@@ -265,7 +265,7 @@ function renderCoverFlow(entries) {
               <button type="button" class="flow-select" data-index="${index}" data-summary="${escapeHtml(summary)}" aria-expanded="false" aria-controls="${backId}" aria-label="${escapeHtml(`${entry.title} by ${entry.artist}`)}"${current}>
                 ${sleeve}
               </button>
-              <div class="flow-back" id="${backId}" aria-hidden="true" inert>
+              <div class="flow-back" id="${backId}" aria-hidden="true" inert hidden>
                 ${renderFlipBack(entry)}
               </div>
             </div>

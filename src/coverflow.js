@@ -158,10 +158,21 @@
     return { left: base.left + x, top: base.top + y, right: base.left + x + width, bottom: base.top + y + height, width, height };
   }
 
+  function showingBackItem() {
+    if (flipped !== null) return flipped;
+    if (flipJob && flipJob.to !== 0) return flipJob.item;
+    if (flipJob) {
+      const back = backOf(flipJob.item);
+      if (back && !back.hidden) return flipJob.item;
+    }
+    return null;
+  }
+
   function backLinkAt(clientX, clientY) {
-    if (flipped === null) return null;
-    const back = backOf(flipped);
-    if (!back) return null;
+    const item = showingBackItem();
+    if (item === null) return null;
+    const back = backOf(item);
+    if (!back || back.hidden) return null;
     const direct = document.elementFromPoint(clientX, clientY);
     if (direct && direct.closest) {
       const link = direct.closest(".flow-back a");
@@ -195,41 +206,210 @@
     return backLinkAt(event.clientX, event.clientY);
   }
 
-  function applyFlip(item, on) {
+  // The sleeve turns on rAF, not a CSS transition. WebKit paints a
+  // preserve-3d back face through the artwork even with backface-visibility,
+  // so the back stays out of the render tree (hidden) until the turn passes
+  // 90°. Below that the front is the only face; above it the front is hidden
+  // and the back is shown. Side covers never leave hidden.
+  const FLIP_MS = 540;
+  let flipJob = null;
+
+  function flipParts(item) {
     const button = buttons[item];
+    if (!button) return null;
     const cover = button.closest(".flow-cover");
-    const back = cover.querySelector(".flow-back");
-    cover.classList.toggle("is-flipped", on);
-    button.setAttribute("aria-expanded", on ? "true" : "false");
-    if (!back) return;
-    if (on) {
-      back.inert = false;
-      back.removeAttribute("aria-hidden");
-      warmBack(back);
+    if (!cover) return null;
+    return {
+      button,
+      cover,
+      flip: cover.querySelector(".flow-flip"),
+      back: cover.querySelector(".flow-back"),
+    };
+  }
+
+  function readFlipAngle(flipEl) {
+    if (!flipEl) return 0;
+    const inline = flipEl.style.transform || "";
+    const inlineMatch = inline.match(/rotateY\(\s*(-?[\d.]+)deg\s*\)/i);
+    if (inlineMatch) {
+      let angle = Number(inlineMatch[1]);
+      if (!Number.isFinite(angle)) return 0;
+      angle = ((angle % 360) + 360) % 360;
+      if (angle > 180) angle = 360 - angle;
+      return angle;
+    }
+    const transform = getComputedStyle(flipEl).transform;
+    if (!transform || transform === "none") return 0;
+    const m = transform.match(/matrix3d\(([^)]+)\)/);
+    if (!m) return 0;
+    const p = m[1].split(",").map((n) => Number(n.trim()));
+    let angle = (Math.atan2(p[8], p[0]) * 180) / Math.PI;
+    if (angle < 0) angle += 360;
+    if (angle > 180) angle = 360 - angle;
+    return angle;
+  }
+
+  // cubic-bezier(0.4, 0.05, 0.2, 1). Same curve the flip used as a transition.
+  function flipEase(x) {
+    if (x <= 0) return 0;
+    if (x >= 1) return 1;
+    const x1 = 0.4;
+    const y1 = 0.05;
+    const x2 = 0.2;
+    const y2 = 1;
+    const cx = 3 * x1;
+    const bx = 3 * (x2 - x1) - cx;
+    const ax = 1 - cx - bx;
+    const cy = 3 * y1;
+    const by = 3 * (y2 - y1) - cy;
+    const ay = 1 - cy - by;
+    const sampleX = (t) => ((ax * t + bx) * t + cx) * t;
+    const sampleY = (t) => ((ay * t + by) * t + cy) * t;
+    const sampleDX = (t) => (3 * ax * t + 2 * bx) * t + cx;
+    let t = x;
+    for (let i = 0; i < 8; i += 1) {
+      const slope = sampleDX(t);
+      if (Math.abs(slope) < 1e-6) break;
+      const next = t - (sampleX(t) - x) / slope;
+      if (!Number.isFinite(next)) break;
+      t = Math.max(0, Math.min(1, next));
+    }
+    // Newton can stall on a flat derivative. Bisect the remainder.
+    let lo = 0;
+    let hi = 1;
+    if (Math.abs(sampleX(t) - x) > 1e-4) {
+      for (let i = 0; i < 12; i += 1) {
+        const mid = (lo + hi) / 2;
+        if (sampleX(mid) < x) lo = mid;
+        else hi = mid;
+      }
+      t = (lo + hi) / 2;
+    }
+    return sampleY(t);
+  }
+
+  function concealBack(node) {
+    if (!node || !node.back) return;
+    const restore = !node.back.hidden && node.back.contains(document.activeElement);
+    node.back.hidden = true;
+    node.back.inert = true;
+    node.back.setAttribute("aria-hidden", "true");
+    node.cover.classList.remove("is-showing-back");
+    if (restore) node.button.focus({ preventScroll: true });
+  }
+
+  function concealOtherBacks(except) {
+    for (let item = 0; item < buttons.length; item += 1) {
+      if (item === except) continue;
+      const node = flipParts(item);
+      if (!node || !node.back || node.back.hidden) continue;
+      concealBack(node);
+      if (node.flip) node.flip.style.transform = "rotateY(0deg)";
+      node.cover.classList.remove("is-flipped");
+      node.button.setAttribute("aria-expanded", "false");
+    }
+  }
+
+  function stopFlipJob() {
+    if (flipJob && flipJob.raf) cancelAnimationFrame(flipJob.raf);
+    flipJob = null;
+  }
+
+  function paintFlip(item, angle) {
+    const node = flipParts(item);
+    if (!node || !node.flip) return;
+    const deg = Math.max(0, Math.min(180, angle));
+    const turn = `rotateY(${deg.toFixed(3)}deg)`;
+    node.flip.style.transform = turn;
+    const showBack = deg >= 90;
+    if (!node.back) {
+      node.cover.classList.toggle("is-showing-back", showBack);
       return;
     }
-    const restore = back.contains(document.activeElement);
-    back.inert = true;
-    back.setAttribute("aria-hidden", "true");
-    if (restore) button.focus({ preventScroll: true });
+    if (showBack) {
+      concealOtherBacks(item);
+      node.cover.classList.add("is-showing-back");
+      if (node.back.hidden) {
+        node.back.hidden = false;
+        warmBack(node.back);
+      }
+      node.back.inert = false;
+      node.back.removeAttribute("aria-hidden");
+      return;
+    }
+    concealBack(node);
   }
 
-  function setFlipped(next) {
-    if (flipped === next) return;
-    if (flipped !== null) applyFlip(flipped, false);
-    flipped = next;
-    if (next !== null) applyFlip(next, true);
+  function runFlip(item, to) {
+    const node = flipParts(item);
+    if (!node || !node.flip) return;
+    const from = readFlipAngle(node.flip);
+    stopFlipJob();
+    if (Math.abs(from - to) < 0.4) {
+      paintFlip(item, to);
+      return;
+    }
+    const start = performance.now();
+    const job = { item, raf: 0, to };
+    flipJob = job;
+    const tick = (now) => {
+      if (flipJob !== job) return;
+      const u = Math.min(1, (now - start) / FLIP_MS);
+      paintFlip(item, from + (to - from) * flipEase(u));
+      if (u < 1) {
+        job.raf = requestAnimationFrame(tick);
+        return;
+      }
+      paintFlip(item, to);
+      if (flipJob === job) flipJob = null;
+    };
+    job.raf = requestAnimationFrame(tick);
   }
 
-  function closeFlip() {
-    if (flipped === null) return;
-    setFlipped(null);
+  function openFlip(item) {
+    if (flipped !== null && flipped !== item) snapFlip(flipped);
+    else if (flipJob && flipJob.item !== item) snapFlip(flipJob.item);
+    const node = flipParts(item);
+    if (!node) return;
+    flipped = item;
+    node.cover.classList.add("is-flipped");
+    node.button.setAttribute("aria-expanded", "true");
+    runFlip(item, 180);
+  }
+
+  function snapFlip(item) {
+    const node = flipParts(item);
+    if (flipJob && flipJob.item === item) stopFlipJob();
+    if (!node) return;
+    node.cover.classList.remove("is-flipped");
+    node.button.setAttribute("aria-expanded", "false");
+    if (node.flip) node.flip.style.transform = "rotateY(0deg)";
+    concealBack(node);
+  }
+
+  function closeFlip(options) {
+    const item = flipped !== null ? flipped : flipJob ? flipJob.item : null;
+    if (item == null) return;
+    const node = flipParts(item);
+    if (node) {
+      node.cover.classList.remove("is-flipped");
+      node.button.setAttribute("aria-expanded", "false");
+    }
+    flipped = null;
+    if (options && options.animate) {
+      runFlip(item, 0);
+      return;
+    }
+    snapFlip(item);
   }
 
   function toggleFlip() {
     const center = clamp(Math.round(index));
-    if (flipped !== null) setFlipped(null);
-    else setFlipped(center);
+    if (flipped === center || (flipped === null && flipJob && flipJob.item === center && flipJob.to === 180)) {
+      closeFlip({ animate: true });
+      return;
+    }
+    openFlip(center);
   }
 
   function activateCover(next, interrupted) {
@@ -990,7 +1170,7 @@
       const back = event.target.closest && event.target.closest(".flow-back");
       if (back && stage.contains(back)) {
         event.preventDefault();
-        closeFlip();
+        closeFlip({ animate: true });
         return;
       }
       const button = event.target.closest(".flow-select");
@@ -1065,9 +1245,9 @@
 
   window.addEventListener("keydown", (event) => {
     if (event.key === "Escape") {
-      if (flipped === null) return;
+      if (flipped === null && !(flipJob && flipJob.to === 180)) return;
       event.preventDefault();
-      closeFlip();
+      closeFlip({ animate: true });
       return;
     }
     if (event.key !== "ArrowLeft" && event.key !== "ArrowRight") return;

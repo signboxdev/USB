@@ -966,7 +966,7 @@ code {
     margin-top: 0.15rem;
     margin-left: -0.5rem;
     margin-right: -0.5rem;
-    margin-bottom: 0.2rem;
+    margin-bottom: 1.7rem;
   }
 
   .flow-readout {
@@ -1066,7 +1066,7 @@ code {
   .flow {
     --cover: clamp(200px, 28vw, 236px);
     margin-inline: -1.5rem;
-    margin-bottom: 2.1rem;
+    margin-bottom: 3.6rem;
   }
 
   .flow-readout {

@@ -9,14 +9,28 @@
   const live = root.querySelector("#flow-live");
   if (!stage || buttons.length === 0) return;
 
-  // Layout. The centered sleeve is flat. The first side cover sits `stride` cover-widths
-  // away (a clear gap), then each further cover is only `pack` cover-widths over,
-  // rotated by `tilt` and set back so the sides read as a tight stack of records.
-  // Wide values match the pre-script CSS. Narrow screens use a slightly steeper
-  // angle and a shorter stride so several sleeves still fit beside the center.
-  let tilt = 68;
+  // Ring. Sleeves sit on a large circle in the horizontal plane, seen from the
+  // front. The centred cover is the near point. Each step is ARC_STEP radians
+  // around a radius of ARC_RATIO sleeve-widths, so the turn stays shallow:
+  // about three covers a side on a phone, and a fourth on a wider column,
+  // before the sleeve fades into the black. Rotation matches the tangent, so
+  // a cover faces the centre of the ring. A pure circle is almost flat near
+  // the front, and a full-size sleeve would cut through its neighbour; `lip`
+  // and `zBias` ease every cover back by just enough that the nearer face
+  // stays in front through a drag. Stride is only the drag scale and is
+  // unchanged from the flat row.
+  const ARC_STEP = (12 * Math.PI) / 180;
+  const ARC_RATIO = 2.25;
+  const ARC_SCALE = 0.84;
+  const POKE_K = 1.35;
+  const LIP = 0.5;
+  const LIP_K = 2.6;
+  const Z_BIAS = 0.1;
+  const FADE_AT = 3.15;
+  const FADE_END = 4.35;
+  // Past this, the sleeve is fully faded. Skip painting it.
+  const RENDER_REACH = 4.8;
   let stride = 1.06;
-  let pack = 0.18;
 
   // Direction lock. Until the finger has moved LOCK_PX, the gesture is undecided.
   // A tie at the very start can be vertical. A thumb arcs, so a flick that is
@@ -56,7 +70,9 @@
   let index = 0;
   let shown = 0;
   let coverWidth = 0;
-  let zBack = 76;
+  let arcRadius = 0;
+  let lipPx = 0;
+  let zBiasPx = 0;
   let spin = null;
   const recentPicks = [];
   const primedImages = new WeakSet();
@@ -446,23 +462,37 @@
   function measure() {
     coverWidth = buttons[0].closest(".flow-cover").offsetWidth || coverWidth;
     const narrow = stage.clientWidth < 620;
-    tilt = narrow ? 70 : 68;
     stride = narrow ? 0.9 : 1.06;
-    pack = narrow ? 0.16 : 0.18;
-    zBack = narrow ? 118 : 76;
+    arcRadius = coverWidth * ARC_RATIO;
+    lipPx = coverWidth * LIP;
+    zBiasPx = coverWidth * Z_BIAS;
   }
 
+  // theta is signed. x/z are the circle, then the sleeve is rotated to sit
+  // tangent to it. The outer edge of a rotated sleeve swings toward the
+  // viewer; pulling back by that poke, plus a short lip, keeps the planes
+  // from crossing.
   function place(delta) {
     const distance = Math.abs(delta);
-    const sign = delta < 0 ? -1 : delta > 0 ? 1 : 0;
-    const x =
-      distance <= 1
-        ? delta * coverWidth * stride
-        : sign * coverWidth * (stride + (distance - 1) * pack);
-    const rot = -sign * tilt * Math.min(distance, 1);
-    const z = distance <= 1 ? 36 - distance * (zBack + 36) : -zBack - Math.min(distance - 1, 14) * 4;
-    const opacity = distance > 18 ? 0 : distance > 15 ? 1 - (distance - 15) / 3 : 1;
-    return { x, rot, z, opacity };
+    const theta = delta * ARC_STEP;
+    const absTheta = Math.abs(theta);
+    const scale = Math.pow(ARC_SCALE, distance);
+    const half = (coverWidth * scale) / 2;
+    const x = Math.sin(theta) * arcRadius;
+    const zCircle = (Math.cos(absTheta) - 1) * arcRadius;
+    const poke = half * Math.sin(absTheta);
+    const lip = lipPx * (1 - Math.exp(-distance * LIP_K));
+    const z = zCircle - poke * POKE_K - lip - distance * zBiasPx;
+    const rot = (-theta * 180) / Math.PI;
+    let shade = Math.min(0.48, distance * 0.12);
+    if (distance > FADE_AT) {
+      const t = Math.min(1, (distance - FADE_AT) / (FADE_END - FADE_AT));
+      shade += (1 - shade) * t;
+    }
+    // The floor reflection reads on the centred sleeve. On the curve it
+    // tilts into the neighbours, so it is gone within one step.
+    const reflect = distance >= 0.85 ? 0 : 1 - distance / 0.85;
+    return { x, z, rot, scale, shade, reflect, distance };
   }
 
   // Pulling past either end shortens the travel, and it never goes past RUBBER_LIMIT.
@@ -491,12 +521,30 @@
     const hold = phase === "drag" || phase === "coast" || phase === "spring" || phase === "wheel" || phase === "spin";
     buttons.forEach((button, item) => {
       const cover = button.closest(".flow-cover");
-      const spot = place(item - index);
+      const delta = item - index;
+      const distance = Math.abs(delta);
+      // Only the sleeves on the near arc are drawn. The rest of the crate
+      // stays in the list for the keyboard and the caption, but it is not painted.
+      if (distance > RENDER_REACH) {
+        if (!cover.classList.contains("is-culled")) {
+          cover.classList.add("is-culled");
+          cover.style.pointerEvents = "none";
+        }
+        return;
+      }
+      const spot = place(delta);
+      if (cover.classList.contains("is-culled")) cover.classList.remove("is-culled");
       if (hold) cover.style.transition = "none";
-      cover.style.transform = `translate3d(${Math.round(spot.x)}px, 0, ${Math.round(spot.z)}px) rotateY(${spot.rot.toFixed(2)}deg)`;
-      cover.style.zIndex = String(1000 - Math.round(Math.abs(item - index) * 10));
-      cover.style.opacity = spot.opacity < 1 ? spot.opacity.toFixed(3) : "";
-      cover.style.pointerEvents = spot.opacity === 0 ? "none" : "";
+      // One transform, depth ordered the same way as z-index. Sub-pixel x/z
+      // avoids a one-pixel pop when two faces pass, which WebKit otherwise
+      // paints as a flicker. Opacity stays at 1 so a faded sleeve cannot
+      // flatten and jump in front of the one nearer the viewer.
+      cover.style.transform = `translate3d(${spot.x.toFixed(2)}px, 0, ${spot.z.toFixed(2)}px) rotateY(${spot.rot.toFixed(2)}deg) scale(${spot.scale.toFixed(4)})`;
+      cover.style.zIndex = String(5000 - Math.round(distance * 100));
+      cover.style.setProperty("--shade", spot.shade.toFixed(3));
+      cover.style.setProperty("--reflect", spot.reflect.toFixed(3));
+      cover.style.opacity = "";
+      cover.style.pointerEvents = spot.shade > 0.97 ? "none" : "";
     });
     syncCaption(clamp(Math.round(index)));
   }

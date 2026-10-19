@@ -9,14 +9,31 @@
   const live = root.querySelector("#flow-live");
   if (!stage || buttons.length === 0) return;
 
-  // Layout. The centered sleeve is flat. The first side cover sits `stride` cover-widths
-  // away (a clear gap), then each further cover is only `pack` cover-widths over,
-  // rotated by `tilt` and set back so the sides read as a tight stack of records.
-  // Wide values match the pre-script CSS. Narrow screens use a slightly steeper
-  // angle and a shorter stride so several sleeves still fit beside the center.
-  let tilt = 68;
+  // Overlapping stack on the shallow ring, the same ratios on every screen.
+  // The first neighbour sits 0.55 sleeve-widths over and each one after that
+  // only 0.22, so the centre covers its neighbour and each neighbour covers
+  // the next. Depth is still the wide ellipse. A cover off centre turns
+  // inward — outer edge back — to 40° at the first step and about 45° further
+  // out, easing to 0 at the centre. The inner edge of that turn swings toward
+  // the viewer, so `poke` sets it back onto the curve. Stride is only the
+  // drag scale and does not set the visual gap.
+  const ARC_STEP = (36 * Math.PI) / 180;
+  const ARC_RATIO = 1.58;
+  const Z_SCALE = 0.3;
+  const ARC_SCALE = 0.84;
+  const STEP = 0.55;
+  const PACK = 0.22;
+  const TILT_MAX = 45;
+  const TILT_K = Math.log(9);
+  const POKE_K = 1;
+  const LIP = 0.04;
+  const LIP_K = 1.4;
+  const Z_BIAS = 0.02;
+  const FADE_AT = 2.6;
+  const FADE_END = 3.5;
+  // Past this, the sleeve is fully faded. Skip painting it.
+  const RENDER_REACH = 3.6;
   let stride = 1.06;
-  let pack = 0.18;
 
   // Direction lock. Until the finger has moved LOCK_PX, the gesture is undecided.
   // A tie at the very start can be vertical. A thumb arcs, so a flick that is
@@ -56,7 +73,9 @@
   let index = 0;
   let shown = 0;
   let coverWidth = 0;
-  let zBack = 76;
+  let arcRadius = 0;
+  let lipPx = 0;
+  let zBiasPx = 0;
   let spin = null;
   const recentPicks = [];
   const primedImages = new WeakSet();
@@ -446,23 +465,43 @@
   function measure() {
     coverWidth = buttons[0].closest(".flow-cover").offsetWidth || coverWidth;
     const narrow = stage.clientWidth < 620;
-    tilt = narrow ? 70 : 68;
     stride = narrow ? 0.9 : 1.06;
-    pack = narrow ? 0.16 : 0.18;
-    zBack = narrow ? 118 : 76;
+    arcRadius = coverWidth * ARC_RATIO;
+    lipPx = coverWidth * LIP;
+    zBiasPx = coverWidth * Z_BIAS;
   }
 
+  // x is the overlapping stack: 0.55 sleeve-widths to the first neighbour,
+  // then 0.22. z is the shallow ellipse, pulled back by the inward tilt so
+  // the inner edge stays behind the sleeve in front. rot is that tilt:
+  // positive rotateY on the right sends that cover's right edge back, and
+  // the mirror of that on the left. It is 0 at delta 0 and smooth through
+  // the centre, so a drag, flick, or shuffle never snaps the angle.
   function place(delta) {
     const distance = Math.abs(delta);
+    const absTheta = distance * ARC_STEP;
     const sign = delta < 0 ? -1 : delta > 0 ? 1 : 0;
+    const scale = Math.pow(ARC_SCALE, distance);
+    const half = (coverWidth * scale) / 2;
     const x =
       distance <= 1
-        ? delta * coverWidth * stride
-        : sign * coverWidth * (stride + (distance - 1) * pack);
-    const rot = -sign * tilt * Math.min(distance, 1);
-    const z = distance <= 1 ? 36 - distance * (zBack + 36) : -zBack - Math.min(distance - 1, 14) * 4;
-    const opacity = distance > 18 ? 0 : distance > 15 ? 1 - (distance - 15) / 3 : 1;
-    return { x, rot, z, opacity };
+        ? delta * coverWidth * STEP
+        : sign * coverWidth * (STEP + (distance - 1) * PACK);
+    const zCircle = (Math.cos(absTheta) - 1) * arcRadius * Z_SCALE;
+    const tilt = TILT_MAX * (1 - Math.exp(-distance * TILT_K));
+    const rot = delta < 0 ? -tilt : delta > 0 ? tilt : 0;
+    const poke = half * Math.sin((tilt * Math.PI) / 180);
+    const lip = lipPx * (1 - Math.exp(-distance * LIP_K));
+    const z = zCircle - poke * POKE_K - lip - distance * zBiasPx;
+    let shade = Math.min(0.48, distance * 0.12);
+    if (distance > FADE_AT) {
+      const t = Math.min(1, (distance - FADE_AT) / (FADE_END - FADE_AT));
+      shade += (1 - shade) * t;
+    }
+    // The floor reflection reads on the centred sleeve. On the curve it
+    // tilts into the neighbours, so it is gone within one step.
+    const reflect = distance >= 0.85 ? 0 : 1 - distance / 0.85;
+    return { x, z, rot, scale, shade, reflect, distance };
   }
 
   // Pulling past either end shortens the travel, and it never goes past RUBBER_LIMIT.
@@ -491,12 +530,32 @@
     const hold = phase === "drag" || phase === "coast" || phase === "spring" || phase === "wheel" || phase === "spin";
     buttons.forEach((button, item) => {
       const cover = button.closest(".flow-cover");
-      const spot = place(item - index);
+      const delta = item - index;
+      const distance = Math.abs(delta);
+      // Only the sleeves on the near arc are drawn. The rest of the crate
+      // stays in the list for the keyboard and the caption, but it is not painted.
+      if (distance > RENDER_REACH) {
+        if (!cover.classList.contains("is-culled")) {
+          cover.classList.add("is-culled");
+          cover.style.pointerEvents = "none";
+        }
+        return;
+      }
+      const spot = place(delta);
+      if (cover.classList.contains("is-culled")) cover.classList.remove("is-culled");
       if (hold) cover.style.transition = "none";
-      cover.style.transform = `translate3d(${Math.round(spot.x)}px, 0, ${Math.round(spot.z)}px) rotateY(${spot.rot.toFixed(2)}deg)`;
-      cover.style.zIndex = String(1000 - Math.round(Math.abs(item - index) * 10));
-      cover.style.opacity = spot.opacity < 1 ? spot.opacity.toFixed(3) : "";
-      cover.style.pointerEvents = spot.opacity === 0 ? "none" : "";
+      // One transform, depth ordered the same way as z-index. Sub-pixel x/z
+      // avoids a one-pixel pop when two faces pass, which WebKit otherwise
+      // paints as a flicker. Opacity stays at 1 so a faded sleeve cannot
+      // flatten and jump in front of the one nearer the viewer.
+      cover.style.transform = `translate3d(${spot.x.toFixed(2)}px, 0, ${spot.z.toFixed(2)}px) rotateY(${spot.rot.toFixed(2)}deg) scale(${spot.scale.toFixed(4)})`;
+      // Finer than the depth sort: the nearer sleeve stays painted above the
+      // next one even while a drag swings their inner edges toward the viewer.
+      cover.style.zIndex = String(5000 - Math.round(distance * 1000));
+      cover.style.setProperty("--shade", spot.shade.toFixed(3));
+      cover.style.setProperty("--reflect", spot.reflect.toFixed(3));
+      cover.style.opacity = "";
+      cover.style.pointerEvents = spot.shade > 0.97 ? "none" : "";
     });
     syncCaption(clamp(Math.round(index)));
   }

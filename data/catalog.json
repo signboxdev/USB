@@ -2,6 +2,22 @@
   "version": 1,
   "entries": [
     {
+      "id": "set-adrift-on-memory-bliss",
+      "type": "track",
+      "title": "Set Adrift On Memory Bliss",
+      "artist": "P.M. Dawn",
+      "album": "Of the Heart, of the Soul and of the Cross: The Utopian Experience",
+      "posted_by": "Dallas",
+      "posted_at": "2026-10-18T22:49:09-04:00",
+      "source_service": "spotify",
+      "source_url": "https://open.spotify.com/track/7vo0ILIm1He4wo30ikYBHh",
+      "spotify_url": "https://open.spotify.com/track/7vo0ILIm1He4wo30ikYBHh",
+      "apple_music_url": "https://music.apple.com/ca/album/set-adrift-on-memory-bliss/1737857883?i=1737858438",
+      "match_status": "matched",
+      "artwork_url": "https://is1-ssl.mzstatic.com/image/thumb/Music221/v4/e6/ce/f0/e6cef0c0-284e-461e-2a52-c3a3f2fb38d4/23137.jpg/600x600bb.jpg",
+      "notes": null
+    },
+    {
       "id": "2c8b4128-49a8-4d4a-b769-147da3058d2d",
       "type": "track",
       "title": "Lost My Brain",

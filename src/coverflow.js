@@ -9,22 +9,24 @@
   const live = root.querySelector("#flow-live");
   if (!stage || buttons.length === 0) return;
 
-  // Shallow ring, tight row. Depth is the wide ellipse: a large radius with
-  // Z_SCALE compressing it, so each step falls back only a little. Horizontal
-  // spacing is the original flat row — the first neighbour sits `stride`
-  // cover-widths over, and each one after that only `pack` — so the sleeves
-  // stay close and overlap slightly. A cover off centre turns inward, outer
-  // edge back, and that turn eases to 0 at the centre. `lip` and `poke` keep
-  // the nearer face in front, because the inner edge of an inward tilt swings
-  // toward the viewer. Stride is also the drag scale and is unchanged.
+  // Overlapping stack on the shallow ring, the same ratios on every screen.
+  // The first neighbour sits 0.55 sleeve-widths over and each one after that
+  // only 0.22, so the centre covers its neighbour and each neighbour covers
+  // the next. Depth is still the wide ellipse. A cover off centre turns
+  // inward — outer edge back — to 40° at the first step and about 45° further
+  // out, easing to 0 at the centre. The inner edge of that turn swings toward
+  // the viewer, so `poke` sets it back onto the curve. Stride is only the
+  // drag scale and does not set the visual gap.
   const ARC_STEP = (36 * Math.PI) / 180;
   const ARC_RATIO = 1.58;
   const Z_SCALE = 0.3;
   const ARC_SCALE = 0.84;
-  const TILT_MAX = 18.7;
-  const TILT_K = 1.5;
-  const POKE_K = 1.05;
-  const LIP = 0.06;
+  const STEP = 0.55;
+  const PACK = 0.22;
+  const TILT_MAX = 45;
+  const TILT_K = Math.log(9);
+  const POKE_K = 1;
+  const LIP = 0.04;
   const LIP_K = 1.4;
   const Z_BIAS = 0.02;
   const FADE_AT = 2.6;
@@ -32,7 +34,6 @@
   // Past this, the sleeve is fully faded. Skip painting it.
   const RENDER_REACH = 3.6;
   let stride = 1.06;
-  let pack = 0.18;
 
   // Direction lock. Until the finger has moved LOCK_PX, the gesture is undecided.
   // A tie at the very start can be vertical. A thumb arcs, so a flick that is
@@ -465,16 +466,17 @@
     coverWidth = buttons[0].closest(".flow-cover").offsetWidth || coverWidth;
     const narrow = stage.clientWidth < 620;
     stride = narrow ? 0.9 : 1.06;
-    pack = narrow ? 0.16 : 0.18;
     arcRadius = coverWidth * ARC_RATIO;
     lipPx = coverWidth * LIP;
     zBiasPx = coverWidth * Z_BIAS;
   }
 
-  // x is the original flat-row spacing. z is the shallow ellipse. rot is the
-  // inward tilt: positive rotateY on the right sends that cover's right edge
-  // back, and the mirror of that on the left. It is 0 at delta 0 and smooth
-  // through the centre, so a drag, flick, or shuffle never snaps the angle.
+  // x is the overlapping stack: 0.55 sleeve-widths to the first neighbour,
+  // then 0.22. z is the shallow ellipse, pulled back by the inward tilt so
+  // the inner edge stays behind the sleeve in front. rot is that tilt:
+  // positive rotateY on the right sends that cover's right edge back, and
+  // the mirror of that on the left. It is 0 at delta 0 and smooth through
+  // the centre, so a drag, flick, or shuffle never snaps the angle.
   function place(delta) {
     const distance = Math.abs(delta);
     const absTheta = distance * ARC_STEP;
@@ -483,8 +485,8 @@
     const half = (coverWidth * scale) / 2;
     const x =
       distance <= 1
-        ? delta * coverWidth * stride
-        : sign * coverWidth * (stride + (distance - 1) * pack);
+        ? delta * coverWidth * STEP
+        : sign * coverWidth * (STEP + (distance - 1) * PACK);
     const zCircle = (Math.cos(absTheta) - 1) * arcRadius * Z_SCALE;
     const tilt = TILT_MAX * (1 - Math.exp(-distance * TILT_K));
     const rot = delta < 0 ? -tilt : delta > 0 ? tilt : 0;
@@ -547,7 +549,9 @@
       // paints as a flicker. Opacity stays at 1 so a faded sleeve cannot
       // flatten and jump in front of the one nearer the viewer.
       cover.style.transform = `translate3d(${spot.x.toFixed(2)}px, 0, ${spot.z.toFixed(2)}px) rotateY(${spot.rot.toFixed(2)}deg) scale(${spot.scale.toFixed(4)})`;
-      cover.style.zIndex = String(5000 - Math.round(distance * 100));
+      // Finer than the depth sort: the nearer sleeve stays painted above the
+      // next one even while a drag swings their inner edges toward the viewer.
+      cover.style.zIndex = String(5000 - Math.round(distance * 1000));
       cover.style.setProperty("--shade", spot.shade.toFixed(3));
       cover.style.setProperty("--reflect", spot.reflect.toFixed(3));
       cover.style.opacity = "";

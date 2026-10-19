@@ -9,27 +9,29 @@
   const live = root.querySelector("#flow-live");
   if (!stage || buttons.length === 0) return;
 
-  // Ring. Sleeves sit on a large circle in the horizontal plane, seen from the
-  // front. The centred cover is the near point. Each step is ARC_STEP radians
-  // around a radius of ARC_RATIO sleeve-widths, so the turn stays shallow:
-  // about three covers a side on a phone, and a fourth on a wider column,
-  // before the sleeve fades into the black. Rotation matches the tangent, so
-  // a cover faces the centre of the ring. A pure circle is almost flat near
-  // the front, and a full-size sleeve would cut through its neighbour; `lip`
-  // and `zBias` ease every cover back by just enough that the nearer face
-  // stays in front through a drag. Stride is only the drag scale and is
-  // unchanged from the flat row.
-  const ARC_STEP = (12 * Math.PI) / 180;
-  const ARC_RATIO = 2.25;
+  // Shallow ring. Sleeves sit on a wide ellipse seen from the front. The
+  // radius is large and Z_SCALE compresses the circle's depth, so each step
+  // falls back only a little and the side covers stay close. A cover off
+  // centre turns slightly — outer edge back, angling in toward the middle —
+  // and that turn eases to 0 as the cover reaches the centre. Past about 80°
+  // the ellipse's x folds back, so sleeves fade out while x is still
+  // increasing. `lip` and `poke` keep the nearer face in front: an inward
+  // tilt swings the inner edge toward the viewer. Stride is only the drag
+  // scale and is unchanged from the flat row.
+  const ARC_STEP = (36 * Math.PI) / 180;
+  const ARC_RATIO = 1.58;
+  const Z_SCALE = 0.3;
   const ARC_SCALE = 0.84;
-  const POKE_K = 1.35;
-  const LIP = 0.5;
-  const LIP_K = 2.6;
-  const Z_BIAS = 0.1;
-  const FADE_AT = 3.15;
-  const FADE_END = 4.35;
+  const TILT_MAX = 17;
+  const TILT_K = 1.5;
+  const POKE_K = 1.1;
+  const LIP = 0.045;
+  const LIP_K = 2.4;
+  const Z_BIAS = 0.018;
+  const FADE_AT = 1.85;
+  const FADE_END = 2.25;
   // Past this, the sleeve is fully faded. Skip painting it.
-  const RENDER_REACH = 4.8;
+  const RENDER_REACH = 2.4;
   let stride = 1.06;
 
   // Direction lock. Until the finger has moved LOCK_PX, the gesture is undecided.
@@ -468,10 +470,10 @@
     zBiasPx = coverWidth * Z_BIAS;
   }
 
-  // theta is signed. x/z are the circle, then the sleeve is rotated to sit
-  // tangent to it. The outer edge of a rotated sleeve swings toward the
-  // viewer; pulling back by that poke, plus a short lip, keeps the planes
-  // from crossing.
+  // x/z are the ellipse. rot is the inward tilt: positive rotateY on the
+  // right sends that cover's right edge back, and the mirror of that on the
+  // left. It is 0 at delta 0 and smooth through the centre, so a drag, flick,
+  // or shuffle never snaps the angle.
   function place(delta) {
     const distance = Math.abs(delta);
     const theta = delta * ARC_STEP;
@@ -479,11 +481,12 @@
     const scale = Math.pow(ARC_SCALE, distance);
     const half = (coverWidth * scale) / 2;
     const x = Math.sin(theta) * arcRadius;
-    const zCircle = (Math.cos(absTheta) - 1) * arcRadius;
-    const poke = half * Math.sin(absTheta);
+    const zCircle = (Math.cos(absTheta) - 1) * arcRadius * Z_SCALE;
+    const tilt = TILT_MAX * (1 - Math.exp(-distance * TILT_K));
+    const rot = delta < 0 ? -tilt : delta > 0 ? tilt : 0;
+    const poke = half * Math.sin((tilt * Math.PI) / 180);
     const lip = lipPx * (1 - Math.exp(-distance * LIP_K));
     const z = zCircle - poke * POKE_K - lip - distance * zBiasPx;
-    const rot = (-theta * 180) / Math.PI;
     let shade = Math.min(0.48, distance * 0.12);
     if (distance > FADE_AT) {
       const t = Math.min(1, (distance - FADE_AT) / (FADE_END - FADE_AT));

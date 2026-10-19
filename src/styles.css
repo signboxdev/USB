@@ -252,11 +252,11 @@ body {
   -webkit-transform-style: preserve-3d;
 }
 
-/* Before script: the same shallow ring the painter uses. 36° along a wide
-   ellipse, depth compressed, a slight inward tilt so the outer edge sits
-   back. translate percentages are of the sleeve, and the depth is a multiple
-   of --cover, so one set fits the phone and the wide column. Sleeves past
-   the near arc stay hidden until the painter places them. */
+/* Before script: the same tight shallow row the painter uses. First neighbour
+   at 1.06 sleeve-widths, then 0.18, depth compressed, inward tilt so the
+   outer edge sits back. Narrow screens use 0.90 then 0.16. translate
+   percentages are of the sleeve, and the depth is a multiple of --cover.
+   Sleeves past the near row stay hidden until the painter places them. */
 .flow-cover:nth-child(1) {
   z-index: 200;
   --shade: 0;
@@ -268,18 +268,39 @@ body {
   z-index: 180;
   --shade: 0.12;
   --reflect: 0;
-  transform: translate3d(92.87%, 0, calc(var(--cover) * -0.255)) rotateY(13.21deg) scale(0.84);
+  transform: translate3d(106%, 0, calc(var(--cover) * -0.266)) rotateY(14.53deg) scale(0.84);
 }
 
 .flow-cover:nth-child(3) {
   z-index: 160;
-  --shade: 0.525;
+  --shade: 0.24;
   --reflect: 0;
-  transform: translate3d(150.27%, 0, calc(var(--cover) * -0.516)) rotateY(16.15deg) scale(0.706);
+  transform: translate3d(124%, 0, calc(var(--cover) * -0.537)) rotateY(17.77deg) scale(0.706);
 }
 
-.flow:not(.is-ready) .flow-cover:nth-child(n + 4) {
+.flow-cover:nth-child(4) {
+  z-index: 140;
+  --shade: 0.644;
+  --reflect: 0;
+  transform: translate3d(142%, 0, calc(var(--cover) * -0.838)) rotateY(18.49deg) scale(0.593);
+}
+
+.flow:not(.is-ready) .flow-cover:nth-child(n + 5) {
   visibility: hidden;
+}
+
+@media (max-width: 619px) {
+  .flow-cover:nth-child(2) {
+    transform: translate3d(90%, 0, calc(var(--cover) * -0.266)) rotateY(14.53deg) scale(0.84);
+  }
+
+  .flow-cover:nth-child(3) {
+    transform: translate3d(106%, 0, calc(var(--cover) * -0.537)) rotateY(17.77deg) scale(0.706);
+  }
+
+  .flow-cover:nth-child(4) {
+    transform: translate3d(122%, 0, calc(var(--cover) * -0.838)) rotateY(18.49deg) scale(0.593);
+  }
 }
 
 .flow.is-ready:not(.is-dragging):not(.is-gliding):not(.is-instant) .flow-cover {

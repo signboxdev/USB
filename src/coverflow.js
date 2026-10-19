@@ -9,30 +9,30 @@
   const live = root.querySelector("#flow-live");
   if (!stage || buttons.length === 0) return;
 
-  // Shallow ring. Sleeves sit on a wide ellipse seen from the front. The
-  // radius is large and Z_SCALE compresses the circle's depth, so each step
-  // falls back only a little and the side covers stay close. A cover off
-  // centre turns slightly — outer edge back, angling in toward the middle —
-  // and that turn eases to 0 as the cover reaches the centre. Past about 80°
-  // the ellipse's x folds back, so sleeves fade out while x is still
-  // increasing. `lip` and `poke` keep the nearer face in front: an inward
-  // tilt swings the inner edge toward the viewer. Stride is only the drag
-  // scale and is unchanged from the flat row.
+  // Shallow ring, tight row. Depth is the wide ellipse: a large radius with
+  // Z_SCALE compressing it, so each step falls back only a little. Horizontal
+  // spacing is the original flat row — the first neighbour sits `stride`
+  // cover-widths over, and each one after that only `pack` — so the sleeves
+  // stay close and overlap slightly. A cover off centre turns inward, outer
+  // edge back, and that turn eases to 0 at the centre. `lip` and `poke` keep
+  // the nearer face in front, because the inner edge of an inward tilt swings
+  // toward the viewer. Stride is also the drag scale and is unchanged.
   const ARC_STEP = (36 * Math.PI) / 180;
   const ARC_RATIO = 1.58;
   const Z_SCALE = 0.3;
   const ARC_SCALE = 0.84;
-  const TILT_MAX = 17;
+  const TILT_MAX = 18.7;
   const TILT_K = 1.5;
-  const POKE_K = 1.1;
-  const LIP = 0.045;
-  const LIP_K = 2.4;
-  const Z_BIAS = 0.018;
-  const FADE_AT = 1.85;
-  const FADE_END = 2.25;
+  const POKE_K = 1.05;
+  const LIP = 0.06;
+  const LIP_K = 1.4;
+  const Z_BIAS = 0.02;
+  const FADE_AT = 2.6;
+  const FADE_END = 3.5;
   // Past this, the sleeve is fully faded. Skip painting it.
-  const RENDER_REACH = 2.4;
+  const RENDER_REACH = 3.6;
   let stride = 1.06;
+  let pack = 0.18;
 
   // Direction lock. Until the finger has moved LOCK_PX, the gesture is undecided.
   // A tie at the very start can be vertical. A thumb arcs, so a flick that is
@@ -465,22 +465,26 @@
     coverWidth = buttons[0].closest(".flow-cover").offsetWidth || coverWidth;
     const narrow = stage.clientWidth < 620;
     stride = narrow ? 0.9 : 1.06;
+    pack = narrow ? 0.16 : 0.18;
     arcRadius = coverWidth * ARC_RATIO;
     lipPx = coverWidth * LIP;
     zBiasPx = coverWidth * Z_BIAS;
   }
 
-  // x/z are the ellipse. rot is the inward tilt: positive rotateY on the
-  // right sends that cover's right edge back, and the mirror of that on the
-  // left. It is 0 at delta 0 and smooth through the centre, so a drag, flick,
-  // or shuffle never snaps the angle.
+  // x is the original flat-row spacing. z is the shallow ellipse. rot is the
+  // inward tilt: positive rotateY on the right sends that cover's right edge
+  // back, and the mirror of that on the left. It is 0 at delta 0 and smooth
+  // through the centre, so a drag, flick, or shuffle never snaps the angle.
   function place(delta) {
     const distance = Math.abs(delta);
-    const theta = delta * ARC_STEP;
-    const absTheta = Math.abs(theta);
+    const absTheta = distance * ARC_STEP;
+    const sign = delta < 0 ? -1 : delta > 0 ? 1 : 0;
     const scale = Math.pow(ARC_SCALE, distance);
     const half = (coverWidth * scale) / 2;
-    const x = Math.sin(theta) * arcRadius;
+    const x =
+      distance <= 1
+        ? delta * coverWidth * stride
+        : sign * coverWidth * (stride + (distance - 1) * pack);
     const zCircle = (Math.cos(absTheta) - 1) * arcRadius * Z_SCALE;
     const tilt = TILT_MAX * (1 - Math.exp(-distance * TILT_K));
     const rot = delta < 0 ? -tilt : delta > 0 ? tilt : 0;

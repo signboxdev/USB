@@ -184,16 +184,11 @@ body {
 .flow-stage {
   position: relative;
   height: calc(var(--cover) * 1.44 + 18px);
-  /* Perspective scales with the sleeve so the ring reads the same on a phone
-     and in the desktop column. The origin sits on the artwork, above the
-     reflection, so receding covers shrink toward the sleeve and not upward
-     into the crate count. */
-  perspective: calc(var(--cover) * 7.6);
-  -webkit-perspective: calc(var(--cover) * 7.6);
-  perspective-origin: 50% 36%;
-  -webkit-perspective-origin: 50% 36%;
-  transform-style: preserve-3d;
-  -webkit-transform-style: preserve-3d;
+  /* No shared perspective. Each sleeve carries perspective() on its own
+     transform, so a tilted neighbour is a flat layer and cannot cut through
+     the one in front. The stage stays flat for the same reason. */
+  transform-style: flat;
+  -webkit-transform-style: flat;
   cursor: grab;
 }
 
@@ -214,10 +209,10 @@ body {
   inset: 0;
   margin: 0;
   padding: 0;
-  /* One layer per sleeve, ordered by z-index. A shared 3D context puts a
-     recessed sleeve behind this list, so a tap on the part that sticks out
-     misses, and tilted faces can cut through each other in WebKit. The
-     stage perspective still turns each sleeve. */
+  /* Flat grouping layer. z-index, not translateZ, decides which sleeve is
+     in front, and a transform here stops WebKit promoting the children into
+     an ancestor 3D context. */
+  transform: translate3d(0, 0, 0);
   transform-style: flat;
   -webkit-transform-style: flat;
 }
@@ -227,11 +222,12 @@ body {
   top: 8px;
   left: 50%;
   width: var(--cover);
+  height: var(--cover);
   margin-left: calc(var(--cover) / -2);
-  /* Pivot on the artwork, not the artwork-plus-reflection box, so the sleeve
-     itself sits on the ring. */
-  transform-origin: 50% calc(var(--cover) / 2);
-  transform: translate3d(0, 0, 0) rotateY(0deg) scale(1);
+  /* The box is the artwork, so perspective() turns around the sleeve and
+     not the reflection hanging below it. */
+  transform-origin: 50% 50%;
+  transform: perspective(calc(var(--cover) * 7.6)) translate3d(0, 0, 0) rotateY(0deg) scale(1);
   transform-style: preserve-3d;
   -webkit-transform-style: preserve-3d;
   --shade: 0;
@@ -258,35 +254,36 @@ body {
 
 /* Before script: the same overlapping stack the painter uses, on every
    screen. First neighbour at 0.55 sleeve-widths, then 0.22, shallow depth,
-   inward tilt so the outer edge sits back (40° then about 45°). translate
-   percentages are of the sleeve, and the depth is a multiple of --cover.
-   Sleeves past the near row stay hidden until the painter places them. */
+   inward tilt so the outer edge sits back (40° then about 45°). Perspective
+   is per sleeve. translate percentages are of the sleeve, and the depth is
+   a multiple of --cover. Sleeves past the near row stay hidden until the
+   painter places them. */
 .flow-cover:nth-child(1) {
   z-index: 200;
   --shade: 0;
   --reflect: 1;
-  transform: translate3d(0, 0, 0) rotateY(0deg) scale(1);
+  transform: perspective(calc(var(--cover) * 7.6)) translate3d(0, 0, 0) rotateY(0deg) scale(1);
 }
 
 .flow-cover:nth-child(2) {
   z-index: 180;
   --shade: 0.12;
   --reflect: 0;
-  transform: translate3d(55%, 0, calc(var(--cover) * -0.411)) rotateY(40deg) scale(0.84);
+  transform: perspective(calc(var(--cover) * 7.6)) translate3d(calc(var(--cover) * 0.5218), 0, 0) rotateY(40deg) scale(0.7969);
 }
 
 .flow-cover:nth-child(3) {
   z-index: 160;
   --shade: 0.24;
   --reflect: 0;
-  transform: translate3d(77%, 0, calc(var(--cover) * -0.652)) rotateY(44.44deg) scale(0.7056);
+  transform: perspective(calc(var(--cover) * 7.6)) translate3d(calc(var(--cover) * 0.7092), 0, 0) rotateY(44.44deg) scale(0.6498);
 }
 
 .flow-cover:nth-child(4) {
   z-index: 140;
   --shade: 0.644;
   --reflect: 0;
-  transform: translate3d(99%, 0, calc(var(--cover) * -0.929)) rotateY(44.94deg) scale(0.5927);
+  transform: perspective(calc(var(--cover) * 7.6)) translate3d(calc(var(--cover) * 0.8821), 0, 0) rotateY(44.94deg) scale(0.5281);
 }
 
 .flow:not(.is-ready) .flow-cover:nth-child(n + 5) {
@@ -390,10 +387,12 @@ body {
 }
 
 .flow-reflect {
-  position: relative;
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: calc(var(--cover) + 5px);
   display: block;
   height: calc(var(--cover) * 0.4);
-  margin-top: 5px;
   overflow: hidden;
   pointer-events: none;
   opacity: var(--reflect, 1);

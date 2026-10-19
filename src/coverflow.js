@@ -15,8 +15,11 @@
   // the next. Depth is still the wide ellipse. A cover off centre turns
   // inward — outer edge back — to 40° at the first step and about 45° further
   // out, easing to 0 at the centre. The inner edge of that turn swings toward
-  // the viewer, so `poke` sets it back onto the curve. Stride is only the
+  // the viewer, so `poke` sets it back onto the curve. Each sleeve carries
+  // its own perspective(), and the list is flat, so neighbouring planes are
+  // never in one 3D space and cannot clip each other. Stride is only the
   // drag scale and does not set the visual gap.
+  const PERSPECTIVE = 7.6;
   const ARC_STEP = (36 * Math.PI) / 180;
   const ARC_RATIO = 1.58;
   const Z_SCALE = 0.3;
@@ -544,13 +547,18 @@
       const spot = place(delta);
       if (cover.classList.contains("is-culled")) cover.classList.remove("is-culled");
       if (hold) cover.style.transition = "none";
-      // One transform, depth ordered the same way as z-index. Sub-pixel x/z
-      // avoids a one-pixel pop when two faces pass, which WebKit otherwise
-      // paints as a flicker. Opacity stays at 1 so a faded sleeve cannot
-      // flatten and jump in front of the one nearer the viewer.
-      cover.style.transform = `translate3d(${spot.x.toFixed(2)}px, 0, ${spot.z.toFixed(2)}px) rotateY(${spot.rot.toFixed(2)}deg) scale(${spot.scale.toFixed(4)})`;
-      // Finer than the depth sort: the nearer sleeve stays painted above the
-      // next one even while a drag swings their inner edges toward the viewer.
+      // Project this sleeve on its own. k is the old shared-perspective
+      // shrink, baked into x and scale, and perspective() only turns this
+      // one face. Nothing is left in a shared z, so a neighbour cannot cut
+      // through the sleeve in front. Opacity stays at 1 so a faded sleeve
+      // cannot flatten and jump forward.
+      const depth = coverWidth * PERSPECTIVE;
+      const k = depth / (depth - spot.z);
+      const x = spot.x * k;
+      const scale = spot.scale * k;
+      cover.style.transform = `perspective(${depth.toFixed(2)}px) translate3d(${x.toFixed(2)}px, 0, 0) rotateY(${spot.rot.toFixed(2)}deg) scale(${scale.toFixed(4)})`;
+      // Nearer sleeve on top. The index follows the fractional distance, so
+      // the two covers swap exactly at the half-step and not on a settle.
       cover.style.zIndex = String(5000 - Math.round(distance * 1000));
       cover.style.setProperty("--shade", spot.shade.toFixed(3));
       cover.style.setProperty("--reflect", spot.reflect.toFixed(3));

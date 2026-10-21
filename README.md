@@ -60,9 +60,9 @@ The three shipped entries are fake. Each has `"notes": "example"`, and the page 
 | `album` | string or null | Album title. Use null when there isn't one. An album entry may leave this null; the card then uses the title as the album name. A track or playlist with null shows "not listed". |
 | `posted_by` | string | Who sent it in the chat. |
 | `posted_at` | string | ISO 8601 datetime with a numeric offset or `Z`. |
-| `source_service` | `spotify` \| `apple_music` | Which service the chat link used. |
-| `source_url` | https URL | The link that was posted. Spotify links are `https://open.spotify.com/...`. Apple Music links are `https://music.apple.com/...`. |
-| `spotify_url` | URL or null | Same recording on Spotify, or null if that side is missing. |
+| `source_service` | `spotify` \| `apple_music` \| `youtube` | Which service the chat link used. |
+| `source_url` | https URL | The link that was posted. Spotify links are `https://open.spotify.com/...` or a `https://spotify.link/...` short link. Apple Music links are `https://music.apple.com/...`. YouTube links are `https://www.youtube.com/...`. |
+| `spotify_url` | URL or null | Same recording on Spotify (`open.spotify.com` or `spotify.link`), or null if that side is missing. |
 | `apple_music_url` | URL or null | Same recording on Apple Music, or null if that side is missing. |
 | `match_status` | `matched` \| `unmatched` \| `source_only` | See below. |
 | `artwork_url` | https URL or null | Optional art. Null draws a monogram sleeve and makes no extra request. |
@@ -76,7 +76,7 @@ The three shipped entries are fake. Each has `"notes": "example"`, and the page 
 
 `match_status` stays in the catalog. The public page does not print matched, unmatched, or source only.
 
-The URL for `source_service` is always required. A Spotify post cannot have `spotify_url: null`.
+The URL for `source_service` is always required. A Spotify post cannot have `spotify_url: null`. A YouTube post keeps the watch link in `source_url` and shows only the Spotify and Apple Music buttons that are set. The page never renders a YouTube button.
 
 `npm run validate` checks `data/catalog.json` against the schema and rejects duplicate ids. `npm run build` runs that check before it writes `dist/`. A failed check leaves the previous `dist/` in place.
 

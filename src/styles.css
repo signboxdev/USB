@@ -472,6 +472,10 @@ body {
   pointer-events: none;
 }
 
+.flow-back-art:not([src]) {
+  display: none;
+}
+
 .flow-cover.is-showing-back .flow-back-art {
   filter: blur(14px) saturate(0.65);
 }
@@ -571,6 +575,10 @@ body {
 
 .flow-back-services li {
   flex: none;
+}
+
+.flow-back-services li[hidden] {
+  display: none;
 }
 
 .flow-stage .flow-back a {
@@ -755,6 +763,10 @@ body {
   display: block;
 }
 
+.thumb img[hidden] {
+  display: none;
+}
+
 .copy {
   min-width: 0;
   flex: 1;
@@ -837,6 +849,10 @@ h2 {
 .services li {
   flex: none;
   min-width: 0;
+}
+
+.services li[hidden] {
+  display: none;
 }
 
 .icon-btn {

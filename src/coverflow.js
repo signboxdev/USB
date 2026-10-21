@@ -1,4 +1,101 @@
 (function () {
+  // Desktop apps. Phones and tablets keep the plain https href: iOS and Android
+  // already open Spotify and Apple Music through universal links. A primary
+  // click elsewhere tries the app, then the web URL if the page is still here
+  // after a second. Middle-click and modified clicks use the href as written.
+  const APP_OPEN_MS = 1000;
+  const SPOTIFY_TYPES = { track: 1, album: 1, playlist: 1, artist: 1, episode: 1, show: 1 };
+
+  function clientKind() {
+    const ua = navigator.userAgent || "";
+    const touchMac = navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1;
+    if (/Android|iPhone|iPad|iPod/i.test(ua) || touchMac) return "mobile";
+    if (/Macintosh|Mac OS X/i.test(ua)) return "mac";
+    return "desktop";
+  }
+
+  function spotifyAppUrl(href) {
+    let url;
+    try {
+      url = new URL(href);
+    } catch {
+      return "";
+    }
+    if (url.protocol !== "https:" || url.hostname !== "open.spotify.com") return "";
+    const parts = url.pathname.split("/").filter(Boolean);
+    if (parts[0] && /^intl-[a-z]{2}$/i.test(parts[0])) parts.shift();
+    if (parts.length < 2) return "";
+    const type = parts[0];
+    const id = parts[1];
+    if (!SPOTIFY_TYPES[type] || !/^[A-Za-z0-9]+$/.test(id)) return "";
+    return "spotify:" + type + ":" + id;
+  }
+
+  function appleAppUrl(href) {
+    let url;
+    try {
+      url = new URL(href);
+    } catch {
+      return "";
+    }
+    if (url.protocol !== "https:" || url.hostname !== "music.apple.com") return "";
+    return "music://" + url.host + url.pathname + url.search;
+  }
+
+  function appUrlFor(href) {
+    const kind = clientKind();
+    if (kind === "mobile") return "";
+    const spotify = spotifyAppUrl(href);
+    if (spotify) return spotify;
+    if (kind === "mac") return appleAppUrl(href);
+    return "";
+  }
+
+  let appAttempt = 0;
+
+  function openAppOrWeb(appUrl, webUrl) {
+    const token = ++appAttempt;
+    const page = window.location.href;
+    const started = performance.now();
+    let left = false;
+    // A custom-protocol attempt blurs the window even when no app is installed
+    // and the page stays visible. Visibility, pagehide, or a timer that was
+    // delayed because the page went to the background means the app took over.
+    const markLeft = () => {
+      if (document.hidden || document.visibilityState === "hidden") left = true;
+    };
+    const onPageHide = () => {
+      left = true;
+    };
+    document.addEventListener("visibilitychange", markLeft);
+    window.addEventListener("pagehide", onPageHide);
+    window.addEventListener("blur", markLeft);
+    window.setTimeout(() => {
+      document.removeEventListener("visibilitychange", markLeft);
+      window.removeEventListener("pagehide", onPageHide);
+      window.removeEventListener("blur", markLeft);
+      if (token !== appAttempt || left) return;
+      if (window.location.href !== page) return;
+      if (document.hidden || document.visibilityState === "hidden") return;
+      const elapsed = performance.now() - started;
+      if (elapsed > APP_OPEN_MS + 500 && !document.hasFocus()) return;
+      window.location.assign(webUrl);
+    }, APP_OPEN_MS);
+    window.location.assign(appUrl);
+  }
+
+  document.addEventListener("click", (event) => {
+    if (event.defaultPrevented || event.button !== 0) return;
+    if (event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
+    const target = event.target;
+    const link = target && target.closest ? target.closest("a.icon-btn") : null;
+    if (!link || !link.getAttribute("href")) return;
+    const appUrl = appUrlFor(link.href);
+    if (!appUrl) return;
+    event.preventDefault();
+    openAppOrWeb(appUrl, link.href);
+  });
+
   const root = document.querySelector("[data-coverflow]");
   if (!root) return;
   if (root.hasAttribute("data-virtual")) {

@@ -1,13 +1,46 @@
 (function () {
   const root = document.querySelector("[data-coverflow]");
   if (!root) return;
+  if (root.hasAttribute("data-virtual")) {
+    const url = root.getAttribute("data-entries");
+    fetch(url, { credentials: "omit", mode: "cors" })
+      .then((res) => {
+        if (!res.ok) throw new Error("entries");
+        return res.json();
+      })
+      .then((data) => start(root, decodeEntries(data)))
+      .catch(() => start(root, null));
+    return;
+  }
+  start(root, null);
 
+  function decodeEntries(data) {
+    if (!data || !Array.isArray(data.entries)) throw new Error("entries");
+    return data.entries.map((row) => ({
+      id: row[0],
+      type: row[1],
+      title: row[2],
+      artist: row[3],
+      album: row[4] || null,
+      postedBy: row[5],
+      postedAt: row[6],
+      spotify: row[7] || null,
+      apple: row[8] || null,
+      art: row[9] || null,
+      number: String(row[10]),
+    }));
+  }
+
+  function start(root, virtualEntries) {
   const stage = root.querySelector(".flow-stage");
-  const buttons = [...root.querySelectorAll(".flow-select")];
+  const virtual = Array.isArray(virtualEntries) && virtualEntries.length > 0;
+  // A large crate keeps a holey list: only sleeves near the centre exist.
+  // forEach skips holes, and the index is still the catalog position.
+  let buttons = virtual ? new Array(virtualEntries.length) : [...root.querySelectorAll(".flow-select")];
   const panels = [...root.querySelectorAll(".flow-panel")];
   const randomBtn = document.querySelector(".flow-random");
   const live = root.querySelector("#flow-live");
-  if (!stage || buttons.length === 0) return;
+  if (!stage || (!virtual && buttons.length === 0)) return;
 
   // Overlapping stack on the shallow ring, the same ratios on every screen.
   // The first neighbour sits 0.55 sleeve-widths over and each one after that
@@ -62,7 +95,8 @@
   // iOS delivers touchend well after the last real move. A short gap is still a flick.
   const RELEASE_GAP = 180;
 
-  const maxIndex = buttons.length - 1;
+  let maxIndex = virtual ? virtualEntries.length - 1 : buttons.length - 1;
+  const mounted = new Set();
 
   // Random-track glide. Same rAF loop as coast/spring. Ease-out cubic
   // (Hermite with end velocity 0 and start slope 3) so a long trip is a fast
@@ -143,7 +177,9 @@
   }
 
   function backOf(item) {
-    return buttons[item].closest(".flow-cover").querySelector(".flow-back");
+    const button = buttons[item];
+    if (!button) return null;
+    return button.closest(".flow-cover").querySelector(".flow-back");
   }
 
   function warmBack(back) {
@@ -466,7 +502,17 @@
   }
 
   function measure() {
-    coverWidth = buttons[0].closest(".flow-cover").offsetWidth || coverWidth;
+    let probe = buttons[0];
+    if (!probe && virtual) {
+      for (const item of mounted) {
+        if (buttons[item]) {
+          probe = buttons[item];
+          break;
+        }
+      }
+    }
+    if (!probe) return;
+    coverWidth = probe.closest(".flow-cover").offsetWidth || coverWidth;
     const narrow = stage.clientWidth < 620;
     stride = narrow ? 0.9 : 1.06;
     arcRadius = coverWidth * ARC_RATIO;
@@ -517,6 +563,28 @@
   function syncCaption(active) {
     if (active === shown) return;
     shown = active;
+    if (virtual) {
+      const entry = virtualEntries[active];
+      const panel = panels[0];
+      if (panel && entry) {
+        panel.hidden = false;
+        const title = panel.querySelector(".flow-title");
+        const artist = panel.querySelector(".flow-artist");
+        if (title.textContent !== entry.title) title.textContent = entry.title;
+        if (artist.textContent !== entry.artist) artist.textContent = entry.artist;
+      }
+      for (const item of mounted) {
+        const button = buttons[item];
+        if (!button) continue;
+        if (item === active) button.setAttribute("aria-current", "true");
+        else button.removeAttribute("aria-current");
+      }
+      if (live && entry) {
+        const summary = entrySummary(entry);
+        if (live.textContent !== summary) live.textContent = summary;
+      }
+      return;
+    }
     panels.forEach((panel, item) => {
       panel.hidden = item !== active;
     });
@@ -529,6 +597,7 @@
   }
 
   function paint() {
+    syncMounts();
     if (!coverWidth) measure();
     const hold = phase === "drag" || phase === "coast" || phase === "spring" || phase === "wheel" || phase === "spin";
     buttons.forEach((button, item) => {
@@ -564,6 +633,7 @@
       cover.style.setProperty("--reflect", spot.reflect.toFixed(3));
       cover.style.opacity = "";
       cover.style.pointerEvents = spot.shade > 0.97 ? "none" : "";
+      if (virtual && wantsArt(item)) refreshArt(item, button);
     });
     syncCaption(clamp(Math.round(index)));
   }
@@ -658,6 +728,13 @@
   }
 
   function primeArtwork(from, to) {
+    if (virtual) {
+      const far = Math.abs(to - from) > 24;
+      const lo = far ? Math.round(to) - 2 : Math.floor(Math.min(from, to)) - 2;
+      const hi = far ? Math.round(to) + 2 : Math.ceil(Math.max(from, to)) + 2;
+      for (let item = lo; item <= hi; item += 1) warmEntry(item);
+      return;
+    }
     const lo = Math.max(0, Math.floor(Math.min(from, to)) - 2);
     const hi = Math.min(maxIndex, Math.ceil(Math.max(from, to)) + 2);
     for (let item = lo; item <= hi; item += 1) {
@@ -901,7 +978,9 @@
   function coverIndexAt(clientX, clientY) {
     let best = null;
     buttons.forEach((button, item) => {
-      const rect = button.closest(".flow-cover").getBoundingClientRect();
+      const cover = button.closest(".flow-cover");
+      if (cover.classList.contains("is-culled")) return;
+      const rect = cover.getBoundingClientRect();
       if (clientX < rect.left || clientX > rect.right || clientY < rect.top || clientY > rect.bottom) return;
       const distance = Math.abs(item - index);
       if (!best || distance < best.distance) best = { item, distance };
@@ -925,7 +1004,7 @@
     }
     goTo(dest);
     const active = document.activeElement;
-    if (active && stage.contains(active)) buttons[dest].focus();
+    if (active && stage.contains(active) && buttons[dest]) buttons[dest].focus();
   }
 
   let cancelTimer = 0;
@@ -1373,7 +1452,524 @@
     randomBtn.addEventListener("click", onRandom);
   }
 
+  const MOUNT_RADIUS = 8;
+  const MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+  const WEEKDAYS = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+  const NAME_ARTICLES = new Set(["the", "a", "an"]);
+  let coverProto = null;
+  let coversOl = null;
+  const ssrCovers = new Map();
+  const freeCovers = [];
+  let virtualReady = false;
+
+  function formatPostedAt(iso) {
+    const match = String(iso).match(
+      /^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2}):(\d{2})(Z|[+-]\d{2}:\d{2})$/,
+    );
+    if (!match) return String(iso);
+    const [, year, month, day, hourStr, minute] = match;
+    const weekday = WEEKDAYS[new Date(Date.UTC(Number(year), Number(month) - 1, Number(day))).getUTCDay()];
+    let hour = Number(hourStr);
+    const suffix = hour >= 12 ? "PM" : "AM";
+    hour = hour % 12 || 12;
+    return `${weekday}, ${MONTHS[Number(month) - 1]} ${Number(day)}, ${year} · ${hour}:${minute} ${suffix}`;
+  }
+
+  function formatFlipDate(iso) {
+    const match = String(iso).match(/^(\d{4})-(\d{2})-(\d{2})T/);
+    if (!match) return String(iso);
+    return `${MONTHS[Number(match[2]) - 1]} ${Number(match[3])}, ${match[1]}`;
+  }
+
+  function monogram(artist) {
+    const words = String(artist)
+      .split(/\s+/)
+      .map((word) => word.replace(/[^a-z0-9]/gi, ""))
+      .filter(Boolean);
+    const usable = words[0] && NAME_ARTICLES.has(words[0].toLowerCase()) ? words.slice(1) : words;
+    const pick = usable.length > 0 ? usable : words;
+    if (pick.length === 0) return "•";
+    const first = pick[0][0];
+    const second = pick.length > 1 ? pick[pick.length - 1][0] : pick[0][1] || "";
+    return (first + second).toUpperCase();
+  }
+
+  function posterSlug(name) {
+    return String(name)
+      .trim()
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/g, "");
+  }
+
+  function entrySummary(entry) {
+    return `${entry.title}, ${entry.artist}, posted by ${entry.postedBy}, ${formatPostedAt(entry.postedAt)}`;
+  }
+
+  function httpsOnly(url) {
+    return typeof url === "string" && url.startsWith("https://") ? url : "";
+  }
+
+  function warmEntry(item) {
+    const entry = virtualEntries[item];
+    const src = entry && httpsOnly(entry.art);
+    if (!src || warmedSrc.has(src)) return;
+    warmedSrc.add(src);
+    const warm = new Image();
+    warm.decoding = "async";
+    warm.src = src;
+    warmers.push(warm);
+  }
+
+  function wantsArt(item) {
+    const entry = virtualEntries[item];
+    if (!entry || !httpsOnly(entry.art)) return false;
+    // A long shuffle is a blur. Preload only the record it lands on.
+    // primeArtwork has already started that fetch.
+    if (spin && Math.abs(spin.to - spin.from) > 24) {
+      return Math.abs(item - spin.to) <= 2 && Math.abs(item - index) <= MOUNT_RADIUS;
+    }
+    // Sleeves past the visible arc stay mounted so a swipe has a node, but
+    // they do not fetch. RENDER_REACH is 3.6.
+    return Math.abs(item - index) <= 3.4;
+  }
+
+  function wantsBackArt(item) {
+    if (!virtualEntries[item] || !httpsOnly(virtualEntries[item].art)) return false;
+    if (flipped === item) return true;
+    if (spin && Math.abs(item - spin.to) <= 1 && Math.abs(index - spin.to) < 4) return true;
+    return Math.abs(item - index) < 0.5 && (!spin || Math.abs(spin.to - spin.from) <= 24);
+  }
+
+  function makeImg(src, lazy, priority) {
+    const img = document.createElement("img");
+    img.alt = "";
+    img.width = 600;
+    img.height = 600;
+    img.draggable = false;
+    img.decoding = "async";
+    if (lazy) img.loading = "lazy";
+    if (priority) img.setAttribute("fetchpriority", "high");
+    if (src) img.src = src;
+    return img;
+  }
+
+  function sleeveSrc(node) {
+    const img = node && node.querySelector("img");
+    return img ? img.getAttribute("src") || "" : "";
+  }
+
+  function ensureSleeve(sleeve, entry, item) {
+    if (!sleeve) return;
+    const art = httpsOnly(entry.art);
+    const show = Boolean(art) && wantsArt(item);
+    if (show) {
+      if (sleeveSrc(sleeve) === art && !sleeve.classList.contains("is-blank")) return;
+      sleeve.classList.remove("is-blank");
+      let img = sleeve.querySelector("img");
+      if (!img) {
+        sleeve.replaceChildren();
+        sleeve.appendChild(makeImg(art, Math.abs(item - index) >= 1.2, Math.abs(item - index) < 0.5));
+        return;
+      }
+      img.hidden = false;
+      img.loading = Math.abs(item - index) >= 1.2 ? "lazy" : "eager";
+      if (img.getAttribute("src") !== art) img.src = art;
+      return;
+    }
+    if (art && sleeveSrc(sleeve) === art) return;
+    if (!art) {
+      if (sleeve.classList.contains("is-blank") && sleeve.querySelector(".flow-mark")) return;
+      sleeve.classList.add("is-blank");
+      sleeve.replaceChildren();
+      const mark = document.createElement("span");
+      mark.className = "flow-mark";
+      mark.textContent = monogram(entry.artist);
+      sleeve.appendChild(mark);
+      return;
+    }
+    if (sleeve.classList.contains("is-blank") && !sleeve.querySelector("img")) return;
+    sleeve.classList.add("is-blank");
+    sleeve.replaceChildren();
+  }
+
+  function ensureReflect(reflect, entry, item) {
+    if (!reflect) return;
+    const art = httpsOnly(entry.art);
+    const show = Boolean(art) && wantsArt(item);
+    if (show) {
+      if (sleeveSrc(reflect) === art && !reflect.classList.contains("is-blank")) return;
+      reflect.classList.remove("is-blank");
+      let img = reflect.querySelector("img");
+      if (!img) {
+        reflect.replaceChildren();
+        reflect.appendChild(makeImg(art, true, false));
+        return;
+      }
+      if (img.getAttribute("src") !== art) img.src = art;
+      return;
+    }
+    if (art && sleeveSrc(reflect) === art) return;
+    if (reflect.classList.contains("is-blank") && !reflect.querySelector("img")) return;
+    reflect.classList.add("is-blank");
+    reflect.replaceChildren();
+  }
+
+  function setService(li, url) {
+    if (!li) return;
+    const link = li.querySelector("a");
+    if (!link) return;
+    if (!url) {
+      li.hidden = true;
+      link.removeAttribute("href");
+      return;
+    }
+    li.hidden = false;
+    if (link.getAttribute("href") !== url) link.setAttribute("href", url);
+  }
+
+  function stampTouch(cover) {
+    cover.querySelectorAll("*").forEach((el) => {
+      if (el.closest(".flow-back a")) return;
+      el.style.touchAction = "pan-y";
+    });
+    cover.querySelectorAll(".flow-back a").forEach((el) => {
+      el.style.setProperty("touch-action", "manipulation", "important");
+    });
+  }
+
+  function fillCover(cover, entry, item) {
+    cover._blanked = false;
+    const button = cover.querySelector(".flow-select");
+    button.dataset.index = String(item);
+    button.dataset.summary = entrySummary(entry);
+    button.setAttribute("aria-label", `${entry.title} by ${entry.artist}`);
+    button.setAttribute("aria-expanded", "false");
+    button.removeAttribute("aria-current");
+    const flip = cover.querySelector(".flow-flip");
+    if (flip) flip.style.transform = "rotateY(0deg)";
+    cover.classList.remove("is-flipped", "is-showing-back", "is-culled");
+    const back = cover.querySelector(".flow-back");
+    if (back) {
+      back.id = `flow-back-${item}`;
+      button.setAttribute("aria-controls", back.id);
+      back.hidden = true;
+      back.inert = true;
+      back.setAttribute("aria-hidden", "true");
+      const title = back.querySelector(".flow-back-title");
+      const artist = back.querySelector(".flow-back-artist");
+      const album = back.querySelector(".flow-back-album");
+      const who = back.querySelector(".poster");
+      const time = back.querySelector("time");
+      if (title) title.textContent = entry.title;
+      if (artist) artist.textContent = entry.artist;
+      if (album) {
+        album.hidden = !entry.album;
+        album.textContent = entry.album || "";
+      }
+      if (who) {
+        who.textContent = entry.postedBy;
+        const slug = posterSlug(entry.postedBy);
+        who.setAttribute("href", slug ? `/p/${slug}/` : "/");
+      }
+      if (time) {
+        time.setAttribute("datetime", entry.postedAt);
+        time.textContent = formatFlipDate(entry.postedAt);
+      }
+      setService(back.querySelector('[data-svc="spotify"]'), httpsOnly(entry.spotify));
+      setService(back.querySelector('[data-svc="apple"]'), httpsOnly(entry.apple));
+      const art = back.querySelector(".flow-back-art");
+      if (art && !wantsBackArt(item)) art.removeAttribute("src");
+    }
+    ensureSleeve(cover.querySelector(".flow-sleeve"), entry, item);
+    ensureReflect(cover.querySelector(".flow-reflect"), entry, item);
+    stampTouch(cover);
+  }
+
+  function refreshArt(item, button) {
+    const entry = virtualEntries[item];
+    if (!entry) return;
+    const cover = button.closest(".flow-cover");
+    ensureSleeve(cover.querySelector(".flow-sleeve"), entry, item);
+    ensureReflect(cover.querySelector(".flow-reflect"), entry, item);
+    if (!wantsBackArt(item)) return;
+    const art = cover.querySelector(".flow-back-art");
+    const src = httpsOnly(entry.art);
+    if (art && src && art.getAttribute("src") !== src) art.src = src;
+  }
+
+  function ensureVirtual() {
+    if (!virtual || virtualReady) return;
+    virtualReady = true;
+    coversOl = stage.querySelector(".flow-covers");
+    coversOl.querySelectorAll(".flow-cover").forEach((cover) => {
+      const button = cover.querySelector(".flow-select");
+      const item = Number(button && button.dataset.index);
+      if (Number.isInteger(item)) ssrCovers.set(item, cover);
+    });
+    const template = document.getElementById("usb-cover");
+    const fromTemplate = template && template.content && template.content.querySelector(".flow-cover");
+    if (fromTemplate) coverProto = fromTemplate.cloneNode(true);
+    else if (ssrCovers.get(0)) {
+      coverProto = ssrCovers.get(0).cloneNode(true);
+      coverProto.querySelectorAll("img").forEach((img) => img.removeAttribute("src"));
+    }
+  }
+
+  const slots = [];
+
+  function fastSpin() {
+    return Boolean(spin && Math.abs(spin.to - spin.from) > 24);
+  }
+
+  // A long glide reuses the same sleeve nodes. Rewriting the back of every
+  // cover it passes would drop frames, and those sleeves are a blur.
+  function lightBind(cover, entry, item) {
+    const button = cover._select || (cover._select = cover.querySelector(".flow-select"));
+    button.dataset.index = String(item);
+    if (!entry._summary) entry._summary = entrySummary(entry);
+    button.dataset.summary = entry._summary;
+    button.setAttribute("aria-label", `${entry.title} by ${entry.artist}`);
+    if (!cover._blanked) {
+      button.setAttribute("aria-expanded", "false");
+      button.removeAttribute("aria-current");
+      cover.classList.remove("is-flipped", "is-showing-back", "is-culled");
+      const sleeve = cover.querySelector(".flow-sleeve");
+      const reflect = cover.querySelector(".flow-reflect");
+      if (sleeve) {
+        sleeve.classList.add("is-blank");
+        sleeve.replaceChildren();
+      }
+      if (reflect) {
+        reflect.classList.add("is-blank");
+        reflect.replaceChildren();
+      }
+      const back = cover.querySelector(".flow-back");
+      if (back && !back.hidden) {
+        back.hidden = true;
+        back.inert = true;
+        back.setAttribute("aria-hidden", "true");
+      }
+      cover._blanked = true;
+    }
+  }
+
+  function dropUnusedSsr() {
+    for (const [, cover] of ssrCovers) {
+      cover.querySelectorAll("img").forEach((img) => img.removeAttribute("src"));
+      cover.remove();
+    }
+    ssrCovers.clear();
+  }
+
+  function syncMounts() {
+    if (!virtual) return;
+    ensureVirtual();
+    if (!coverProto || !coversOl) return;
+    const blurring = fastSpin();
+    const radius = blurring ? 4 : MOUNT_RADIUS;
+    let lo = Math.max(0, Math.floor(index) - radius);
+    let hi = Math.min(maxIndex, Math.ceil(index) + radius);
+    if (!blurring && flipped !== null) {
+      lo = Math.min(lo, flipped);
+      hi = Math.max(hi, flipped);
+    }
+    if (!blurring && flipJob) {
+      lo = Math.min(lo, flipJob.item);
+      hi = Math.max(hi, flipJob.item);
+    }
+    const spare = [];
+    for (const slot of slots) {
+      if (slot.item >= lo && slot.item <= hi) continue;
+      if (flipped === slot.item || (flipJob && flipJob.item === slot.item)) continue;
+      delete buttons[slot.item];
+      mounted.delete(slot.item);
+      slot.item = -1;
+      // Parked sleeves stay in the pool, but a leftover transform would keep
+      // painting the record this node last showed.
+      slot.cover.classList.add("is-culled");
+      spare.push(slot);
+    }
+    for (let item = lo; item <= hi; item += 1) {
+      const entry = virtualEntries[item];
+      if (!entry) continue;
+      if (buttons[item]) {
+        const slot = slots.find((candidate) => candidate.item === item);
+        if (slot && slot.fast && !blurring) {
+          fillCover(slot.cover, entry, item);
+          slot.fast = false;
+        }
+        continue;
+      }
+      let slot = spare.pop();
+      let freshSsr = false;
+      if (!slot) {
+        const ssr = ssrCovers.get(item);
+        let cover;
+        if (ssr) {
+          ssrCovers.delete(item);
+          cover = ssr;
+          freshSsr = true;
+        } else {
+          cover = coverProto.cloneNode(true);
+          coversOl.appendChild(cover);
+          stampTouch(cover);
+        }
+        slot = { cover, item: -1, fast: false };
+        slots.push(slot);
+      }
+      slot.item = item;
+      slot.fast = blurring && !freshSsr;
+      const button = slot.cover.querySelector(".flow-select");
+      buttons[item] = button;
+      mounted.add(item);
+      slot.cover.classList.remove("is-culled");
+      if (!slot.cover.isConnected) coversOl.appendChild(slot.cover);
+      if (freshSsr) {
+        stampTouch(slot.cover);
+        if (!wantsArt(item)) {
+          slot.cover.querySelectorAll(".flow-sleeve img, .flow-reflect img").forEach((img) => img.removeAttribute("src"));
+        }
+        if (!wantsBackArt(item)) {
+          const backArt = slot.cover.querySelector(".flow-back-art");
+          if (backArt) backArt.removeAttribute("src");
+        }
+      } else if (blurring) lightBind(slot.cover, entry, item);
+      else fillCover(slot.cover, entry, item);
+    }
+    if (ssrCovers.size) dropUnusedSsr();
+  }
+
+  function bindVirtualList() {
+    const list = document.querySelector("#crate ol.crate");
+    const template = document.getElementById("usb-row");
+    if (!list || !template || !template.content) return;
+    const proto = template.content.querySelector("li");
+    if (!proto) return;
+    // Rows stay in the document once drawn, in order, so the zebra bands and
+    // the native scroller stay exactly as they are for a short crate. Only
+    // the next batch is built when the reader gets near the end.
+    // A full batch is enough runway for a flick. It is drawn a few rows at a
+    // time so inserting it does not hitch the frame the reader is scrolling.
+    const CHUNK = 8;
+    let rendered = list.children.length;
+
+    function albumLabel(entry) {
+      if (entry.album) return { text: entry.album, empty: false };
+      if (entry.type === "album") return { text: entry.title, empty: false };
+      return { text: "not listed", empty: true };
+    }
+
+    function fillRow(li, entry, item) {
+      const article = li.querySelector("article");
+      article.id = entry.id;
+      article.dataset.type = entry.type;
+      const thumb = li.querySelector(".thumb");
+      const img = thumb.querySelector("img");
+      const art = httpsOnly(entry.art);
+      const mark = thumb.querySelector(".monogram");
+      if (art) {
+        thumb.removeAttribute("aria-hidden");
+        const alt = `Cover art for ${entry.album || entry.title} by ${entry.artist}`;
+        img.alt = alt;
+        img.hidden = false;
+        img.loading = item < 10 ? "eager" : "lazy";
+        if (img.getAttribute("src") !== art) img.src = art;
+        if (mark) mark.hidden = true;
+      } else {
+        thumb.setAttribute("aria-hidden", "true");
+        img.hidden = true;
+        img.removeAttribute("src");
+        let glyph = mark;
+        if (!glyph) {
+          glyph = document.createElement("span");
+          glyph.className = "monogram";
+          thumb.appendChild(glyph);
+        }
+        glyph.hidden = false;
+        glyph.textContent = monogram(entry.artist);
+      }
+      li.querySelector(".kind span").textContent = entry.type;
+      li.querySelector(".no").textContent = entry.number;
+      li.querySelector("h2").textContent = entry.title;
+      li.querySelector(".artist").textContent = entry.artist;
+      const album = li.querySelector(".album");
+      const named = albumLabel(entry);
+      album.textContent = named.text;
+      album.classList.toggle("is-empty", named.empty);
+      const poster = li.querySelector(".posted .poster");
+      poster.textContent = entry.postedBy;
+      const slug = posterSlug(entry.postedBy);
+      poster.setAttribute("href", slug ? `/p/${slug}/` : "/");
+      const time = li.querySelector("time");
+      time.setAttribute("datetime", entry.postedAt);
+      time.textContent = formatPostedAt(entry.postedAt);
+      setService(li.querySelector('[data-svc="spotify"]'), httpsOnly(entry.spotify));
+      setService(li.querySelector('[data-svc="apple"]'), httpsOnly(entry.apple));
+    }
+
+    function appendUntil(count) {
+      const target = Math.min(virtualEntries.length, count);
+      if (target <= rendered) return;
+      const frag = document.createDocumentFragment();
+      for (let item = rendered; item < target; item += 1) {
+        const li = proto.cloneNode(true);
+        fillRow(li, virtualEntries[item], item);
+        frag.appendChild(li);
+      }
+      list.appendChild(frag);
+      rendered = target;
+    }
+
+    function nearEnd() {
+      const last = list.lastElementChild;
+      if (!last) return true;
+      const rect = last.getBoundingClientRect();
+      const viewH = window.visualViewport ? window.visualViewport.height : window.innerHeight;
+      return rect.bottom < viewH + viewH * 1.4;
+    }
+
+    function pump() {
+      if (rendered >= virtualEntries.length) return;
+      if (!nearEnd()) return;
+      appendUntil(rendered + CHUNK);
+      if (rendered < virtualEntries.length && nearEnd()) schedule();
+    }
+
+    // Enough rows that the first flick is the native scroller, not a builder.
+    appendUntil(Math.min(virtualEntries.length, Math.max(rendered, 48)));
+
+    let queued = 0;
+    const schedule = () => {
+      if (rendered >= virtualEntries.length || queued) return;
+      queued = window.requestAnimationFrame(() => {
+        queued = 0;
+        pump();
+      });
+    };
+    window.addEventListener("scroll", schedule, { passive: true });
+    window.addEventListener("resize", schedule, { passive: true });
+
+    function itemFromHash() {
+      const id = decodeURIComponent((location.hash || "").replace(/^#/, ""));
+      if (!id) return -1;
+      return virtualEntries.findIndex((entry) => entry.id === id);
+    }
+
+    function scrollToItem(item) {
+      if (item < 0) return;
+      appendUntil(item + 1);
+      const row = list.children[item];
+      if (row) row.scrollIntoView({ block: "start" });
+    }
+
+    if (itemFromHash() >= 0) scrollToItem(itemFromHash());
+    window.addEventListener("hashchange", () => scrollToItem(itemFromHash()));
+  }
+
+  syncMounts();
   measure();
   paint();
+  if (virtual) bindVirtualList();
   window.requestAnimationFrame(() => root.classList.add("is-ready"));
+  }
 })();

@@ -18,6 +18,7 @@ const types = {
   ".png": "image/png",
   ".gif": "image/gif",
   ".js": "text/javascript; charset=utf-8",
+  ".json": "application/json; charset=utf-8",
   ".webmanifest": "application/manifest+json",
 };
 

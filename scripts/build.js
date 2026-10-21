@@ -4,6 +4,15 @@ import path from "node:path";
 import { pathToFileURL } from "node:url";
 import { assertValidCatalog, repoRoot } from "./catalog.js";
 
+// Above this, the homepage (and a poster page) stops inlining every sleeve.
+// The shell keeps the first screen; entries.json feeds a window of covers and
+// list rows. 44 entries stay fully inlined, so the current crate is unchanged.
+const VIRTUAL_AT = 64;
+const VIRTUAL_COVERS = 4;
+const VIRTUAL_ROWS = 8;
+// Posted-by is a name. A phone number in that field must not ship.
+const PHONE_IN_NAME = /(?:\+\d[\d\s().-]{8,}\d)|\b\d{3}[\s.-]\d{3}[\s.-]\d{4}\b/;
+
 const SITE_ORIGIN = "https://unfamiliarsoundbyte.com";
 const CANONICAL_URL = `${SITE_ORIGIN}/`;
 const PAGE_TITLE = "Unfamiliar Sound Byte";
@@ -140,6 +149,43 @@ function artworkAlt(entry) {
 // leave in-viewport covers as empty black squares until a scroll gesture.
 const EAGER_LIST_ARTWORK = 10;
 
+function assertNameIsPublic(entry) {
+  if (PHONE_IN_NAME.test(entry.posted_by)) {
+    throw new Error(`refusing to publish a phone number in posted_by for ${entry.id}`);
+  }
+}
+
+// Public view of one page. Arrays keep the file small. Order is the contract
+// coverflow.js decodes. Private catalog fields stay out: notes, match_status,
+// source_url, source_service, and anything like posters.json.
+function entriesPayload(entries, numbers) {
+  for (const entry of entries) assertNameIsPublic(entry);
+  return {
+    v: 1,
+    entries: entries.map((entry) => [
+      entry.id,
+      entry.type,
+      entry.title,
+      entry.artist,
+      entry.album,
+      entry.posted_by,
+      entry.posted_at,
+      entry.spotify_url,
+      entry.apple_music_url,
+      entry.artwork_url,
+      numbers.get(entry.id),
+    ]),
+  };
+}
+
+function assertPublicJson(text) {
+  if (text.includes("posters.json")) throw new Error("refusing to publish posters.json");
+  if (/"notes"\s*:/.test(text) || /"match_status"\s*:/.test(text) || /"source_url"\s*:/.test(text)) {
+    throw new Error("public entries JSON included a private catalog field");
+  }
+  if (PHONE_IN_NAME.test(text)) throw new Error("refusing to publish a phone number");
+}
+
 function renderEntry(entry, number, { listIndex = 0 } = {}) {
   const loading = listIndex < EAGER_LIST_ARTWORK ? "eager" : "lazy";
   const artwork = entry.artwork_url
@@ -247,9 +293,10 @@ function coverImage(entry, index, reflect) {
   return `<img src="${httpsUrl(entry.artwork_url, "artwork")}" alt="" width="600" height="600" draggable="false" decoding="async"${priority}${lazy}>`;
 }
 
-function renderCoverFlow(entries) {
+function renderCoverFlow(entries, { coverLimit, singlePanel = false, entriesHref = "" } = {}) {
   if (entries.length === 0) return "";
-  const covers = entries
+  const shown = Number.isFinite(coverLimit) ? entries.slice(0, coverLimit) : entries;
+  const covers = shown
     .map((entry, index) => {
       const current = index === 0 ? " aria-current=\"true\"" : "";
       const summary = `${entry.title}, ${entry.artist}, posted by ${entry.posted_by}, ${formatPostedAt(entry.posted_at)}`;
@@ -273,7 +320,8 @@ function renderCoverFlow(entries) {
           </li>`;
     })
     .join("\n");
-  const panels = entries
+  const panelSource = singlePanel ? shown.slice(0, 1) : shown;
+  const panels = panelSource
     .map((entry, index) => {
       const hidden = index === 0 ? "" : " hidden";
       return `          <div class="flow-panel"${hidden}>
@@ -283,10 +331,13 @@ function renderCoverFlow(entries) {
     })
     .join("\n");
   const live = escapeHtml(
-    `${entries[0].title}, ${entries[0].artist}, posted by ${entries[0].posted_by}, ${formatPostedAt(entries[0].posted_at)}`,
+    `${shown[0].title}, ${shown[0].artist}, posted by ${shown[0].posted_by}, ${formatPostedAt(shown[0].posted_at)}`,
   );
+  const virtualAttr = entriesHref
+    ? ` data-virtual data-entries="${escapeHtml(entriesHref)}"`
+    : "";
 
-  return `      <section class="flow" data-coverflow aria-roledescription="carousel" aria-label="album covers">
+  return `      <section class="flow" data-coverflow${virtualAttr} aria-roledescription="carousel" aria-label="album covers">
         <h2 class="sr-only">album covers</h2>
         <div class="flow-stage">
           <ol class="flow-covers">
@@ -311,11 +362,19 @@ function renderDocument({
   flow,
   list,
   catalogVersion,
+  entriesHref = "",
+  templates = "",
 }) {
   const styleHref = versionedAsset("styles.css");
   const logoSrc = versionedAsset("logo.gif");
   const scriptSrc = versionedAsset("coverflow.js");
   const flowHtml = flow || "";
+  const preload = entriesHref
+    ? `\n    <link rel="preload" href="${escapeHtml(entriesHref)}" as="fetch" crossorigin>`
+    : "";
+  const csp = entriesHref
+    ? "default-src 'none'; script-src 'self'; connect-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' https:; manifest-src 'self'; base-uri 'none'; form-action 'none'"
+    : "default-src 'none'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' https:; manifest-src 'self'; base-uri 'none'; form-action 'none'";
 
   return `<!DOCTYPE html>
 <html lang="en">
@@ -340,7 +399,7 @@ function renderDocument({
     <meta name="twitter:description" content="${escapeHtml(description)}">
     <meta name="twitter:image" content="${SHARE_IMAGE_URL}">
     <meta name="theme-color" content="#000000">
-    <meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' https:; manifest-src 'self'; base-uri 'none'; form-action 'none'">
+    <meta http-equiv="Content-Security-Policy" content="${csp}">${preload}
     <link rel="stylesheet" href="${styleHref}">
     <link rel="icon" href="/favicon.ico" sizes="any">
     <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png">
@@ -368,24 +427,76 @@ ${flowHtml}      <main id="crate">
         <p>rebuilt from data/catalog.json.</p>
       </footer>
     </div>
-    <script src="${scriptSrc}" defer></script>
+${templates}    <script src="${scriptSrc}" defer></script>
   </body>
 </html>
 `;
 }
 
-function renderCrateList(entries, numbers) {
+function renderCrateList(entries, numbers, { limit } = {}) {
   if (entries.length === 0) {
     return `<p class="empty-crate">the crate is empty. add an entry to <code>data/catalog.json</code>, then run <code>npm run build</code>.</p>`;
   }
-  return `<ol class="crate">\n${entries
+  const shown = Number.isFinite(limit) ? entries.slice(0, limit) : entries;
+  return `<ol class="crate">\n${shown
     .map((entry, listIndex) => renderEntry(entry, numbers.get(entry.id), { listIndex }))
     .join("\n")}\n    </ol>`;
 }
 
-export function renderPage(catalog) {
+function virtualTemplates() {
+  const spotify = `<li data-svc="spotify"><a class="icon-btn" rel="noreferrer" aria-label="Open on Spotify">${SPOTIFY_ICON}</a></li>`;
+  const apple = `<li data-svc="apple"><a class="icon-btn" rel="noreferrer" aria-label="Open on Apple Music">${APPLE_MUSIC_ICON}</a></li>`;
+  return `    <template id="usb-cover">
+      <li class="flow-cover">
+        <div class="flow-flip">
+          <button type="button" class="flow-select" data-index="0" aria-expanded="false" aria-controls="flow-back-pool" aria-label="">
+            <span class="flow-sleeve"></span>
+          </button>
+          <div class="flow-back" id="flow-back-pool" aria-hidden="true" inert hidden>
+            <div class="flow-back-card"><img class="flow-back-art" alt="" width="600" height="600" draggable="false" decoding="async"><div class="flow-back-copy"><p class="flow-back-title"></p><p class="flow-back-artist"></p><p class="flow-back-album" hidden></p><p class="flow-back-who">posted by <a class="poster"></a></p><p class="flow-back-when"><time></time></p><ul class="flow-back-services">${spotify}${apple}</ul></div></div>
+          </div>
+        </div>
+        <span class="flow-reflect" aria-hidden="true"></span>
+      </li>
+    </template>
+    <template id="usb-row">
+      <li>
+        <article class="card">
+          <div class="row">
+            <div class="thumb"><img alt="" width="600" height="600" decoding="async"></div>
+            <div class="copy">
+              <p class="kind"><span></span><span class="no"></span></p>
+              <h2></h2>
+              <p class="byline"><span class="artist"></span><span class="sep" aria-hidden="true">·</span><span class="album"></span></p>
+              <p class="posted">posted by <a class="poster"></a> · <time></time></p>
+            </div>
+            <ul class="services">
+            <li data-svc="spotify"><a class="icon-btn" aria-label="Open on Spotify">${SPOTIFY_ICON}</a></li>
+            <li data-svc="apple"><a class="icon-btn" aria-label="Open on Apple Music">${APPLE_MUSIC_ICON}</a></li>
+          </ul>
+          </div>
+        </article>
+      </li>
+    </template>
+`;
+}
+
+function pageParts(catalog, entries, numbers, { entriesHref = "" } = {}) {
+  const virtual = entries.length > VIRTUAL_AT;
+  const href = virtual ? entriesHref : "";
+  return {
+    virtual,
+    flow: renderCoverFlow(entries, virtual ? { coverLimit: VIRTUAL_COVERS, singlePanel: true, entriesHref: href } : {}),
+    list: renderCrateList(entries, numbers, virtual ? { limit: VIRTUAL_ROWS } : {}),
+    entriesHref: href,
+    templates: virtual ? virtualTemplates() : "",
+  };
+}
+
+export function renderPage(catalog, entriesHref = "") {
   const entries = sortNewestFirst(catalog.entries);
   const numbers = acquisitionNumbers(entries);
+  const parts = pageParts(catalog, entries, numbers, { entriesHref });
   return renderDocument({
     title: PAGE_TITLE,
     description: PAGE_DESCRIPTION,
@@ -393,19 +504,22 @@ export function renderPage(catalog) {
     mastHeading: `<h1 class="sr-only">Unfamiliar Sound Byte</h1>`,
     countHtml: crateSummary(entries.length),
     randomButton: randomTrackButton(entries.length),
-    flow: renderCoverFlow(entries),
-    list: renderCrateList(entries, numbers),
+    flow: parts.flow,
+    list: parts.list,
     catalogVersion: catalog.version,
+    entriesHref: parts.entriesHref,
+    templates: parts.templates,
   });
 }
 
-export function renderPosterPage(catalog, poster) {
+export function renderPosterPage(catalog, poster, entriesHref = "") {
   const allEntries = sortNewestFirst(catalog.entries);
   const numbers = acquisitionNumbers(allEntries);
   const entries = poster.entries;
   const title = `${poster.name} · ${PAGE_TITLE}`;
   const description = `${poster.name}'s posts in Unfamiliar Sound Byte`;
   const canonicalUrl = `${SITE_ORIGIN}${posterHref(poster.name)}`;
+  const parts = pageParts(catalog, entries, numbers, { entriesHref });
   return renderDocument({
     title,
     description,
@@ -413,9 +527,11 @@ export function renderPosterPage(catalog, poster) {
     mastHeading: `<h1 class="poster-name">${escapeHtml(poster.name)}</h1>`,
     countHtml: posterSummary(entries.length),
     randomButton: randomTrackButton(entries.length),
-    flow: renderCoverFlow(entries),
-    list: renderCrateList(entries, numbers),
+    flow: parts.flow,
+    list: parts.list,
     catalogVersion: catalog.version,
+    entriesHref: parts.entriesHref,
+    templates: parts.templates,
   });
 }
 
@@ -459,24 +575,46 @@ function copyStatic(dist) {
   }
 }
 
+function jsonHash(payload) {
+  const text = JSON.stringify(payload);
+  assertPublicJson(text);
+  const hash = crypto.createHash("sha256").update(text).digest("hex").slice(0, 8);
+  return { text, hash };
+}
+
 function main() {
   const catalog = assertValidCatalog();
+  for (const entry of catalog.entries) assertNameIsPublic(entry);
   const posters = groupEntriesByPoster(catalog.entries);
-  const html = renderPage(catalog);
+  const homeEntries = sortNewestFirst(catalog.entries);
+  const numbers = acquisitionNumbers(homeEntries);
+  const homeVirtual = homeEntries.length > VIRTUAL_AT;
+  const homeJson = homeVirtual ? jsonHash(entriesPayload(homeEntries, numbers)) : null;
+  const homeHref = homeJson ? `/entries.json?v=${homeJson.hash}` : "";
+  const posterBuilt = posters.map((poster) => {
+    const virtual = poster.entries.length > VIRTUAL_AT;
+    const json = virtual ? jsonHash(entriesPayload(poster.entries, numbers)) : null;
+    const href = json ? `/p/${poster.slug}/entries.json?v=${json.hash}` : "";
+    return { poster, json, href };
+  });
+  const html = renderPage(catalog, homeHref);
   const dist = path.join(repoRoot, "dist");
   fs.rmSync(dist, { recursive: true, force: true });
   fs.mkdirSync(dist, { recursive: true });
   fs.writeFileSync(path.join(dist, "index.html"), html);
-  for (const poster of posters) {
+  if (homeJson) fs.writeFileSync(path.join(dist, "entries.json"), homeJson.text);
+  for (const { poster, json, href } of posterBuilt) {
     const dir = path.join(dist, "p", poster.slug);
     fs.mkdirSync(dir, { recursive: true });
-    fs.writeFileSync(path.join(dir, "index.html"), renderPosterPage(catalog, poster));
+    fs.writeFileSync(path.join(dir, "index.html"), renderPosterPage(catalog, poster, href));
+    if (json) fs.writeFileSync(path.join(dir, "entries.json"), json.text);
   }
   fs.writeFileSync(path.join(dist, "sitemap.xml"), renderSitemap(posters));
   copyStatic(dist);
   const slugList = posters.map((poster) => poster.slug).join(", ");
+  const homeBytes = homeJson ? homeJson.text.length : 0;
   console.log(
-    `built dist/index.html, ${posters.length} poster pages (${slugList || "none"}), and dist/sitemap.xml (${catalog.entries.length} entries)`,
+    `built dist/index.html, ${posters.length} poster pages (${slugList || "none"}), and dist/sitemap.xml (${catalog.entries.length} entries${homeBytes ? `; entries.json ${homeBytes} bytes` : ""})`,
   );
 }
 

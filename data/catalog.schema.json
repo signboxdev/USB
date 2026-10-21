@@ -80,8 +80,8 @@
           "description": "When it was posted. ISO 8601 with seconds and a numeric offset or Z. No fractional seconds."
         },
         "source_service": {
-          "enum": ["spotify", "apple_music"],
-          "description": "Which service the chat link pointed at."
+          "enum": ["spotify", "apple_music", "youtube"],
+          "description": "Which service the chat link pointed at. A youtube post still renders only its Spotify and Apple Music links."
         },
         "source_url": {
           "type": "string",
@@ -96,7 +96,7 @@
             {
               "type": "string",
               "format": "uri",
-              "pattern": "^https://open\\.spotify\\.com/\\S+$"
+              "pattern": "^https://(?:open\\.spotify\\.com|spotify\\.link)/\\S+$"
             }
           ]
         },
@@ -139,7 +139,7 @@
           },
           "then": {
             "properties": {
-              "source_url": { "type": "string", "pattern": "^https://open\\.spotify\\.com/\\S+$" },
+              "source_url": { "type": "string", "pattern": "^https://(?:open\\.spotify\\.com|spotify\\.link)/\\S+$" },
               "spotify_url": { "type": "string", "minLength": 1 }
             }
           }
@@ -154,6 +154,18 @@
             "properties": {
               "source_url": { "type": "string", "pattern": "^https://music\\.apple\\.com/\\S+$" },
               "apple_music_url": { "type": "string", "minLength": 1 }
+            }
+          }
+        },
+        {
+          "if": {
+            "type": "object",
+            "properties": { "source_service": { "const": "youtube" } },
+            "required": ["source_service"]
+          },
+          "then": {
+            "properties": {
+              "source_url": { "type": "string", "pattern": "^https://www\\.youtube\\.com/\\S+$" }
             }
           }
         },

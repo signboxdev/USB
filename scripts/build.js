@@ -268,11 +268,16 @@ export function groupEntriesByPoster(entries) {
 }
 
 function flipStoreLink(kind, url) {
-  if (!url) return "";
   const name = kind === "spotify" ? "Spotify" : "Apple Music";
   const icon = kind === "spotify" ? SPOTIFY_ICON : APPLE_MUSIC_ICON;
   const label = kind === "spotify" ? "Open on Spotify" : "Open on Apple Music";
-  return `<li><a class="icon-btn" href="${httpsUrl(url, name)}" rel="noreferrer" aria-label="${escapeHtml(label)}">${icon}</a></li>`;
+  const svc = kind === "spotify" ? "spotify" : "apple";
+  // data-svc lets the windowed cover flow rewrite a reused sleeve. A missing
+  // link stays in the markup hidden, so the other button is the only one shown.
+  if (!url) {
+    return `<li data-svc="${svc}" hidden><a class="icon-btn" rel="noreferrer" aria-label="${escapeHtml(label)}">${icon}</a></li>`;
+  }
+  return `<li data-svc="${svc}"><a class="icon-btn" href="${httpsUrl(url, name)}" rel="noreferrer" aria-label="${escapeHtml(label)}">${icon}</a></li>`;
 }
 
 function renderFlipBack(entry) {
@@ -280,10 +285,7 @@ function renderFlipBack(entry) {
     ? `<img class="flow-back-art" src="${httpsUrl(entry.artwork_url, "artwork")}" alt="" width="600" height="600" draggable="false" decoding="async" loading="lazy">`
     : "";
   const album = entry.album ? `<p class="flow-back-album">${escapeHtml(entry.album)}</p>` : "";
-  const links = [flipStoreLink("spotify", entry.spotify_url), flipStoreLink("apple", entry.apple_music_url)].filter(
-    Boolean,
-  );
-  const services = links.length ? `<ul class="flow-back-services">${links.join("")}</ul>` : "";
+  const services = `<ul class="flow-back-services">${flipStoreLink("spotify", entry.spotify_url)}${flipStoreLink("apple", entry.apple_music_url)}</ul>`;
   return `<div class="flow-back-card">${art}<div class="flow-back-copy"><p class="flow-back-title">${escapeHtml(entry.title)}</p><p class="flow-back-artist">${escapeHtml(entry.artist)}</p>${album}<p class="flow-back-who">posted by ${posterLink(entry.posted_by)}</p><p class="flow-back-when"><time datetime="${escapeHtml(entry.posted_at)}">${formatFlipDate(entry.posted_at)}</time></p>${services}</div></div>`;
 }
 

@@ -315,11 +315,11 @@
       "posted_at": "2026-10-09T13:50:00-04:00",
       "source_service": "spotify",
       "source_url": "https://open.spotify.com/track/6rxLSXSnACDbi0V3wGksxd",
-      "spotify_url": "https://open.spotify.com/track/6rxLSXSnACDbi0V3wGksxd",
+      "spotify_url": "https://open.spotify.com/track/18Znx47PDdm8uNoyljW4zQ",
       "apple_music_url": "https://music.apple.com/ca/album/homeless/893175779?i=893175798",
       "match_status": "matched",
       "artwork_url": "https://is1-ssl.mzstatic.com/image/thumb/Music116/v4/9d/0f/1c/9d0f1c2b-2fae-d8ac-3920-ce9ec5bc85b5/7982.jpg/600x600bb.jpg",
-      "notes": null
+      "notes": "Relinked 2026-10-21 (see usb-relink patch)."
     },
     {
       "id": "a4b061ae-ddd8-520a-8925-9bbeb7f9e17a",
@@ -363,11 +363,11 @@
       "posted_at": "2026-10-06T13:06:00-04:00",
       "source_service": "spotify",
       "source_url": "https://open.spotify.com/track/3rJvQb0Msq7sEorMowlQ7j",
-      "spotify_url": "https://open.spotify.com/track/3rJvQb0Msq7sEorMowlQ7j",
+      "spotify_url": "https://open.spotify.com/track/5lxQAoqEP5QLcC5056NOYK",
       "apple_music_url": "https://music.apple.com/ca/album/near-dark/893175779?i=893175789",
       "match_status": "matched",
       "artwork_url": "https://is1-ssl.mzstatic.com/image/thumb/Music116/v4/9d/0f/1c/9d0f1c2b-2fae-d8ac-3920-ce9ec5bc85b5/7982.jpg/600x600bb.jpg",
-      "notes": null
+      "notes": "Relinked 2026-10-21 (see usb-relink patch)."
     },
     {
       "id": "5f43747c-ac6c-4896-b3c3-b082957c8a94",
@@ -1660,10 +1660,10 @@
       "source_service": "spotify",
       "source_url": "https://open.spotify.com/track/788NX6uCNEVuZW8x5BkQqM",
       "spotify_url": "https://open.spotify.com/track/788NX6uCNEVuZW8x5BkQqM",
-      "apple_music_url": null,
-      "match_status": "unmatched",
-      "artwork_url": "https://image-cdn-fa.spotifycdn.com/image/ab67616d0000b27325dc1c32dbdd14b8049a3b3f",
-      "notes": "no iTunes CA result with matching title, artist and duration."
+      "apple_music_url": "https://music.apple.com/ca/album/like-dat/1127924077?i=1127924590",
+      "match_status": "matched",
+      "artwork_url": "https://is1-ssl.mzstatic.com/image/thumb/Music124/v4/db/4e/92/db4e9266-1bf6-047d-5eeb-3bc13810048c/888915243985_cover.jpg/600x600bb.jpg",
+      "notes": "Relinked 2026-10-21 (see usb-relink patch)."
     },
     {
       "id": "9afa9242-aa3c-5344-b140-fc264b76f826",
@@ -3468,10 +3468,10 @@
       "source_service": "spotify",
       "source_url": "https://open.spotify.com/track/2bkKnaLTMCghmjlcPBoYWd",
       "spotify_url": "https://open.spotify.com/track/2bkKnaLTMCghmjlcPBoYWd",
-      "apple_music_url": null,
-      "match_status": "unmatched",
-      "artwork_url": "https://image-cdn-fa.spotifycdn.com/image/ab67616d0000b273b31f6adf0da5659911b05c9b",
-      "notes": "no iTunes CA result with matching title, artist and duration."
+      "apple_music_url": "https://music.apple.com/ca/album/musty/1378663449?i=1378664284",
+      "match_status": "matched",
+      "artwork_url": "https://is1-ssl.mzstatic.com/image/thumb/Music115/v4/7c/a7/13/7ca71340-d9f7-95d3-4d81-cd66b35763c0/075679874214.jpg/600x600bb.jpg",
+      "notes": "Relinked 2026-10-21 (see usb-relink patch)."
     },
     {
       "id": "456a8b2e-656d-5b02-af2a-da2b1fb8c7e9",
@@ -3636,18 +3636,18 @@
     {
       "id": "f380e1e9-09fa-5aae-a6a8-ec7335fa8199",
       "type": "track",
-      "title": "1 Train Feat Kendrick Lamar Joey Bada$$ Yelawolf Danny",
-      "artist": "Unknown",
-      "album": null,
+      "title": "1 Train (feat. Kendrick Lamar, Joey Bada$$, Yelawolf, Danny Brown, Action Bronson & Big K.R.I.T.)",
+      "artist": "A$AP Rocky",
+      "album": "LONG.LIVE.A$AP (Deluxe Edition)",
       "posted_by": "Brandon",
       "posted_at": "2026-01-09T23:56:26-05:00",
       "source_service": "apple_music",
       "source_url": "https://music.apple.com/ca/album/1-train-feat-kendrick-lamar-joey-bada%24%24-yelawolf-danny/1450690198?i=1450690214",
-      "spotify_url": null,
+      "spotify_url": "https://open.spotify.com/track/1eLU27PPFxBhbp1CBjPh9J",
       "apple_music_url": "https://music.apple.com/ca/album/1-train-feat-kendrick-lamar-joey-bada%24%24-yelawolf-danny/1450690198?i=1450690214",
-      "match_status": "unmatched",
-      "artwork_url": null,
-      "notes": "Apple Music item no longer available in the CA storefront (iTunes lookup empty); title taken from the URL slug, artist unknown."
+      "match_status": "matched",
+      "artwork_url": "https://is1-ssl.mzstatic.com/image/thumb/Music116/v4/65/4e/c2/654ec2c7-e3c9-c3a4-e1aa-bd52853f7668/886443810112.jpg/600x600bb.jpg",
+      "notes": "Relinked 2026-10-21 (see usb-relink patch)."
     },
     {
       "id": "dcf4520e-0c7a-5d7b-bda6-16badb8cb1c4",
@@ -4299,11 +4299,11 @@
       "posted_at": "2025-11-21T18:46:28-05:00",
       "source_service": "apple_music",
       "source_url": "https://music.apple.com/ca/album/nothing-else-matters/1572046434?i=1572046444",
-      "spotify_url": "https://open.spotify.com/track/7s1xIVKnVj4hhsO607RC8k",
+      "spotify_url": "https://open.spotify.com/track/2CtemffYhT0DJWcT1XW047",
       "apple_music_url": "https://music.apple.com/ca/album/nothing-else-matters/1572046434?i=1572046444",
       "match_status": "matched",
       "artwork_url": "https://is1-ssl.mzstatic.com/image/thumb/Music125/v4/9e/80/1b/9e801b06-67fa-0990-2d15-85480ad3cd46/850007452025.png/600x600bb.jpg",
-      "notes": null
+      "notes": "Relinked 2026-10-21 (see usb-relink patch)."
     },
     {
       "id": "3b15a862-bb8b-5d8e-b57b-66e51a02d616",
@@ -4683,11 +4683,11 @@
       "posted_at": "2025-10-31T20:41:56-04:00",
       "source_service": "spotify",
       "source_url": "https://spotify.link/21JLp6izVXb",
-      "spotify_url": "https://spotify.link/21JLp6izVXb",
-      "apple_music_url": null,
-      "match_status": "unmatched",
-      "artwork_url": null,
-      "notes": "spotify.link short link no longer resolves to a Spotify page; metadata from export preview. no iTunes CA result with matching title, artist and year."
+      "spotify_url": "https://open.spotify.com/track/1v1eJFpexjUf9DRLkrGw7P",
+      "apple_music_url": "https://music.apple.com/ca/album/every-day-is-halloween/1761404040?i=1761404697",
+      "match_status": "matched",
+      "artwork_url": "https://is1-ssl.mzstatic.com/image/thumb/Music211/v4/09/be/f7/09bef708-332c-af47-7630-cb6807b904d3/889466599767.jpg/600x600bb.jpg",
+      "notes": "Relinked 2026-10-21 (see usb-relink patch)."
     },
     {
       "id": "18514572-bb11-5642-a503-ce9351ad89cc",
@@ -4699,11 +4699,11 @@
       "posted_at": "2025-10-31T15:12:02-04:00",
       "source_service": "spotify",
       "source_url": "https://spotify.link/gl4bsRJbVXb",
-      "spotify_url": "https://spotify.link/gl4bsRJbVXb",
+      "spotify_url": "https://open.spotify.com/track/2zBY88nji53AVJ2kczRvBO",
       "apple_music_url": "https://music.apple.com/ca/album/there-is-something-on-your-mind/1014312464?i=1014313114",
       "match_status": "matched",
       "artwork_url": "https://is1-ssl.mzstatic.com/image/thumb/Music7/v4/c5/c3/af/c5c3af23-97ac-9af2-1d13-e58225903f60/889845100133.jpg/600x600bb.jpg",
-      "notes": "spotify.link short link no longer resolves to a Spotify page; metadata from export preview. Apple match confirmed on exact title, artist and release year (no duration available); spotifyUrl is the unresolved short link."
+      "notes": "Relinked 2026-10-21 (see usb-relink patch)."
     },
     {
       "id": "2a843287-e93e-5a2c-a941-fb646e522567",
@@ -4747,11 +4747,11 @@
       "posted_at": "2025-10-25T15:58:44-04:00",
       "source_service": "spotify",
       "source_url": "https://spotify.link/crfWQiEhLXb",
-      "spotify_url": "https://spotify.link/crfWQiEhLXb",
-      "apple_music_url": null,
-      "match_status": "unmatched",
-      "artwork_url": null,
-      "notes": "spotify.link short link no longer resolves to a Spotify page; metadata from export preview. no iTunes CA result with matching title, artist and year."
+      "spotify_url": "https://open.spotify.com/track/3w7hnMNX4zVZeBJ6LisTjT",
+      "apple_music_url": "https://music.apple.com/ca/album/moonlight-mile/1440812661?i=1440812828",
+      "match_status": "matched",
+      "artwork_url": "https://is1-ssl.mzstatic.com/image/thumb/Music112/v4/7f/e0/b4/7fe0b4da-36cd-a1d0-0f19-ef3fec18e3cd/08UMGIM15742.rgb.jpg/600x600bb.jpg",
+      "notes": "Relinked 2026-10-21 (see usb-relink patch)."
     },
     {
       "id": "cad4f563-5bcf-5690-85ec-bf21f3943740",
@@ -4843,11 +4843,11 @@
       "posted_at": "2025-10-17T10:30:38-04:00",
       "source_service": "spotify",
       "source_url": "https://spotify.link/gipWQxYCxXb",
-      "spotify_url": "https://spotify.link/gipWQxYCxXb",
+      "spotify_url": "https://open.spotify.com/track/4n2TdiKaoex8YHxCFg6kxK",
       "apple_music_url": "https://music.apple.com/ca/album/stuck-in-love/1735888886?i=1735888887",
       "match_status": "matched",
       "artwork_url": "https://is1-ssl.mzstatic.com/image/thumb/Music221/v4/24/cd/37/24cd37f4-a99d-8c15-c33e-115278613b30/artwork.jpg/600x600bb.jpg",
-      "notes": "spotify.link short link no longer resolves to a Spotify page; metadata from export preview. Apple match confirmed on exact title, artist and release year (no duration available); spotifyUrl is the unresolved short link."
+      "notes": "Relinked 2026-10-21 (see usb-relink patch)."
     },
     {
       "id": "407b4226-24d1-5217-a53a-d924be78c962",
@@ -4859,11 +4859,11 @@
       "posted_at": "2025-10-16T21:56:06-04:00",
       "source_service": "spotify",
       "source_url": "https://spotify.link/1a1rIb3KwXb",
-      "spotify_url": "https://spotify.link/1a1rIb3KwXb",
+      "spotify_url": "https://open.spotify.com/track/1BpKJw4RZxaFB88NE5uxXf",
       "apple_music_url": null,
       "match_status": "unmatched",
-      "artwork_url": null,
-      "notes": "spotify.link short link no longer resolves to a Spotify page; metadata from export preview. no iTunes CA result with matching title, artist and year."
+      "artwork_url": "https://image-cdn-fa.spotifycdn.com/image/ab67616d0000b27398ea0e689c91f8fea726d9bb",
+      "notes": "Relinked 2026-10-21 (see usb-relink patch). No confirmed cross-service match (title + primary artist + duration)."
     },
     {
       "id": "b4128496-f599-5af5-99cc-ae103a7b2772",
@@ -4875,11 +4875,11 @@
       "posted_at": "2025-10-16T16:32:25-04:00",
       "source_service": "spotify",
       "source_url": "https://spotify.link/eE1YovVnwXb",
-      "spotify_url": "https://spotify.link/eE1YovVnwXb",
+      "spotify_url": "https://open.spotify.com/track/4QEeFaUPTkOfUIgBt7rQPv",
       "apple_music_url": null,
       "match_status": "unmatched",
-      "artwork_url": null,
-      "notes": "spotify.link short link no longer resolves to a Spotify page; metadata from export preview. no iTunes CA result with matching title, artist and year."
+      "artwork_url": "https://image-cdn-fa.spotifycdn.com/image/ab67616d0000b273ad0f65cf585c467277864205",
+      "notes": "Relinked 2026-10-21 (see usb-relink patch). No confirmed cross-service match (title + primary artist + duration)."
     },
     {
       "id": "6b35e7c5-300f-5544-af5e-f0474ab5f6a8",
@@ -4891,11 +4891,11 @@
       "posted_at": "2025-10-16T16:19:52-04:00",
       "source_service": "spotify",
       "source_url": "https://spotify.link/yZdHjN1mwXb",
-      "spotify_url": "https://spotify.link/yZdHjN1mwXb",
+      "spotify_url": "https://open.spotify.com/track/5BwvTxVMzPMvLNMoj8jxvK",
       "apple_music_url": null,
       "match_status": "unmatched",
-      "artwork_url": null,
-      "notes": "spotify.link short link no longer resolves to a Spotify page; metadata from export preview. no iTunes CA result with matching title, artist and year."
+      "artwork_url": "https://image-cdn-fa.spotifycdn.com/image/ab67616d0000b273628170a1a2731337c08e7676",
+      "notes": "Relinked 2026-10-21 (see usb-relink patch). No confirmed cross-service match (title + primary artist + duration)."
     },
     {
       "id": "638b8944-6595-543b-b6a5-7e88af32722d",
@@ -6827,11 +6827,11 @@
       "posted_at": "2025-06-11T15:18:44-04:00",
       "source_service": "spotify",
       "source_url": "https://spotify.link/XKeOavRv7Tb",
-      "spotify_url": "https://spotify.link/XKeOavRv7Tb",
+      "spotify_url": "https://open.spotify.com/track/5xiO1uQ7sd0p5YmisQQSv1",
       "apple_music_url": "https://music.apple.com/ca/album/lover-you-shouldve-come-over/1046187510?i=1046187589",
       "match_status": "matched",
       "artwork_url": "https://is1-ssl.mzstatic.com/image/thumb/Music115/v4/26/d6/e3/26d6e339-a7a9-d61e-1b5f-0852a5515a55/886445517880.jpg/600x600bb.jpg",
-      "notes": "spotify.link short link no longer resolves to a Spotify page; metadata from export preview. Apple match confirmed on exact title, artist and release year (no duration available); spotifyUrl is the unresolved short link."
+      "notes": "Relinked 2026-10-21 (see usb-relink patch)."
     },
     {
       "id": "9132725a-18cd-5c81-a50d-e0c6727c2806",
@@ -6891,11 +6891,11 @@
       "posted_at": "2025-06-09T10:49:22-04:00",
       "source_service": "spotify",
       "source_url": "https://spotify.link/VdcHmsOS3Tb",
-      "spotify_url": "https://spotify.link/VdcHmsOS3Tb",
+      "spotify_url": null,
       "apple_music_url": "https://music.apple.com/ca/album/for-what-its-worth/265611980?i=265611986",
-      "match_status": "matched",
+      "match_status": "unmatched",
       "artwork_url": "https://is1-ssl.mzstatic.com/image/thumb/Music125/v4/14/12/bb/1412bb4b-d4bd-3fb6-e282-3e96b5988eed/mzi.vdwggpmt.jpg/600x600bb.jpg",
-      "notes": "spotify.link short link no longer resolves to a Spotify page; metadata from export preview. Apple match confirmed on exact title, artist and release year (no duration available); spotifyUrl is the unresolved short link."
+      "notes": "spotify.link short link no longer resolves to a Spotify page; metadata from export preview. Apple match confirmed on exact title, artist and release year (no duration available); no confirmed Spotify replacement, so the Spotify link was removed 2026-10-21 (the posted short link is kept as the source link)."
     },
     {
       "id": "047db1eb-3f37-5929-837c-42317df73771",
@@ -6907,11 +6907,11 @@
       "posted_at": "2025-06-09T08:56:26-04:00",
       "source_service": "spotify",
       "source_url": "https://spotify.link/XJy2WNJK3Tb",
-      "spotify_url": "https://spotify.link/XJy2WNJK3Tb",
+      "spotify_url": "https://open.spotify.com/track/23Sip8890F5vshgxh4Itux",
       "apple_music_url": "https://music.apple.com/ca/album/smoke-two-joints/1442353682?i=1442353942",
       "match_status": "matched",
       "artwork_url": "https://is1-ssl.mzstatic.com/image/thumb/Music211/v4/8c/4c/b3/8c4cb360-3f10-e5af-70d9-66d5fa24b22a/06UMGIM20483.rgb.jpg/600x600bb.jpg",
-      "notes": "spotify.link short link no longer resolves to a Spotify page; metadata from export preview. Apple match confirmed on exact title, artist and release year (no duration available); spotifyUrl is the unresolved short link."
+      "notes": "Relinked 2026-10-21 (see usb-relink patch)."
     },
     {
       "id": "39e89a8a-7205-5dd7-bfa9-cf090d5fdaf9",
@@ -6971,11 +6971,11 @@
       "posted_at": "2025-06-06T00:43:24-04:00",
       "source_service": "spotify",
       "source_url": "https://spotify.link/NfT1HmNcYTb",
-      "spotify_url": "https://spotify.link/NfT1HmNcYTb",
+      "spotify_url": null,
       "apple_music_url": "https://music.apple.com/ca/album/the-closer-you-get/337878184?i=337878302",
-      "match_status": "matched",
+      "match_status": "unmatched",
       "artwork_url": "https://is1-ssl.mzstatic.com/image/thumb/Music125/v4/75/4d/43/754d43b9-bddf-e5b0-5c26-b556c79f31cb/dj.obznxalu.jpg/600x600bb.jpg",
-      "notes": "spotify.link short link no longer resolves to a Spotify page; metadata from export preview. Apple match confirmed on exact title, artist and release year (no duration available); spotifyUrl is the unresolved short link."
+      "notes": "spotify.link short link no longer resolves to a Spotify page; metadata from export preview. Apple match confirmed on exact title, artist and release year (no duration available); no confirmed Spotify replacement, so the Spotify link was removed 2026-10-21 (the posted short link is kept as the source link)."
     },
     {
       "id": "810c8337-5522-551a-b102-316ca43b0816",
@@ -7003,11 +7003,11 @@
       "posted_at": "2025-06-04T22:16:10-04:00",
       "source_service": "spotify",
       "source_url": "https://spotify.link/WzTFU8mnWTb",
-      "spotify_url": "https://spotify.link/WzTFU8mnWTb",
+      "spotify_url": null,
       "apple_music_url": "https://music.apple.com/ca/album/poison-tearz/1812940422?i=1812940427",
-      "match_status": "matched",
+      "match_status": "unmatched",
       "artwork_url": "https://is1-ssl.mzstatic.com/image/thumb/Music221/v4/25/09/82/2509829b-18a4-0f5b-d52b-ccc5927fb6b6/cover.jpg/600x600bb.jpg",
-      "notes": "spotify.link short link no longer resolves to a Spotify page; metadata from export preview. Apple match confirmed on exact title, artist and release year (no duration available); spotifyUrl is the unresolved short link."
+      "notes": "spotify.link short link no longer resolves to a Spotify page; metadata from export preview. Apple match confirmed on exact title, artist and release year (no duration available); no confirmed Spotify replacement, so the Spotify link was removed 2026-10-21 (the posted short link is kept as the source link)."
     },
     {
       "id": "65c2e314-70e3-5856-9fa9-4cb397f779a6",
@@ -7019,11 +7019,11 @@
       "posted_at": "2025-06-04T20:57:27-04:00",
       "source_service": "spotify",
       "source_url": "https://spotify.link/m0tCrdKhWTb",
-      "spotify_url": "https://spotify.link/m0tCrdKhWTb",
+      "spotify_url": null,
       "apple_music_url": "https://music.apple.com/ca/album/lets-get-loud/265143164?i=265144078",
-      "match_status": "matched",
+      "match_status": "unmatched",
       "artwork_url": "https://is1-ssl.mzstatic.com/image/thumb/Music125/v4/c7/f4/6d/c7f46dbd-bc8d-7a7a-cf66-4b96dc59e105/888880316592.jpg/600x600bb.jpg",
-      "notes": "spotify.link short link no longer resolves to a Spotify page; metadata from export preview. Apple match confirmed on exact title, artist and release year (no duration available); spotifyUrl is the unresolved short link."
+      "notes": "spotify.link short link no longer resolves to a Spotify page; metadata from export preview. Apple match confirmed on exact title, artist and release year (no duration available); no confirmed Spotify replacement, so the Spotify link was removed 2026-10-21 (the posted short link is kept as the source link)."
     },
     {
       "id": "e2078e12-d3f5-5624-8e8a-5a07805ee799",
@@ -7099,11 +7099,11 @@
       "posted_at": "2025-05-31T21:51:21-04:00",
       "source_service": "spotify",
       "source_url": "https://spotify.link/UE7rmWYHPTb",
-      "spotify_url": "https://spotify.link/UE7rmWYHPTb",
+      "spotify_url": "https://open.spotify.com/track/4mLwvl7x69NyA71hFMWieV",
       "apple_music_url": "https://music.apple.com/ca/album/bobcaygeon/1440826990?i=1440827383",
       "match_status": "matched",
       "artwork_url": "https://is1-ssl.mzstatic.com/image/thumb/Music116/v4/44/24/17/442417c8-28f0-1ab1-bae7-4e2f3175c6d3/15UMGIM12257.rgb.jpg/600x600bb.jpg",
-      "notes": "spotify.link short link no longer resolves to a Spotify page; metadata from export preview. Apple match confirmed on exact title, artist and release year (no duration available); spotifyUrl is the unresolved short link."
+      "notes": "Relinked 2026-10-21 (see usb-relink patch)."
     },
     {
       "id": "733e968d-7221-5b77-9fc5-a36284c1482b",
@@ -7115,11 +7115,11 @@
       "posted_at": "2025-05-31T21:45:38-04:00",
       "source_service": "spotify",
       "source_url": "https://spotify.link/zyeMWFzHPTb",
-      "spotify_url": "https://spotify.link/zyeMWFzHPTb",
+      "spotify_url": "https://open.spotify.com/track/2E7FWjLnz2oityrVVU04uM",
       "apple_music_url": "https://music.apple.com/ca/album/the-wreck-of-the-edmund-fitzgerald/70258987?i=70258956",
       "match_status": "matched",
       "artwork_url": "https://is1-ssl.mzstatic.com/image/thumb/Music124/v4/c7/ce/64/c7ce6402-e04d-828e-1bb4-ce30e56f423a/s06.kphgemuk.jpg/600x600bb.jpg",
-      "notes": "spotify.link short link no longer resolves to a Spotify page; metadata from export preview. Apple match confirmed on exact title, artist and release year (no duration available); spotifyUrl is the unresolved short link."
+      "notes": "Relinked 2026-10-21 (see usb-relink patch)."
     },
     {
       "id": "d4e9f627-9e4f-5bad-9111-aeceace54d7f",
@@ -7211,11 +7211,11 @@
       "posted_at": "2025-05-30T17:03:39-04:00",
       "source_service": "spotify",
       "source_url": "https://spotify.link/BtfWr2vINTb",
-      "spotify_url": "https://spotify.link/BtfWr2vINTb",
+      "spotify_url": null,
       "apple_music_url": "https://music.apple.com/ca/album/cats-in-the-cradle/40286674?i=40286679",
-      "match_status": "matched",
+      "match_status": "unmatched",
       "artwork_url": "https://is1-ssl.mzstatic.com/image/thumb/Music125/v4/59/23/4e/59234e42-86ac-818a-6e41-1fa1536aa04f/s06.zywtcmse.jpg/600x600bb.jpg",
-      "notes": "spotify.link short link no longer resolves to a Spotify page; metadata from export preview. Apple match confirmed on exact title, artist and release year (no duration available); spotifyUrl is the unresolved short link."
+      "notes": "spotify.link short link no longer resolves to a Spotify page; metadata from export preview. Apple match confirmed on exact title, artist and release year (no duration available); no confirmed Spotify replacement, so the Spotify link was removed 2026-10-21 (the posted short link is kept as the source link)."
     },
     {
       "id": "76e855f3-40ae-5078-867c-399c648300b6",
@@ -7243,11 +7243,11 @@
       "posted_at": "2025-05-28T07:37:49-04:00",
       "source_service": "spotify",
       "source_url": "https://spotify.link/suFYG6gKJTb",
-      "spotify_url": "https://spotify.link/suFYG6gKJTb",
+      "spotify_url": null,
       "apple_music_url": "https://music.apple.com/ca/album/im-with-you/315025768?i=315025828",
-      "match_status": "matched",
+      "match_status": "unmatched",
       "artwork_url": "https://is1-ssl.mzstatic.com/image/thumb/Music115/v4/32/2c/f3/322cf324-9ea1-3962-865a-f4f9bf83764d/888880191069.jpg/600x600bb.jpg",
-      "notes": "spotify.link short link no longer resolves to a Spotify page; metadata from export preview. Apple match confirmed on exact title, artist and release year (no duration available); spotifyUrl is the unresolved short link."
+      "notes": "spotify.link short link no longer resolves to a Spotify page; metadata from export preview. Apple match confirmed on exact title, artist and release year (no duration available); no confirmed Spotify replacement, so the Spotify link was removed 2026-10-21 (the posted short link is kept as the source link)."
     },
     {
       "id": "e87ec7bb-e957-535e-851b-3aba4cc5da02",
@@ -7291,11 +7291,11 @@
       "posted_at": "2025-05-26T08:44:11-04:00",
       "source_service": "spotify",
       "source_url": "https://spotify.link/hp3447cvGTb",
-      "spotify_url": "https://spotify.link/hp3447cvGTb",
+      "spotify_url": null,
       "apple_music_url": "https://music.apple.com/ca/album/ponte-bajo-el-sol/1712543274?i=1712543280",
-      "match_status": "matched",
+      "match_status": "unmatched",
       "artwork_url": "https://is1-ssl.mzstatic.com/image/thumb/Music211/v4/e2/63/63/e263637f-fc3a-2a33-42ee-537dd3f59b58/889845409151.png/600x600bb.jpg",
-      "notes": "spotify.link short link no longer resolves to a Spotify page; metadata from export preview. Apple match confirmed on exact title, artist and release year (no duration available); spotifyUrl is the unresolved short link."
+      "notes": "spotify.link short link no longer resolves to a Spotify page; metadata from export preview. Apple match confirmed on exact title, artist and release year (no duration available); no confirmed Spotify replacement, so the Spotify link was removed 2026-10-21 (the posted short link is kept as the source link)."
     },
     {
       "id": "9f1bfae4-d382-536d-a2a1-11c56eabd1d1",
@@ -7307,11 +7307,11 @@
       "posted_at": "2025-05-26T08:38:00-04:00",
       "source_service": "spotify",
       "source_url": "https://spotify.link/S3u0pOLuGTb",
-      "spotify_url": "https://spotify.link/S3u0pOLuGTb",
+      "spotify_url": null,
       "apple_music_url": "https://music.apple.com/ca/album/soy-una-nube/1712543274?i=1712543278",
-      "match_status": "matched",
+      "match_status": "unmatched",
       "artwork_url": "https://is1-ssl.mzstatic.com/image/thumb/Music211/v4/e2/63/63/e263637f-fc3a-2a33-42ee-537dd3f59b58/889845409151.png/600x600bb.jpg",
-      "notes": "spotify.link short link no longer resolves to a Spotify page; metadata from export preview. Apple match confirmed on exact title, artist and release year (no duration available); spotifyUrl is the unresolved short link."
+      "notes": "spotify.link short link no longer resolves to a Spotify page; metadata from export preview. Apple match confirmed on exact title, artist and release year (no duration available); no confirmed Spotify replacement, so the Spotify link was removed 2026-10-21 (the posted short link is kept as the source link)."
     },
     {
       "id": "12b46219-9842-5d6a-bb56-91b4ffd5f3d2",
@@ -7323,11 +7323,11 @@
       "posted_at": "2025-05-26T08:33:48-04:00",
       "source_service": "spotify",
       "source_url": "https://spotify.link/BHMBq3suGTb",
-      "spotify_url": "https://spotify.link/BHMBq3suGTb",
+      "spotify_url": null,
       "apple_music_url": "https://music.apple.com/ca/album/alegr%C3%ADa/1712543891?i=1712543895",
-      "match_status": "matched",
+      "match_status": "unmatched",
       "artwork_url": "https://is1-ssl.mzstatic.com/image/thumb/Music211/v4/36/7d/57/367d5790-c64f-9697-d552-9fd32a8fdb67/889845409700.png/600x600bb.jpg",
-      "notes": "spotify.link short link no longer resolves to a Spotify page; metadata from export preview. Apple match confirmed on exact title, artist and release year (no duration available); spotifyUrl is the unresolved short link."
+      "notes": "spotify.link short link no longer resolves to a Spotify page; metadata from export preview. Apple match confirmed on exact title, artist and release year (no duration available); no confirmed Spotify replacement, so the Spotify link was removed 2026-10-21 (the posted short link is kept as the source link)."
     },
     {
       "id": "14bee953-2f98-5e3b-8c55-4293cf26ef8f",
@@ -7371,11 +7371,11 @@
       "posted_at": "2025-05-24T21:18:59-04:00",
       "source_service": "spotify",
       "source_url": "https://spotify.link/YvWSjbl3DTb",
-      "spotify_url": "https://spotify.link/YvWSjbl3DTb",
+      "spotify_url": null,
       "apple_music_url": "https://music.apple.com/ca/album/if-i-could-turn-back-time/1445940530?i=1445940793",
-      "match_status": "matched",
+      "match_status": "unmatched",
       "artwork_url": "https://is1-ssl.mzstatic.com/image/thumb/Music124/v4/fd/16/9a/fd169ae1-5bc5-31b3-f628-9f01f474f37e/00602567822851.rgb.jpg/600x600bb.jpg",
-      "notes": "spotify.link short link no longer resolves to a Spotify page; metadata from export preview. Apple match confirmed on exact title, artist and release year (no duration available); spotifyUrl is the unresolved short link."
+      "notes": "spotify.link short link no longer resolves to a Spotify page; metadata from export preview. Apple match confirmed on exact title, artist and release year (no duration available); no confirmed Spotify replacement, so the Spotify link was removed 2026-10-21 (the posted short link is kept as the source link)."
     },
     {
       "id": "37a9dd66-a533-5e90-a7b5-2d2f00598c23",
@@ -7403,11 +7403,11 @@
       "posted_at": "2025-05-24T12:13:32-04:00",
       "source_service": "spotify",
       "source_url": "https://spotify.link/w0TbbzmqDTb",
-      "spotify_url": "https://spotify.link/w0TbbzmqDTb",
+      "spotify_url": "https://open.spotify.com/track/6gbmylJ7sB7NFfMfTQHosf",
       "apple_music_url": "https://music.apple.com/ca/album/alberto-balsalm-1994/281829991?i=281830075",
       "match_status": "matched",
       "artwork_url": "https://is1-ssl.mzstatic.com/image/thumb/Music125/v4/5b/b8/00/5bb80093-db7e-fdb9-c4ce-48f81847f68b/mzi.jwcepubj.jpg/600x600bb.jpg",
-      "notes": "spotify.link short link no longer resolves to a Spotify page; metadata from export preview. Apple match confirmed on exact title, artist and release year (no duration available); spotifyUrl is the unresolved short link."
+      "notes": "Relinked 2026-10-21 (see usb-relink patch)."
     },
     {
       "id": "b6ade691-2b64-5504-ad5e-69817cbfc6e4",
@@ -7419,11 +7419,11 @@
       "posted_at": "2025-05-24T10:38:40-04:00",
       "source_service": "spotify",
       "source_url": "https://spotify.link/vNdJRcAjDTb",
-      "spotify_url": "https://spotify.link/vNdJRcAjDTb",
+      "spotify_url": "https://open.spotify.com/track/2X3noddA1Gi8OmJVRP4eYC",
       "apple_music_url": "https://music.apple.com/ca/album/sweet-feat-foushe%C3%A9/1705102318?i=1705102851",
       "match_status": "matched",
       "artwork_url": "https://is1-ssl.mzstatic.com/image/thumb/Music116/v4/1f/e3/56/1fe356ff-d5d2-a3c4-37c3-7b0a15e6b5c2/196589967268.jpg/600x600bb.jpg",
-      "notes": "spotify.link short link no longer resolves to a Spotify page; metadata from export preview. Apple match confirmed on exact title, artist and release year (no duration available); spotifyUrl is the unresolved short link."
+      "notes": "Relinked 2026-10-21 (see usb-relink patch)."
     },
     {
       "id": "7c5e99df-a5e8-5b7e-b9fa-51e140228db2",
@@ -7451,11 +7451,11 @@
       "posted_at": "2025-05-23T19:28:21-04:00",
       "source_service": "spotify",
       "source_url": "https://spotify.link/Y01If1wgCTb",
-      "spotify_url": "https://spotify.link/Y01If1wgCTb",
+      "spotify_url": null,
       "apple_music_url": "https://music.apple.com/ca/album/aalto/1813883064?i=1813883065",
-      "match_status": "matched",
+      "match_status": "unmatched",
       "artwork_url": "https://is1-ssl.mzstatic.com/image/thumb/Music221/v4/24/7d/06/247d06cd-4774-2417-e7d8-fc6d6707bf00/193436427302_Aalto.jpg/600x600bb.jpg",
-      "notes": "spotify.link short link no longer resolves to a Spotify page; metadata from export preview. Apple match confirmed on exact title, artist and release year (no duration available); spotifyUrl is the unresolved short link."
+      "notes": "spotify.link short link no longer resolves to a Spotify page; metadata from export preview. Apple match confirmed on exact title, artist and release year (no duration available); no confirmed Spotify replacement, so the Spotify link was removed 2026-10-21 (the posted short link is kept as the source link)."
     },
     {
       "id": "d271b8ea-028d-5cca-b380-682542411cb8",
@@ -7467,11 +7467,11 @@
       "posted_at": "2025-05-23T16:54:33-04:00",
       "source_service": "spotify",
       "source_url": "https://spotify.link/ZTDXYEx5BTb",
-      "spotify_url": "https://spotify.link/ZTDXYEx5BTb",
+      "spotify_url": "https://open.spotify.com/track/0zikWa6k06uycAkRB8CsXA",
       "apple_music_url": "https://music.apple.com/ca/album/hi-grace/1744185197?i=1744185481",
       "match_status": "matched",
       "artwork_url": "https://is1-ssl.mzstatic.com/image/thumb/Music211/v4/4e/88/0c/4e880c64-5161-add4-3f1b-203435048b72/196872054972.jpg/600x600bb.jpg",
-      "notes": "spotify.link short link no longer resolves to a Spotify page; metadata from export preview. Apple match confirmed on exact title, artist and release year (no duration available); spotifyUrl is the unresolved short link."
+      "notes": "Relinked 2026-10-21 (see usb-relink patch)."
     },
     {
       "id": "361ca60e-9960-52ef-92a1-638dcfb41174",
@@ -7483,11 +7483,11 @@
       "posted_at": "2025-05-22T14:24:49-04:00",
       "source_service": "spotify",
       "source_url": "https://spotify.link/AMKLkXVfATb",
-      "spotify_url": "https://spotify.link/AMKLkXVfATb",
+      "spotify_url": null,
       "apple_music_url": "https://music.apple.com/ca/album/do-what-you-want-be-what-you-are/262058883?i=262059059",
-      "match_status": "matched",
+      "match_status": "unmatched",
       "artwork_url": "https://is1-ssl.mzstatic.com/image/thumb/Music125/v4/5f/93/80/5f938084-bace-c795-d92d-b69af67ab4e7/743219265326.jpg/600x600bb.jpg",
-      "notes": "spotify.link short link no longer resolves to a Spotify page; metadata from export preview. Apple match confirmed on exact title, artist and release year (no duration available); spotifyUrl is the unresolved short link."
+      "notes": "spotify.link short link no longer resolves to a Spotify page; metadata from export preview. Apple match confirmed on exact title, artist and release year (no duration available); no confirmed Spotify replacement, so the Spotify link was removed 2026-10-21 (the posted short link is kept as the source link)."
     },
     {
       "id": "8ae31342-51ae-5909-959d-755c0341493e",
@@ -7515,11 +7515,11 @@
       "posted_at": "2025-05-21T23:16:49-04:00",
       "source_service": "spotify",
       "source_url": "https://spotify.link/w33Jj70czTb",
-      "spotify_url": "https://spotify.link/w33Jj70czTb",
+      "spotify_url": null,
       "apple_music_url": "https://music.apple.com/ca/album/uber-everywhere/1528119989?i=1528119991",
-      "match_status": "matched",
+      "match_status": "unmatched",
       "artwork_url": "https://is1-ssl.mzstatic.com/image/thumb/Music114/v4/cf/06/7e/cf067ef3-ee42-0b3e-fffc-471ea1ff1a88/00075597946291_Cover.jpg/600x600bb.jpg",
-      "notes": "spotify.link short link no longer resolves to a Spotify page; metadata from export preview. Apple match confirmed on exact title, artist and release year (no duration available); spotifyUrl is the unresolved short link."
+      "notes": "spotify.link short link no longer resolves to a Spotify page; metadata from export preview. Apple match confirmed on exact title, artist and release year (no duration available); no confirmed Spotify replacement, so the Spotify link was removed 2026-10-21 (the posted short link is kept as the source link)."
     },
     {
       "id": "6ec79478-e713-5a76-b8f9-5b90fc72a08c",
@@ -7547,11 +7547,11 @@
       "posted_at": "2025-05-21T21:35:24-04:00",
       "source_service": "spotify",
       "source_url": "https://spotify.link/qg1v8GN5yTb",
-      "spotify_url": "https://spotify.link/qg1v8GN5yTb",
+      "spotify_url": null,
       "apple_music_url": "https://music.apple.com/ca/album/my-melody/1784353212?i=1784353977",
-      "match_status": "matched",
+      "match_status": "unmatched",
       "artwork_url": "https://is1-ssl.mzstatic.com/image/thumb/Music211/v4/ae/a6/96/aea69698-3ee9-2550-0e34-47022a892865/199066189108.jpg/600x600bb.jpg",
-      "notes": "spotify.link short link no longer resolves to a Spotify page; metadata from export preview. Apple match confirmed on exact title, artist and release year (no duration available); spotifyUrl is the unresolved short link."
+      "notes": "spotify.link short link no longer resolves to a Spotify page; metadata from export preview. Apple match confirmed on exact title, artist and release year (no duration available); no confirmed Spotify replacement, so the Spotify link was removed 2026-10-21 (the posted short link is kept as the source link)."
     },
     {
       "id": "952b1856-00a4-5702-bbd7-323ca3c01db4",
@@ -7563,11 +7563,11 @@
       "posted_at": "2025-05-19T12:06:35-04:00",
       "source_service": "spotify",
       "source_url": "https://spotify.link/QACEnSk7uTb",
-      "spotify_url": "https://spotify.link/QACEnSk7uTb",
-      "apple_music_url": null,
-      "match_status": "unmatched",
-      "artwork_url": null,
-      "notes": "spotify.link short link no longer resolves to a Spotify page; metadata from export preview. no iTunes CA result with matching title, artist and year."
+      "spotify_url": "https://open.spotify.com/track/788NX6uCNEVuZW8x5BkQqM",
+      "apple_music_url": "https://music.apple.com/ca/album/like-dat/1127924077?i=1127924590",
+      "match_status": "matched",
+      "artwork_url": "https://is1-ssl.mzstatic.com/image/thumb/Music124/v4/db/4e/92/db4e9266-1bf6-047d-5eeb-3bc13810048c/888915243985_cover.jpg/600x600bb.jpg",
+      "notes": "Relinked 2026-10-21 (see usb-relink patch)."
     },
     {
       "id": "70c8d696-faa9-582b-a7af-b7a57193894d",
@@ -7579,11 +7579,11 @@
       "posted_at": "2025-05-17T18:04:32-04:00",
       "source_service": "spotify",
       "source_url": "https://spotify.link/OzAlLk7csTb",
-      "spotify_url": "https://spotify.link/OzAlLk7csTb",
+      "spotify_url": null,
       "apple_music_url": "https://music.apple.com/ca/album/good-lookin/1753085589?i=1753085592",
-      "match_status": "matched",
+      "match_status": "unmatched",
       "artwork_url": "https://is1-ssl.mzstatic.com/image/thumb/Music221/v4/01/9c/da/019cdaaf-bb81-b2a7-3958-6175f62d3a77/artwork.jpg/600x600bb.jpg",
-      "notes": "spotify.link short link no longer resolves to a Spotify page; metadata from export preview. Apple match confirmed on exact title, artist and release year (no duration available); spotifyUrl is the unresolved short link."
+      "notes": "spotify.link short link no longer resolves to a Spotify page; metadata from export preview. Apple match confirmed on exact title, artist and release year (no duration available); no confirmed Spotify replacement, so the Spotify link was removed 2026-10-21 (the posted short link is kept as the source link)."
     },
     {
       "id": "f2cd46f0-71d7-5936-bfe1-a11af7ad8637",
@@ -7675,11 +7675,11 @@
       "posted_at": "2025-05-13T21:26:30-04:00",
       "source_service": "spotify",
       "source_url": "https://spotify.link/oI0gzQVNlTb",
-      "spotify_url": "https://spotify.link/oI0gzQVNlTb",
+      "spotify_url": null,
       "apple_music_url": "https://music.apple.com/ca/album/its-my-life-remastered-1997/695469000?i=695469004",
-      "match_status": "matched",
+      "match_status": "unmatched",
       "artwork_url": "https://is1-ssl.mzstatic.com/image/thumb/Music122/v4/7d/66/f0/7d66f06c-63ce-c0fc-97ac-0971c14542c8/724385679759.jpg/600x600bb.jpg",
-      "notes": "spotify.link short link no longer resolves to a Spotify page; metadata from export preview."
+      "notes": "spotify.link short link no longer resolves to a Spotify page; metadata from export preview. No confirmed Spotify replacement, so the Spotify link was removed 2026-10-21 (the posted short link is kept as the source link)."
     },
     {
       "id": "890188de-ff03-53d3-858e-46cf89b46edc",
@@ -7755,11 +7755,11 @@
       "posted_at": "2025-05-10T08:03:25-04:00",
       "source_service": "spotify",
       "source_url": "https://spotify.link/KUCbGTPTfTb",
-      "spotify_url": "https://spotify.link/KUCbGTPTfTb",
+      "spotify_url": null,
       "apple_music_url": "https://music.apple.com/ca/album/the-boss-feat-the-j-b-s/1444193522?i=1444193822",
-      "match_status": "matched",
+      "match_status": "unmatched",
       "artwork_url": "https://is1-ssl.mzstatic.com/image/thumb/Music128/v4/89/08/b9/8908b9a1-d1a7-641c-2d19-5251bc176a17/00602547021694.rgb.jpg/600x600bb.jpg",
-      "notes": "spotify.link short link no longer resolves to a Spotify page; metadata from export preview. Apple match confirmed on exact title, artist and release year (no duration available); spotifyUrl is the unresolved short link."
+      "notes": "spotify.link short link no longer resolves to a Spotify page; metadata from export preview. Apple match confirmed on exact title, artist and release year (no duration available); no confirmed Spotify replacement, so the Spotify link was removed 2026-10-21 (the posted short link is kept as the source link)."
     },
     {
       "id": "7f6c9af6-a588-5ddd-a4cf-cbce667f66cc",
@@ -7851,11 +7851,11 @@
       "posted_at": "2025-05-08T00:38:01-04:00",
       "source_service": "spotify",
       "source_url": "https://spotify.link/1c5Jn8b4bTb",
-      "spotify_url": "https://spotify.link/1c5Jn8b4bTb",
+      "spotify_url": "https://open.spotify.com/track/2UPiF4dyPTBKJYrvekbbis",
       "apple_music_url": "https://music.apple.com/ca/album/ryder-music/1444007100?i=1444007310",
       "match_status": "matched",
       "artwork_url": "https://is1-ssl.mzstatic.com/image/thumb/Music112/v4/b6/50/07/b650079b-15db-74fb-5395-ff7ef7c5a45e/17UMGIM93593.rgb.jpg/600x600bb.jpg",
-      "notes": "spotify.link short link no longer resolves to a Spotify page; metadata from export preview. Apple match confirmed on exact title, artist and release year (no duration available); spotifyUrl is the unresolved short link."
+      "notes": "Relinked 2026-10-21 (see usb-relink patch)."
     },
     {
       "id": "4e7228fe-3c33-5f3b-bfc0-c33c5af9cb69",
@@ -7867,11 +7867,11 @@
       "posted_at": "2025-05-08T00:07:23-04:00",
       "source_service": "spotify",
       "source_url": "https://spotify.link/PBKMkt01bTb",
-      "spotify_url": "https://spotify.link/PBKMkt01bTb",
-      "apple_music_url": null,
-      "match_status": "unmatched",
-      "artwork_url": null,
-      "notes": "spotify.link short link no longer resolves to a Spotify page; metadata from export preview. no iTunes CA result with matching title, artist and year."
+      "spotify_url": "https://open.spotify.com/track/3sNVsP50132BTNlImLx70i",
+      "apple_music_url": "https://music.apple.com/ca/album/bound-2/1440873068?i=1440873353",
+      "match_status": "matched",
+      "artwork_url": "https://is1-ssl.mzstatic.com/image/thumb/Music115/v4/3c/56/e7/3c56e717-06a0-b67d-e694-9b6e6e43a5a8/13UAAIM08444.rgb.jpg/600x600bb.jpg",
+      "notes": "Relinked 2026-10-21 (see usb-relink patch)."
     },
     {
       "id": "24d14490-66fd-5672-b41d-6504f0e6874f",
@@ -7899,11 +7899,11 @@
       "posted_at": "2025-05-06T21:31:48-04:00",
       "source_service": "spotify",
       "source_url": "https://spotify.link/1OeA8jZbaTb",
-      "spotify_url": "https://spotify.link/1OeA8jZbaTb",
+      "spotify_url": null,
       "apple_music_url": "https://music.apple.com/ca/album/one-call-away-feat-j-weav/715924885?i=715925378",
-      "match_status": "matched",
+      "match_status": "unmatched",
       "artwork_url": "https://is1-ssl.mzstatic.com/image/thumb/Music122/v4/b7/1b/20/b71b20df-80f0-ee67-7732-cefaebcc5f17/13ULAIM49574.rgb.jpg/600x600bb.jpg",
-      "notes": "spotify.link short link no longer resolves to a Spotify page; metadata from export preview. Apple match confirmed on exact title, artist and release year (no duration available); spotifyUrl is the unresolved short link."
+      "notes": "spotify.link short link no longer resolves to a Spotify page; metadata from export preview. Apple match confirmed on exact title, artist and release year (no duration available); no confirmed Spotify replacement, so the Spotify link was removed 2026-10-21 (the posted short link is kept as the source link)."
     },
     {
       "id": "28bb019e-d148-5dc7-ad16-b53403b65841",
@@ -7915,11 +7915,11 @@
       "posted_at": "2025-05-06T21:14:16-04:00",
       "source_service": "spotify",
       "source_url": "https://spotify.link/d1wlvFJaaTb",
-      "spotify_url": "https://spotify.link/d1wlvFJaaTb",
+      "spotify_url": null,
       "apple_music_url": "https://music.apple.com/ca/album/the-setup/1443175502?i=1443175768",
-      "match_status": "matched",
+      "match_status": "unmatched",
       "artwork_url": "https://is1-ssl.mzstatic.com/image/thumb/Music128/v4/a0/93/7f/a0937f91-ca3f-5ce8-e053-95eaed3d92fb/00602547130129.rgb.jpg/600x600bb.jpg",
-      "notes": "spotify.link short link no longer resolves to a Spotify page; metadata from export preview. Apple match confirmed on exact title, artist and release year (no duration available); spotifyUrl is the unresolved short link."
+      "notes": "spotify.link short link no longer resolves to a Spotify page; metadata from export preview. Apple match confirmed on exact title, artist and release year (no duration available); no confirmed Spotify replacement, so the Spotify link was removed 2026-10-21 (the posted short link is kept as the source link)."
     },
     {
       "id": "df576e25-0b2f-56cf-a515-d03832fc9130",
@@ -7947,11 +7947,11 @@
       "posted_at": "2025-05-06T20:10:01-04:00",
       "source_service": "spotify",
       "source_url": "https://spotify.link/Aynf6M859Sb",
-      "spotify_url": "https://spotify.link/Aynf6M859Sb",
+      "spotify_url": null,
       "apple_music_url": "https://music.apple.com/ca/album/this-is-how-we-do/1442875455?i=1442875462",
-      "match_status": "matched",
+      "match_status": "unmatched",
       "artwork_url": "https://is1-ssl.mzstatic.com/image/thumb/Music118/v4/f6/05/30/f60530fd-eac5-3d1e-667c-242faae7f53c/00602498604656.rgb.jpg/600x600bb.jpg",
-      "notes": "spotify.link short link no longer resolves to a Spotify page; metadata from export preview. Apple match confirmed on exact title, artist and release year (no duration available); spotifyUrl is the unresolved short link."
+      "notes": "spotify.link short link no longer resolves to a Spotify page; metadata from export preview. Apple match confirmed on exact title, artist and release year (no duration available); no confirmed Spotify replacement, so the Spotify link was removed 2026-10-21 (the posted short link is kept as the source link)."
     },
     {
       "id": "959d1ad8-a405-5595-ac98-c818e8c6ab10",
@@ -7979,11 +7979,11 @@
       "posted_at": "2025-05-06T14:46:14-04:00",
       "source_service": "spotify",
       "source_url": "https://spotify.link/H80IXf0I9Sb",
-      "spotify_url": "https://spotify.link/H80IXf0I9Sb",
+      "spotify_url": null,
       "apple_music_url": "https://music.apple.com/ca/album/half-on-a-baby-radio-version/303156530?i=303156626",
-      "match_status": "matched",
+      "match_status": "unmatched",
       "artwork_url": "https://is1-ssl.mzstatic.com/image/thumb/Music19/v4/72/6d/05/726d056a-d97e-fd41-b537-f48a15caecd2/mzm.nlqaqvhb.jpg/600x600bb.jpg",
-      "notes": "spotify.link short link no longer resolves to a Spotify page; metadata from export preview. Apple match confirmed on exact title, artist and release year (no duration available); spotifyUrl is the unresolved short link."
+      "notes": "spotify.link short link no longer resolves to a Spotify page; metadata from export preview. Apple match confirmed on exact title, artist and release year (no duration available); no confirmed Spotify replacement, so the Spotify link was removed 2026-10-21 (the posted short link is kept as the source link)."
     },
     {
       "id": "d26a58a2-632b-5540-805c-a04d7736ca08",
@@ -7995,11 +7995,11 @@
       "posted_at": "2025-05-04T20:44:55-04:00",
       "source_service": "spotify",
       "source_url": "https://spotify.link/qsu7ptPO6Sb",
-      "spotify_url": "https://spotify.link/qsu7ptPO6Sb",
+      "spotify_url": "https://open.spotify.com/track/3l9CW99AHtExIRV4hW2N5m",
       "apple_music_url": "https://music.apple.com/ca/album/misery-business/604863238?i=604863246",
       "match_status": "matched",
       "artwork_url": "https://is1-ssl.mzstatic.com/image/thumb/Music115/v4/bf/fa/66/bffa6672-1e97-fcf7-b301-9766f3563d68/075679954992.jpg/600x600bb.jpg",
-      "notes": "spotify.link short link no longer resolves to a Spotify page; metadata from export preview. Apple match confirmed on exact title, artist and release year (no duration available); spotifyUrl is the unresolved short link."
+      "notes": "Relinked 2026-10-21 (see usb-relink patch)."
     },
     {
       "id": "44787953-3876-5d75-a233-7b214075c2d2",
@@ -8011,11 +8011,11 @@
       "posted_at": "2025-05-04T20:44:07-04:00",
       "source_service": "spotify",
       "source_url": "https://spotify.link/jgKt0VLO6Sb",
-      "spotify_url": "https://spotify.link/jgKt0VLO6Sb",
+      "spotify_url": null,
       "apple_music_url": "https://music.apple.com/ca/album/re-education-through-labor/1440851524?i=1440851989",
-      "match_status": "matched",
+      "match_status": "unmatched",
       "artwork_url": "https://is1-ssl.mzstatic.com/image/thumb/Music115/v4/c8/fa/6a/c8fa6acb-bd79-5399-0876-f5e6a0f226e8/08UMGIM18022.rgb.jpg/600x600bb.jpg",
-      "notes": "spotify.link short link no longer resolves to a Spotify page; metadata from export preview. Apple match confirmed on exact title, artist and release year (no duration available); spotifyUrl is the unresolved short link."
+      "notes": "spotify.link short link no longer resolves to a Spotify page; metadata from export preview. Apple match confirmed on exact title, artist and release year (no duration available); no confirmed Spotify replacement, so the Spotify link was removed 2026-10-21 (the posted short link is kept as the source link)."
     },
     {
       "id": "15b34f43-9979-5fd7-b949-1bce76612c67",
@@ -8971,11 +8971,11 @@
       "posted_at": "2025-03-31T22:35:06-04:00",
       "source_service": "spotify",
       "source_url": "https://open.spotify.com/track/0Vl9aGb0dmeiCQ2ATgNK2B",
-      "spotify_url": "https://open.spotify.com/track/0Vl9aGb0dmeiCQ2ATgNK2B",
+      "spotify_url": "https://open.spotify.com/track/2AX8asCpJSCGnPVlRIopVa",
       "apple_music_url": "https://music.apple.com/ca/album/mas-que-nada/1895019802?i=6762804663",
       "match_status": "matched",
       "artwork_url": "https://is1-ssl.mzstatic.com/image/thumb/Music221/v4/2d/50/15/2d5015dd-5d04-2587-d609-923713549547/4011778322368.jpg/600x600bb.jpg",
-      "notes": null
+      "notes": "Relinked 2026-10-21 (see usb-relink patch)."
     },
     {
       "id": "323fd2f1-a11e-59cb-8bd1-31d744427d03",
@@ -9547,11 +9547,11 @@
       "posted_at": "2025-03-21T07:40:02-04:00",
       "source_service": "spotify",
       "source_url": "https://open.spotify.com/track/3ibxcND6eTszDGirHtDltf",
-      "spotify_url": "https://open.spotify.com/track/3ibxcND6eTszDGirHtDltf",
+      "spotify_url": "https://open.spotify.com/track/6jDcYJiI1nkPuLpTklrkfh",
       "apple_music_url": "https://music.apple.com/ca/album/tell-it-like-it-is/1607161284?i=1607161285",
       "match_status": "matched",
       "artwork_url": "https://is1-ssl.mzstatic.com/image/thumb/Music126/v4/50/9b/62/509b6283-f386-02a9-4f54-fcecacec4fa1/Aaron_Neville_Album_Cover.jpg/600x600bb.jpg",
-      "notes": null
+      "notes": "Relinked 2026-10-21 (see usb-relink patch)."
     },
     {
       "id": "dd12ae1c-f7d1-5fd5-a2bb-544be75a61d3",
@@ -10491,11 +10491,11 @@
       "posted_at": "2025-02-16T13:01:22-05:00",
       "source_service": "apple_music",
       "source_url": "https://music.apple.com/ca/album/anything/1504827372?i=1504827374",
-      "spotify_url": null,
+      "spotify_url": "https://open.spotify.com/track/3lcDf5GlfvzgCtccTBpx3Q",
       "apple_music_url": "https://music.apple.com/ca/album/anything/1504827372?i=1504827374",
-      "match_status": "unmatched",
+      "match_status": "matched",
       "artwork_url": "https://is1-ssl.mzstatic.com/image/thumb/Music211/v4/1b/cd/4a/1bcd4a31-2f53-e8d9-b559-299bbc594c5d/195188019316-copy-efe2f1fd.png/600x600bb.jpg",
-      "notes": "No Spotify match confirmed via public pages."
+      "notes": "Relinked 2026-10-21 (see usb-relink patch)."
     },
     {
       "id": "0c9025e5-d506-5356-85ab-8997474c24fb",
@@ -11419,11 +11419,11 @@
       "posted_at": "2025-01-15T00:55:24-05:00",
       "source_service": "spotify",
       "source_url": "https://open.spotify.com/track/3CkjLJYnnyOtGk4Jx4iYS4",
-      "spotify_url": "https://open.spotify.com/track/3CkjLJYnnyOtGk4Jx4iYS4",
+      "spotify_url": "https://open.spotify.com/track/2MVcTN1zcj0eThnzn2TKvE",
       "apple_music_url": "https://music.apple.com/ca/album/woman/1440749482?i=1440749490",
       "match_status": "matched",
       "artwork_url": "https://is1-ssl.mzstatic.com/image/thumb/Music124/v4/7e/4f/18/7e4f1872-57de-9a2c-02d1-770ac11a1529/06UMGIM41019.rgb.jpg/600x600bb.jpg",
-      "notes": null
+      "notes": "Relinked 2026-10-21 (see usb-relink patch)."
     },
     {
       "id": "2b4bdc03-8fdf-59af-b302-221e7b58cdca",
@@ -11996,10 +11996,10 @@
       "source_service": "spotify",
       "source_url": "https://open.spotify.com/track/3LodnEuvawlcOLBD3ssDt7",
       "spotify_url": "https://open.spotify.com/track/3LodnEuvawlcOLBD3ssDt7",
-      "apple_music_url": null,
-      "match_status": "unmatched",
-      "artwork_url": "https://i.scdn.co/image/ab67616d0000b2736e187568ddb6630b7e312c01",
-      "notes": "no iTunes CA result with matching title, artist and year."
+      "apple_music_url": "https://music.apple.com/ca/album/rap-do-silva/1439318028?i=1439318029",
+      "match_status": "matched",
+      "artwork_url": "https://is1-ssl.mzstatic.com/image/thumb/Music221/v4/1f/30/49/1f3049db-c308-b48e-4ab4-0889fb2c0e38/0.jpg/600x600bb.jpg",
+      "notes": "Relinked 2026-10-21 (see usb-relink patch)."
     },
     {
       "id": "d065b086-1b0c-5945-be67-ae2cedf6a84b",
@@ -12236,10 +12236,10 @@
       "source_service": "spotify",
       "source_url": "https://open.spotify.com/track/3z8i35KCAtgdoIAw94BBqt",
       "spotify_url": "https://open.spotify.com/track/3z8i35KCAtgdoIAw94BBqt",
-      "apple_music_url": null,
-      "match_status": "unmatched",
-      "artwork_url": "https://i.scdn.co/image/ab67616d0000b273efccc04a76d7759c921928e8",
-      "notes": "no iTunes CA result with matching title, artist and year."
+      "apple_music_url": "https://music.apple.com/ca/album/castle-in-the-sky/1615687551?i=1615687772",
+      "match_status": "matched",
+      "artwork_url": "https://is1-ssl.mzstatic.com/image/thumb/Music116/v4/be/5e/a0/be5ea03e-529f-5a0d-f7ef-8a8843b21e31/cover.jpg/600x600bb.jpg",
+      "notes": "Relinked 2026-10-21 (see usb-relink patch)."
     },
     {
       "id": "7a029fa7-6dd2-5223-b830-f5e9ca44ad5e",
@@ -12475,11 +12475,11 @@
       "posted_at": "2024-12-02T20:48:57-05:00",
       "source_service": "spotify",
       "source_url": "https://open.spotify.com/track/4iVTSRiJAA18d3QglhyJ6Q",
-      "spotify_url": "https://open.spotify.com/track/4iVTSRiJAA18d3QglhyJ6Q",
+      "spotify_url": "https://open.spotify.com/track/3O4TPMOgChXOerSdB5WENH",
       "apple_music_url": "https://music.apple.com/ca/album/a-forest/286646354?i=286646361",
       "match_status": "matched",
       "artwork_url": "https://is1-ssl.mzstatic.com/image/thumb/Music/95/f8/89/mzi.lzqbugyp.jpg/600x600bb.jpg",
-      "notes": null
+      "notes": "Relinked 2026-10-21 (see usb-relink patch)."
     },
     {
       "id": "3b7d9cd7-165c-5828-b224-5e5c506a177f",
@@ -13035,11 +13035,11 @@
       "posted_at": "2024-11-10T22:41:07-05:00",
       "source_service": "spotify",
       "source_url": "https://spotify.link/o8GHcMezqOb",
-      "spotify_url": "https://spotify.link/o8GHcMezqOb",
+      "spotify_url": "https://open.spotify.com/track/0904cqduzhGIS9llPW6ksT",
       "apple_music_url": "https://music.apple.com/ca/album/hide-and-seek/1785655348?i=1785655353",
       "match_status": "matched",
       "artwork_url": "https://is1-ssl.mzstatic.com/image/thumb/Music211/v4/e3/ac/ac/e3acac09-d933-bd4c-e6e1-3d66dc66bac2/886445364729_cover.jpg/600x600bb.jpg",
-      "notes": "spotify.link short link no longer resolves to a Spotify page; metadata from export preview. Apple match confirmed on exact title, artist and release year (no duration available); spotifyUrl is the unresolved short link."
+      "notes": "Relinked 2026-10-21 (see usb-relink patch)."
     },
     {
       "id": "ee377a5f-c878-5a89-b925-0d5daa40086d",
@@ -13051,11 +13051,11 @@
       "posted_at": "2024-11-10T18:35:15-05:00",
       "source_service": "spotify",
       "source_url": "https://spotify.link/rwTuFYDhqOb",
-      "spotify_url": "https://spotify.link/rwTuFYDhqOb",
+      "spotify_url": "https://open.spotify.com/track/7sVbKoBdhXtYCEOO6qC1SN",
       "apple_music_url": "https://music.apple.com/ca/album/we-still-dont-trust-you/1742292297?i=1742292598",
       "match_status": "matched",
       "artwork_url": "https://is1-ssl.mzstatic.com/image/thumb/Music211/v4/33/aa/6c/33aa6ca4-cb53-d64a-2981-5fd79fdc57ce/196871990851.jpg/600x600bb.jpg",
-      "notes": "spotify.link short link no longer resolves to a Spotify page; metadata from export preview. Apple match confirmed on exact title, artist and release year (no duration available); spotifyUrl is the unresolved short link."
+      "notes": "Relinked 2026-10-21 (see usb-relink patch)."
     },
     {
       "id": "c91198bb-dcf9-5def-bd26-93748c3f1d08",
@@ -13067,11 +13067,11 @@
       "posted_at": "2024-11-10T18:18:11-05:00",
       "source_service": "spotify",
       "source_url": "https://spotify.link/11mGbIrgqOb",
-      "spotify_url": "https://spotify.link/11mGbIrgqOb",
+      "spotify_url": null,
       "apple_music_url": "https://music.apple.com/ca/album/que-sera-sera/1744586615?i=1744586905",
-      "match_status": "matched",
+      "match_status": "unmatched",
       "artwork_url": "https://is1-ssl.mzstatic.com/image/thumb/Music211/v4/bb/00/39/bb003979-1a74-4580-9d84-5e53954aa285/4099964058789.jpg/600x600bb.jpg",
-      "notes": "spotify.link short link no longer resolves to a Spotify page; metadata from export preview. Apple match confirmed on exact title, artist and release year (no duration available); spotifyUrl is the unresolved short link."
+      "notes": "spotify.link short link no longer resolves to a Spotify page; metadata from export preview. Apple match confirmed on exact title, artist and release year (no duration available); no confirmed Spotify replacement, so the Spotify link was removed 2026-10-21 (the posted short link is kept as the source link)."
     },
     {
       "id": "72799b70-015b-59ef-a883-3fa49fe2b196",
@@ -13083,11 +13083,11 @@
       "posted_at": "2024-11-10T09:57:08-05:00",
       "source_service": "spotify",
       "source_url": "https://spotify.link/Z1YRYVDGpOb",
-      "spotify_url": "https://spotify.link/Z1YRYVDGpOb",
+      "spotify_url": null,
       "apple_music_url": "https://music.apple.com/ca/album/stereo-love-original/1712763131?i=1712763319",
-      "match_status": "matched",
+      "match_status": "unmatched",
       "artwork_url": "https://is1-ssl.mzstatic.com/image/thumb/Music116/v4/b0/c6/89/b0c689f1-a228-2257-b339-7e5d170b56d4/0617465249150.jpg/600x600bb.jpg",
-      "notes": "spotify.link short link no longer resolves to a Spotify page; metadata from export preview. Apple match confirmed on exact title, artist and release year (no duration available); spotifyUrl is the unresolved short link."
+      "notes": "spotify.link short link no longer resolves to a Spotify page; metadata from export preview. Apple match confirmed on exact title, artist and release year (no duration available); no confirmed Spotify replacement, so the Spotify link was removed 2026-10-21 (the posted short link is kept as the source link)."
     },
     {
       "id": "b3813b0a-cf7f-5089-9dcb-109e8f4f0916",
@@ -13163,11 +13163,11 @@
       "posted_at": "2024-11-08T15:02:10-05:00",
       "source_service": "spotify",
       "source_url": "https://spotify.link/lPNpbVCImOb",
-      "spotify_url": "https://spotify.link/lPNpbVCImOb",
+      "spotify_url": "https://open.spotify.com/track/5iBtuVALNwt59VUz8XlbZo",
       "apple_music_url": "https://music.apple.com/ca/album/in-the-garage-2024-remaster/1890580956?i=1890580964",
       "match_status": "matched",
       "artwork_url": "https://is1-ssl.mzstatic.com/image/thumb/Music211/v4/98/f8/ab/98f8ab48-2bb6-ef63-4061-404459b02202/16UMGIM52971.rgb.jpg/600x600bb.jpg",
-      "notes": "spotify.link short link no longer resolves to a Spotify page; metadata from export preview. Apple match confirmed on exact title, artist and release year (no duration available); spotifyUrl is the unresolved short link."
+      "notes": "Relinked 2026-10-21 (see usb-relink patch)."
     },
     {
       "id": "a320a179-fbbb-5952-85eb-3b97f744fc28",
@@ -13179,11 +13179,11 @@
       "posted_at": "2024-11-05T00:05:44-05:00",
       "source_service": "spotify",
       "source_url": "https://spotify.link/hGQojtRHgOb",
-      "spotify_url": "https://spotify.link/hGQojtRHgOb",
-      "apple_music_url": null,
-      "match_status": "unmatched",
-      "artwork_url": null,
-      "notes": "spotify.link short link no longer resolves to a Spotify page; metadata from export preview. no iTunes CA result with matching title, artist and year."
+      "spotify_url": "https://open.spotify.com/track/1dJNuQQ5Zp06oBlnwpiNzT",
+      "apple_music_url": "https://music.apple.com/ca/album/mass-appeal/724829211?i=724829363",
+      "match_status": "matched",
+      "artwork_url": "https://is1-ssl.mzstatic.com/image/thumb/Music116/v4/8e/30/03/8e3003e0-ce9a-4fe0-b96d-2ce9da443616/13UADIM60809.rgb.jpg/600x600bb.jpg",
+      "notes": "Relinked 2026-10-21 (see usb-relink patch)."
     },
     {
       "id": "55ce3bb3-c3c5-517c-ac43-7bbbfc334b73",
@@ -13595,11 +13595,11 @@
       "posted_at": "2024-10-12T20:23:18-04:00",
       "source_service": "spotify",
       "source_url": "https://open.spotify.com/track/0D2lE9pdfepfEcUWds1Sst",
-      "spotify_url": "https://open.spotify.com/track/0D2lE9pdfepfEcUWds1Sst",
+      "spotify_url": "https://open.spotify.com/track/45S9QsqfOuByLkSMf68BCH",
       "apple_music_url": "https://music.apple.com/ca/album/lifes-a-gas/251016654?i=251016986",
       "match_status": "matched",
       "artwork_url": "https://is1-ssl.mzstatic.com/image/thumb/Music125/v4/d1/c0/8c/d1c08c34-dc7b-0e5b-cb99-4dcfc8b92d06/mzm.gwxgofup.jpg/600x600bb.jpg",
-      "notes": null
+      "notes": "Relinked 2026-10-21 (see usb-relink patch)."
     },
     {
       "id": "1722fe76-3d11-51ee-9260-3033b3579314",
@@ -14108,10 +14108,10 @@
       "source_service": "spotify",
       "source_url": "https://open.spotify.com/track/3YKR7Wglf9JvWg5O7xdA5g",
       "spotify_url": "https://open.spotify.com/track/3YKR7Wglf9JvWg5O7xdA5g",
-      "apple_music_url": null,
-      "match_status": "unmatched",
-      "artwork_url": "https://image-cdn-ak.spotifycdn.com/image/ab67616d0000b2731533f5dd895bb03556473485",
-      "notes": "no iTunes CA result with matching title, artist and duration."
+      "apple_music_url": "https://music.apple.com/ca/album/we-got-it-for-cheap-intro/204865737?i=204865862",
+      "match_status": "matched",
+      "artwork_url": "https://is1-ssl.mzstatic.com/image/thumb/Features/9b/dd/61/dj.avjfsbkd.jpg/600x600bb.jpg",
+      "notes": "Relinked 2026-10-21 (see usb-relink patch)."
     },
     {
       "id": "aa3089a9-bcaf-5a53-acf7-c478d88ea17c",
@@ -14539,11 +14539,11 @@
       "posted_at": "2024-08-29T14:53:24-04:00",
       "source_service": "spotify",
       "source_url": "https://open.spotify.com/track/4YAtIop3U0HsJ7jE94BCmX",
-      "spotify_url": "https://open.spotify.com/track/4YAtIop3U0HsJ7jE94BCmX",
+      "spotify_url": "https://open.spotify.com/track/1fHNx9MymVjrxGUbq8eh46",
       "apple_music_url": "https://music.apple.com/ca/album/all-the-way-turnt-up-feat-soulja-boy-tell-em/1444267318?i=1444267321",
       "match_status": "matched",
       "artwork_url": "https://is1-ssl.mzstatic.com/image/thumb/Music114/v4/ce/90/e3/ce90e3b9-fdf1-5fa6-956e-55a5264e5894/00602527335735.rgb.jpg/600x600bb.jpg",
-      "notes": null
+      "notes": "Relinked 2026-10-21 (see usb-relink patch)."
     },
     {
       "id": "b265185e-3565-50e2-b3c6-41a54f763002",
@@ -15580,10 +15580,10 @@
       "source_service": "spotify",
       "source_url": "https://open.spotify.com/track/3N9uDI1Ge9YWu75cxSqp2s",
       "spotify_url": "https://open.spotify.com/track/3N9uDI1Ge9YWu75cxSqp2s",
-      "apple_music_url": null,
-      "match_status": "unmatched",
-      "artwork_url": "https://image-cdn-fa.spotifycdn.com/image/ab67616d0000b273d048b94e9c108353c009d285",
-      "notes": "no iTunes CA result with matching title, artist and duration."
+      "apple_music_url": "https://music.apple.com/ca/album/nightmare/1504827372?i=1504827392",
+      "match_status": "matched",
+      "artwork_url": "https://is1-ssl.mzstatic.com/image/thumb/Music211/v4/1b/cd/4a/1bcd4a31-2f53-e8d9-b559-299bbc594c5d/195188019316-copy-efe2f1fd.png/600x600bb.jpg",
+      "notes": "Relinked 2026-10-21 (see usb-relink patch)."
     },
     {
       "id": "25df0beb-4892-582c-9c65-7377c05ae513",
@@ -16539,11 +16539,11 @@
       "posted_at": "2024-03-12T19:52:21-04:00",
       "source_service": "apple_music",
       "source_url": "https://music.apple.com/ca/album/pmw-all-i-really-need-feat-schoolboy-q/1450690198?i=1450690202",
-      "spotify_url": "https://open.spotify.com/track/4X3Y9DhAiTZ6zT6wwwFaId",
+      "spotify_url": "https://open.spotify.com/track/5oeKoJMi9g6GXEbtz1ta0f",
       "apple_music_url": "https://music.apple.com/ca/album/pmw-all-i-really-need-feat-schoolboy-q/1450690198?i=1450690202",
       "match_status": "matched",
       "artwork_url": "https://is1-ssl.mzstatic.com/image/thumb/Music116/v4/65/4e/c2/654ec2c7-e3c9-c3a4-e1aa-bd52853f7668/886443810112.jpg/600x600bb.jpg",
-      "notes": null
+      "notes": "Relinked 2026-10-21 (see usb-relink patch)."
     },
     {
       "id": "175b9791-6442-51ad-a375-1eb82c99ce25",
@@ -17179,11 +17179,11 @@
       "posted_at": "2024-01-29T23:52:28-05:00",
       "source_service": "spotify",
       "source_url": "https://open.spotify.com/track/2x625TiKKdsj7liUwXHYib",
-      "spotify_url": "https://open.spotify.com/track/2x625TiKKdsj7liUwXHYib",
+      "spotify_url": "https://open.spotify.com/track/1vFBi2eOtxWIneS5pHJ1wg",
       "apple_music_url": "https://music.apple.com/ca/album/life-is-a-highway/1826467370?i=1826467536",
       "match_status": "matched",
       "artwork_url": "https://is1-ssl.mzstatic.com/image/thumb/Music221/v4/73/9c/f9/739cf99c-7b8e-773a-6434-9134c425bb4b/00792755865866_Cover.jpg/600x600bb.jpg",
-      "notes": null
+      "notes": "Relinked 2026-10-21 (see usb-relink patch)."
     },
     {
       "id": "546ca2c8-e29c-58d1-8001-00a023520aaa",
@@ -17595,11 +17595,11 @@
       "posted_at": "2023-12-08T12:29:13-05:00",
       "source_service": "youtube",
       "source_url": "https://www.youtube.com/watch?v=Z83PICHUwSc",
-      "spotify_url": null,
+      "spotify_url": "https://open.spotify.com/track/4EKvRMR2n80eg7gVKFzxF3",
       "apple_music_url": "https://music.apple.com/ca/album/blue-da-ba-dee-medieval-style/1651200336?i=1651200337",
-      "match_status": "unmatched",
+      "match_status": "matched",
       "artwork_url": "https://is1-ssl.mzstatic.com/image/thumb/Music122/v4/ac/a6/33/aca63313-3234-7cf1-8302-58013c0ee523/5056032369498.png/600x600bb.jpg",
-      "notes": "Posted as a YouTube link; matched from its title \"Eiffel 65 - Blue (Da Ba Dee)\"."
+      "notes": "Posted as a YouTube link; matched from its title \"Eiffel 65 - Blue (Da Ba Dee)\". Relinked 2026-10-21 (see usb-relink patch)."
     },
     {
       "id": "afaea021-aa0e-541f-af0b-efdeeb023c30",
@@ -17867,11 +17867,11 @@
       "posted_at": "2023-10-14T22:05:08-04:00",
       "source_service": "spotify",
       "source_url": "https://spotify.link/DBjQMU8aUDb",
-      "spotify_url": "https://spotify.link/DBjQMU8aUDb",
+      "spotify_url": "https://open.spotify.com/track/4knkucXAA3QGSDr74taN4y",
       "apple_music_url": "https://music.apple.com/ca/album/cold-inside/1524626800?i=1524626811",
       "match_status": "matched",
       "artwork_url": "https://is1-ssl.mzstatic.com/image/thumb/Music114/v4/70/5b/d5/705bd50e-c43e-649a-16a4-f860e9439bf4/artwork.jpg/600x600bb.jpg",
-      "notes": "spotify.link short link no longer resolves to a Spotify page; metadata from export preview. Apple match confirmed on exact title, artist and release year (no duration available); spotifyUrl is the unresolved short link."
+      "notes": "Relinked 2026-10-21 (see usb-relink patch)."
     },
     {
       "id": "c6ae1050-dab7-549b-baf9-248d6664b714",
@@ -17899,11 +17899,11 @@
       "posted_at": "2023-10-12T09:21:16-04:00",
       "source_service": "spotify",
       "source_url": "https://spotify.link/32pbTJKYPDb",
-      "spotify_url": "https://spotify.link/32pbTJKYPDb",
+      "spotify_url": null,
       "apple_music_url": "https://music.apple.com/ca/album/strawberry-letter-23/1440896408?i=1440897015",
-      "match_status": "matched",
+      "match_status": "unmatched",
       "artwork_url": "https://is1-ssl.mzstatic.com/image/thumb/Music124/v4/20/3d/b4/203db425-5910-a34e-b72e-11a276be063a/06UMGIM10314.rgb.jpg/600x600bb.jpg",
-      "notes": "spotify.link short link no longer resolves to a Spotify page; metadata from export preview. Apple match confirmed on exact title, artist and release year (no duration available); spotifyUrl is the unresolved short link."
+      "notes": "spotify.link short link no longer resolves to a Spotify page; metadata from export preview. Apple match confirmed on exact title, artist and release year (no duration available); no confirmed Spotify replacement, so the Spotify link was removed 2026-10-21 (the posted short link is kept as the source link)."
     },
     {
       "id": "9f98e904-5e28-5647-b343-84ec95f5602b",
@@ -17915,11 +17915,11 @@
       "posted_at": "2023-10-09T22:35:22-04:00",
       "source_service": "spotify",
       "source_url": "https://spotify.link/U5Hyh7sULDb",
-      "spotify_url": "https://spotify.link/U5Hyh7sULDb",
+      "spotify_url": "https://open.spotify.com/track/0HEfiw4FFDxMTfCIf6k3J5",
       "apple_music_url": "https://music.apple.com/ca/album/wildn-cuz-im-young/1442990188?i=1442990334",
       "match_status": "matched",
       "artwork_url": "https://is1-ssl.mzstatic.com/image/thumb/Music125/v4/c9/72/b6/c972b69d-29d5-5442-7e40-020a7abddc17/10UMGIM27686.rgb.jpg/600x600bb.jpg",
-      "notes": "spotify.link short link no longer resolves to a Spotify page; metadata from export preview. Apple match confirmed on exact title, artist and release year (no duration available); spotifyUrl is the unresolved short link."
+      "notes": "Relinked 2026-10-21 (see usb-relink patch)."
     },
     {
       "id": "4c0e0fa7-96d8-57bb-b0ff-557bfe6be934",
@@ -17947,11 +17947,11 @@
       "posted_at": "2023-10-03T21:02:22-04:00",
       "source_service": "spotify",
       "source_url": "https://spotify.link/Fm6eCmIQBDb",
-      "spotify_url": "https://spotify.link/Fm6eCmIQBDb",
+      "spotify_url": null,
       "apple_music_url": "https://music.apple.com/ca/album/post-to-be-feat-chris-brown-jhene-aiko/944459370?i=944459436",
-      "match_status": "matched",
+      "match_status": "unmatched",
       "artwork_url": "https://is1-ssl.mzstatic.com/image/thumb/Music124/v4/76/d1/67/76d167bf-b5fa-d7de-5f6d-a58542bda6a0/075679945624.jpg/600x600bb.jpg",
-      "notes": "spotify.link short link no longer resolves to a Spotify page; metadata from export preview. Apple match confirmed on exact title, artist and release year (no duration available); spotifyUrl is the unresolved short link."
+      "notes": "spotify.link short link no longer resolves to a Spotify page; metadata from export preview. Apple match confirmed on exact title, artist and release year (no duration available); no confirmed Spotify replacement, so the Spotify link was removed 2026-10-21 (the posted short link is kept as the source link)."
     },
     {
       "id": "4366b867-5909-5783-a17a-0f34133ee6d7",
@@ -17963,11 +17963,11 @@
       "posted_at": "2023-10-03T20:55:55-04:00",
       "source_service": "spotify",
       "source_url": "https://spotify.link/kojNMZfQBDb",
-      "spotify_url": "https://spotify.link/kojNMZfQBDb",
+      "spotify_url": "https://open.spotify.com/track/4z0PnuB07fxtVZZRWsCfxb",
       "apple_music_url": "https://music.apple.com/ca/album/100-grandkids/1025258189?i=1025258194",
       "match_status": "matched",
       "artwork_url": "https://is1-ssl.mzstatic.com/image/thumb/Music5/v4/92/fb/29/92fb2980-906d-3761-651d-cabcc49723b0/093624923763.jpg/600x600bb.jpg",
-      "notes": "spotify.link short link no longer resolves to a Spotify page; metadata from export preview. Apple match confirmed on exact title, artist and release year (no duration available); spotifyUrl is the unresolved short link."
+      "notes": "Relinked 2026-10-21 (see usb-relink patch)."
     },
     {
       "id": "14ccbbbd-7547-5d40-90d8-c1993ea71fc3",
@@ -17979,11 +17979,11 @@
       "posted_at": "2023-10-02T21:45:18-04:00",
       "source_service": "spotify",
       "source_url": "https://spotify.link/5YYuqRSeADb",
-      "spotify_url": "https://spotify.link/5YYuqRSeADb",
+      "spotify_url": null,
       "apple_music_url": "https://music.apple.com/ca/album/they-know-dey-know/313703350?i=313703360",
-      "match_status": "matched",
+      "match_status": "unmatched",
       "artwork_url": "https://is1-ssl.mzstatic.com/image/thumb/Music/9c/2f/ef/mzi.hqjpnmam.jpg/600x600bb.jpg",
-      "notes": "spotify.link short link no longer resolves to a Spotify page; metadata from export preview. Apple match confirmed on exact title, artist and release year (no duration available); spotifyUrl is the unresolved short link."
+      "notes": "spotify.link short link no longer resolves to a Spotify page; metadata from export preview. Apple match confirmed on exact title, artist and release year (no duration available); no confirmed Spotify replacement, so the Spotify link was removed 2026-10-21 (the posted short link is kept as the source link)."
     },
     {
       "id": "6d8c81c4-8be8-5d78-9c42-f9572dfded55",
@@ -17995,11 +17995,11 @@
       "posted_at": "2023-10-02T21:44:55-04:00",
       "source_service": "spotify",
       "source_url": "https://spotify.link/O7KQO9QeADb",
-      "spotify_url": "https://spotify.link/O7KQO9QeADb",
+      "spotify_url": null,
       "apple_music_url": "https://music.apple.com/ca/album/we-fly-high/196177754?i=196177765",
-      "match_status": "matched",
+      "match_status": "unmatched",
       "artwork_url": "https://is1-ssl.mzstatic.com/image/thumb/Music/03/4a/87/dj.qsrilesq.jpg/600x600bb.jpg",
-      "notes": "spotify.link short link no longer resolves to a Spotify page; metadata from export preview. Apple match confirmed on exact title, artist and release year (no duration available); spotifyUrl is the unresolved short link."
+      "notes": "spotify.link short link no longer resolves to a Spotify page; metadata from export preview. Apple match confirmed on exact title, artist and release year (no duration available); no confirmed Spotify replacement, so the Spotify link was removed 2026-10-21 (the posted short link is kept as the source link)."
     },
     {
       "id": "d5d5ab99-8abe-5b21-abe7-99f5a4bd3e90",
@@ -18027,11 +18027,11 @@
       "posted_at": "2023-10-02T21:44:06-04:00",
       "source_service": "spotify",
       "source_url": "https://spotify.link/bPc6xzNeADb",
-      "spotify_url": "https://spotify.link/bPc6xzNeADb",
+      "spotify_url": null,
       "apple_music_url": "https://music.apple.com/ca/album/this-is-why-im-hot/716083675?i=716083759",
-      "match_status": "matched",
+      "match_status": "unmatched",
       "artwork_url": "https://is1-ssl.mzstatic.com/image/thumb/Music/v4/ab/7c/b0/ab7cb0f7-de1b-8f68-88ca-cd04182f09bf/00094638652557.jpg/600x600bb.jpg",
-      "notes": "spotify.link short link no longer resolves to a Spotify page; metadata from export preview. Apple match confirmed on exact title, artist and release year (no duration available); spotifyUrl is the unresolved short link."
+      "notes": "spotify.link short link no longer resolves to a Spotify page; metadata from export preview. Apple match confirmed on exact title, artist and release year (no duration available); no confirmed Spotify replacement, so the Spotify link was removed 2026-10-21 (the posted short link is kept as the source link)."
     },
     {
       "id": "992ea25b-67a2-5199-9228-1c41c66dfdae",
@@ -18043,11 +18043,11 @@
       "posted_at": "2023-10-02T21:43:47-04:00",
       "source_service": "spotify",
       "source_url": "https://spotify.link/wYYMk2LeADb",
-      "spotify_url": "https://spotify.link/wYYMk2LeADb",
+      "spotify_url": null,
       "apple_music_url": "https://music.apple.com/ca/album/calabria-2008-feat-natasja-mims-mims-remix/1712041149?i=1712041251",
-      "match_status": "matched",
+      "match_status": "unmatched",
       "artwork_url": "https://is1-ssl.mzstatic.com/image/thumb/Music126/v4/1e/f6/2b/1ef62b98-5fd1-02aa-5c7b-0a8a1b734706/617465804250.jpg/600x600bb.jpg",
-      "notes": "spotify.link short link no longer resolves to a Spotify page; metadata from export preview. Apple match confirmed on exact title, artist and release year (no duration available); spotifyUrl is the unresolved short link."
+      "notes": "spotify.link short link no longer resolves to a Spotify page; metadata from export preview. Apple match confirmed on exact title, artist and release year (no duration available); no confirmed Spotify replacement, so the Spotify link was removed 2026-10-21 (the posted short link is kept as the source link)."
     },
     {
       "id": "8bc4864d-d7f6-5493-8868-f4fe2a2e0b79",
@@ -18059,11 +18059,11 @@
       "posted_at": "2023-09-29T20:29:49-04:00",
       "source_service": "spotify",
       "source_url": "https://spotify.link/6NGGD1LavDb",
-      "spotify_url": "https://spotify.link/6NGGD1LavDb",
+      "spotify_url": null,
       "apple_music_url": "https://music.apple.com/ca/album/my-patch/121065587?i=121065549",
-      "match_status": "matched",
+      "match_status": "unmatched",
       "artwork_url": "https://is1-ssl.mzstatic.com/image/thumb/Music124/v4/5c/cd/be/5ccdbeb7-292a-3863-c548-2f0b4d5283e7/mzi.gswgpthb.jpg/600x600bb.jpg",
-      "notes": "spotify.link short link no longer resolves to a Spotify page; metadata from export preview. Apple match confirmed on exact title, artist and release year (no duration available); spotifyUrl is the unresolved short link."
+      "notes": "spotify.link short link no longer resolves to a Spotify page; metadata from export preview. Apple match confirmed on exact title, artist and release year (no duration available); no confirmed Spotify replacement, so the Spotify link was removed 2026-10-21 (the posted short link is kept as the source link)."
     },
     {
       "id": "7307c62d-99ff-5116-bcb0-b1c2e0ff0611",
@@ -18075,11 +18075,11 @@
       "posted_at": "2023-09-27T20:53:10-04:00",
       "source_service": "spotify",
       "source_url": "https://spotify.link/0rlaqiDSrDb",
-      "spotify_url": "https://spotify.link/0rlaqiDSrDb",
+      "spotify_url": null,
       "apple_music_url": "https://music.apple.com/ca/album/over-now/1530420238?i=1530420240",
-      "match_status": "matched",
+      "match_status": "unmatched",
       "artwork_url": "https://is1-ssl.mzstatic.com/image/thumb/Music124/v4/53/01/98/53019897-813a-c043-2f52-c445715ad57c/886448752493.jpg/600x600bb.jpg",
-      "notes": "spotify.link short link no longer resolves to a Spotify page; metadata from export preview. Apple match confirmed on exact title, artist and release year (no duration available); spotifyUrl is the unresolved short link."
+      "notes": "spotify.link short link no longer resolves to a Spotify page; metadata from export preview. Apple match confirmed on exact title, artist and release year (no duration available); no confirmed Spotify replacement, so the Spotify link was removed 2026-10-21 (the posted short link is kept as the source link)."
     },
     {
       "id": "e48b804f-31b3-5a42-b985-459f70858eb9",
@@ -18907,11 +18907,11 @@
       "posted_at": "2023-08-09T05:21:43-04:00",
       "source_service": "youtube",
       "source_url": "https://www.youtube.com/watch?v=QWc3xOapYVs",
-      "spotify_url": null,
+      "spotify_url": "https://open.spotify.com/track/5FQGTzCU5ETOnItLp7TjGL",
       "apple_music_url": "https://music.apple.com/ca/album/walls/1697740262?i=1697740263",
-      "match_status": "unmatched",
+      "match_status": "matched",
       "artwork_url": "https://is1-ssl.mzstatic.com/image/thumb/Music116/v4/59/47/a1/5947a1c9-794c-c5db-1b7e-4055cd9a7f81/artwork.jpg/600x600bb.jpg",
-      "notes": "Posted as a YouTube link; matched from its title \"GAGNE - Walls (Official Music Video)\"."
+      "notes": "Posted as a YouTube link; matched from its title \"GAGNE - Walls (Official Music Video)\". Relinked 2026-10-21 (see usb-relink patch)."
     },
     {
       "id": "3e404151-b0d9-540b-b720-8b611cb28086",
@@ -19435,11 +19435,11 @@
       "posted_at": "2023-07-05T18:57:13-04:00",
       "source_service": "spotify",
       "source_url": "https://open.spotify.com/track/6KhwQJ0Kbfee1D8KIbXGU8",
-      "spotify_url": "https://open.spotify.com/track/6KhwQJ0Kbfee1D8KIbXGU8",
+      "spotify_url": "https://open.spotify.com/track/2KZvQoTZh5C8kWiUyzqsDM",
       "apple_music_url": "https://music.apple.com/ca/album/before-today-2015-remaster/1631049357?i=1631049358",
       "match_status": "matched",
       "artwork_url": "https://is1-ssl.mzstatic.com/image/thumb/Music112/v4/c3/e1/d8/c3e1d886-d667-63b3-9f5b-8ed3047b3204/0810098500777.png/600x600bb.jpg",
-      "notes": null
+      "notes": "Relinked 2026-10-21 (see usb-relink patch)."
     },
     {
       "id": "a93fd661-0054-5293-ad3e-ea7730157242",
@@ -20156,10 +20156,10 @@
       "source_service": "spotify",
       "source_url": "https://open.spotify.com/track/0O3TAouZE4vL9dM5SyxgvH",
       "spotify_url": "https://open.spotify.com/track/0O3TAouZE4vL9dM5SyxgvH",
-      "apple_music_url": null,
-      "match_status": "unmatched",
-      "artwork_url": "https://image-cdn-fa.spotifycdn.com/image/ab67616d0000b2732ae92030b51fb8135d694af9",
-      "notes": "no iTunes CA result with matching title, artist and duration."
+      "apple_music_url": "https://music.apple.com/ca/album/fashion-killa/1450690198?i=1450690215",
+      "match_status": "matched",
+      "artwork_url": "https://is1-ssl.mzstatic.com/image/thumb/Music116/v4/65/4e/c2/654ec2c7-e3c9-c3a4-e1aa-bd52853f7668/886443810112.jpg/600x600bb.jpg",
+      "notes": "Relinked 2026-10-21 (see usb-relink patch)."
     },
     {
       "id": "55680f16-20ea-57a6-97e2-8b0a15316827",
@@ -20812,10 +20812,10 @@
       "source_service": "spotify",
       "source_url": "https://open.spotify.com/track/31G9RaSaDOI2NWcpnIp734",
       "spotify_url": "https://open.spotify.com/track/31G9RaSaDOI2NWcpnIp734",
-      "apple_music_url": null,
-      "match_status": "unmatched",
-      "artwork_url": "https://image-cdn-fa.spotifycdn.com/image/ab67616d0000b2732ae92030b51fb8135d694af9",
-      "notes": "no iTunes CA result with matching title, artist and duration."
+      "apple_music_url": "https://music.apple.com/ca/album/goldie/1450690198?i=1450690201",
+      "match_status": "matched",
+      "artwork_url": "https://is1-ssl.mzstatic.com/image/thumb/Music116/v4/65/4e/c2/654ec2c7-e3c9-c3a4-e1aa-bd52853f7668/886443810112.jpg/600x600bb.jpg",
+      "notes": "Relinked 2026-10-21 (see usb-relink patch)."
     },
     {
       "id": "332fda73-50a0-5c2b-aaad-929d697df3b5",
@@ -21596,10 +21596,10 @@
       "source_service": "spotify",
       "source_url": "https://open.spotify.com/track/3q6tJZj2A2PQVQEBgZnJ8W",
       "spotify_url": "https://open.spotify.com/track/3q6tJZj2A2PQVQEBgZnJ8W",
-      "apple_music_url": null,
-      "match_status": "unmatched",
-      "artwork_url": "https://image-cdn-fa.spotifycdn.com/image/ab67616d0000b273d1e6e1902ed5993d92ffb627",
-      "notes": "no iTunes CA result with matching title, artist and duration."
+      "apple_music_url": "https://music.apple.com/ca/album/e-coli-feat-earl-sweatshirt/1443018050?i=1443018054",
+      "match_status": "matched",
+      "artwork_url": "https://is1-ssl.mzstatic.com/image/thumb/Music118/v4/a3/0d/86/a30d86c3-24b7-da37-7c9e-bdba94ca35f4/888915783184_cover.jpg/600x600bb.jpg",
+      "notes": "Relinked 2026-10-21 (see usb-relink patch)."
     },
     {
       "id": "69a524f4-8778-5d67-8488-ec0fe3835aad",

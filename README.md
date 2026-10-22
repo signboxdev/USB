@@ -76,7 +76,7 @@ The three shipped entries are fake. Each has `"notes": "example"`, and the page 
 
 `match_status` stays in the catalog. The public page does not print matched, unmatched, or source only.
 
-The URL for `source_service` is always required. A Spotify post cannot have `spotify_url: null`. A YouTube post keeps the watch link in `source_url` and shows only the Spotify and Apple Music buttons that are set. The page never renders a YouTube button.
+The URL for `source_service` is always required. A Spotify post whose Spotify link has died with no confirmed replacement may have `spotify_url: null` and `match_status: "unmatched"`; `source_url` still keeps the link as posted and is never rendered. A YouTube post keeps the watch link in `source_url` and shows only the Spotify and Apple Music buttons that are set. The page never renders a YouTube button.
 
 `npm run validate` checks `data/catalog.json` against the schema and rejects duplicate ids. `npm run build` runs that check before it writes `dist/`. A failed check leaves the previous `dist/` in place.
 

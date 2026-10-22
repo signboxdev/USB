@@ -139,8 +139,7 @@
           },
           "then": {
             "properties": {
-              "source_url": { "type": "string", "pattern": "^https://(?:open\\.spotify\\.com|spotify\\.link)/\\S+$" },
-              "spotify_url": { "type": "string", "minLength": 1 }
+              "source_url": { "type": "string", "pattern": "^https://(?:open\\.spotify\\.com|spotify\\.link)/\\S+$" }
             }
           }
         },

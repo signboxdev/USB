@@ -2,6 +2,22 @@
   "version": 1,
   "entries": [
     {
+      "id": "f6a7469a-1b37-4a5a-aff3-74f5ed61a217",
+      "type": "track",
+      "title": "Yeah Yeah - D Ramirez Vocal Radio Edit",
+      "artist": "Bodyrox, Luciana, D. Ramirez",
+      "album": "Yeah Yeah - Single",
+      "posted_by": "Chris",
+      "posted_at": "2026-10-22T09:24:38-04:00",
+      "source_service": "spotify",
+      "source_url": "https://open.spotify.com/track/4HVGC52IogHANcKFA0QYiT",
+      "spotify_url": "https://open.spotify.com/track/4HVGC52IogHANcKFA0QYiT",
+      "apple_music_url": "https://music.apple.com/ca/album/yeah-yeah-d-ramirez-vocal-radio-edit/925691327?i=925691346",
+      "match_status": "matched",
+      "artwork_url": "https://is1-ssl.mzstatic.com/image/thumb/Music5/v4/b5/a6/08/b5a60859-8e98-a159-afb8-a2fd26b2b7f0/8718274950670.jpg/600x600bb.jpg",
+      "notes": null
+    },
+    {
       "id": "e92c55ea-8e32-469f-ab92-a7b7bea5c3f1",
       "type": "track",
       "title": "Change (Aphex Twin Mix #2)",

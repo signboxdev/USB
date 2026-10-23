@@ -2,6 +2,22 @@
   "version": 1,
   "entries": [
     {
+      "id": "2286d4ba-8da8-47bf-8ff4-42e37ab8306f",
+      "type": "track",
+      "title": "Drive In",
+      "artist": "Madlib",
+      "album": "Bad Neighbor Instrumentals",
+      "posted_by": "Dallas",
+      "posted_at": "2026-10-22T21:57:50-04:00",
+      "source_service": "spotify",
+      "source_url": "https://open.spotify.com/track/26ACAjtqWSx8LDY6SSe0Zb",
+      "spotify_url": "https://open.spotify.com/track/26ACAjtqWSx8LDY6SSe0Zb",
+      "apple_music_url": "https://music.apple.com/ca/album/drive-in-instrumental/1185111032?i=1185111323",
+      "match_status": "matched",
+      "artwork_url": "https://is1-ssl.mzstatic.com/image/thumb/Music111/v4/9c/b5/43/9cb543d0-3f2e-d39e-c811-30f6a7bc2a3b/2643.jpg/600x600bb.jpg",
+      "notes": null
+    },
+    {
       "id": "f6a7469a-1b37-4a5a-aff3-74f5ed61a217",
       "type": "track",
       "title": "Yeah Yeah - D Ramirez Vocal Radio Edit",

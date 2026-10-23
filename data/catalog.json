@@ -2,6 +2,22 @@
   "version": 1,
   "entries": [
     {
+      "id": "c8570a3a-a3fe-460f-a64d-470cb70938a0",
+      "type": "album",
+      "title": "ZILLA",
+      "artist": "Westside Gunn",
+      "album": "ZILLA",
+      "posted_by": "George",
+      "posted_at": "2026-10-23T09:10:42-04:00",
+      "source_service": "spotify",
+      "source_url": "https://open.spotify.com/album/2bA62lIFAMlOitMT1XLOwI",
+      "spotify_url": "https://open.spotify.com/album/2bA62lIFAMlOitMT1XLOwI",
+      "apple_music_url": "https://music.apple.com/ca/album/zilla-single/6825097610",
+      "match_status": "matched",
+      "artwork_url": "https://is1-ssl.mzstatic.com/image/thumb/Music211/v4/33/57/87/3357875d-3fdc-7170-14e4-00eedabbe95e/711641043096.jpg/600x600bb.jpg",
+      "notes": null
+    },
+    {
       "id": "e0134910-4997-409d-88b6-536cb77d29fc",
       "type": "track",
       "title": "Obsessive",

@@ -2,6 +2,22 @@
   "version": 1,
   "entries": [
     {
+      "id": "59558ed6-938e-4323-8456-ec1152edbc2e",
+      "type": "track",
+      "title": "Take You There",
+      "artist": "Sean Kingston",
+      "album": "Sean Kingston",
+      "posted_by": "Dallas",
+      "posted_at": "2026-10-23T21:58:36-04:00",
+      "source_service": "spotify",
+      "source_url": "https://open.spotify.com/track/6AdLyvisRKHLAwARaZMGr6",
+      "spotify_url": "https://open.spotify.com/track/6AdLyvisRKHLAwARaZMGr6",
+      "apple_music_url": "https://music.apple.com/ca/album/take-you-there/275820068?i=275820153",
+      "match_status": "matched",
+      "artwork_url": "https://is1-ssl.mzstatic.com/image/thumb/Music112/v4/78/1e/cd/781ecd93-78a8-a27b-b4fb-db85314cca92/888880493637.jpg/600x600bb.jpg",
+      "notes": null
+    },
+    {
       "id": "c8570a3a-a3fe-460f-a64d-470cb70938a0",
       "type": "album",
       "title": "ZILLA",

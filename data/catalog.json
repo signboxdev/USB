@@ -2,6 +2,22 @@
   "version": 1,
   "entries": [
     {
+      "id": "8a6d3799-4826-460f-a3e8-d3b5ec55e2e0",
+      "type": "track",
+      "title": "Love Is The Drug",
+      "artist": "Roxy Music",
+      "album": "Siren",
+      "posted_by": "Evan",
+      "posted_at": "2026-10-24T00:02:39-04:00",
+      "source_service": "spotify",
+      "source_url": "https://open.spotify.com/track/3wtMkvedoWMQ3XTKv7tqcZ",
+      "spotify_url": "https://open.spotify.com/track/3wtMkvedoWMQ3XTKv7tqcZ",
+      "apple_music_url": "https://music.apple.com/ca/album/love-is-the-drug/723878140?i=723878503",
+      "match_status": "matched",
+      "artwork_url": "https://is1-ssl.mzstatic.com/image/thumb/Music116/v4/54/8f/35/548f35eb-40e7-174a-3583-e81f144a0415/13ULAIM48846.rgb.jpg/600x600bb.jpg",
+      "notes": null
+    },
+    {
       "id": "59558ed6-938e-4323-8456-ec1152edbc2e",
       "type": "track",
       "title": "Take You There",

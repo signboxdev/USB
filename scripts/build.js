@@ -2,6 +2,7 @@ import crypto from "node:crypto";
 import fs from "node:fs";
 import path from "node:path";
 import { pathToFileURL } from "node:url";
+import { prepareIndex, queryIndex } from "../src/search.js";
 import { assertValidCatalog, repoRoot } from "./catalog.js";
 
 // Above this, the homepage (and a poster page) stops inlining every sleeve.
@@ -10,8 +11,9 @@ import { assertValidCatalog, repoRoot } from "./catalog.js";
 const VIRTUAL_AT = 64;
 const VIRTUAL_COVERS = 4;
 const VIRTUAL_ROWS = 8;
-// Posted-by is a name. A phone number in that field must not ship.
+// Posted-by is a name. A phone number or email in that field must not ship.
 const PHONE_IN_NAME = /(?:\+\d[\d\s().-]{8,}\d)|\b\d{3}[\s.-]\d{3}[\s.-]\d{4}\b/;
+const EMAIL_IN_NAME = /@/;
 
 const SITE_ORIGIN = "https://unfamiliarsoundbyte.com";
 const CANONICAL_URL = `${SITE_ORIGIN}/`;
@@ -153,11 +155,24 @@ function assertNameIsPublic(entry) {
   if (PHONE_IN_NAME.test(entry.posted_by)) {
     throw new Error(`refusing to publish a phone number in posted_by for ${entry.id}`);
   }
+  if (EMAIL_IN_NAME.test(entry.posted_by)) {
+    throw new Error(`refusing to publish an email in posted_by for ${entry.id}`);
+  }
 }
 
 // Public view of one page. Arrays keep the file small. Order is the contract
 // coverflow.js decodes. Private catalog fields stay out: notes, match_status,
 // source_url, source_service, and anything like posters.json.
+// Same public fields as the windowed catalog, minus the links and art. Search
+// reads this file in the browser. Private catalog fields stay out.
+function searchPayload(entries) {
+  for (const entry of entries) assertNameIsPublic(entry);
+  return {
+    v: 1,
+    entries: entries.map((entry) => [entry.id, entry.title, entry.artist, entry.album, entry.posted_by]),
+  };
+}
+
 function entriesPayload(entries, numbers) {
   for (const entry of entries) assertNameIsPublic(entry);
   return {
@@ -311,7 +326,7 @@ function renderCoverFlow(entries, { coverLimit, singlePanel = false, entriesHref
       const backId = `flow-back-${index}`;
       return `          <li class="flow-cover">
             <div class="flow-flip">
-              <button type="button" class="flow-select" data-index="${index}" data-summary="${escapeHtml(summary)}" aria-expanded="false" aria-controls="${backId}" aria-label="${escapeHtml(`${entry.title} by ${entry.artist}`)}"${current}>
+              <button type="button" class="flow-select" data-index="${index}" data-id="${escapeHtml(entry.id)}" data-summary="${escapeHtml(summary)}" aria-expanded="false" aria-controls="${backId}" aria-label="${escapeHtml(`${entry.title} by ${entry.artist}`)}"${current}>
                 ${sleeve}
               </button>
               <div class="flow-back" id="${backId}" aria-hidden="true" inert hidden>
@@ -354,6 +369,21 @@ ${panels}
 `;
 }
 
+function renderFinder(searchHref) {
+  return `        <div class="finder" role="search" data-search="${escapeHtml(searchHref)}">
+          <label class="sr-only" for="finder-q">Search songs, artists, and people</label>
+          <div class="finder-bar">
+            <input id="finder-q" class="finder-input" type="search" placeholder="search" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" enterkeyhint="search" aria-autocomplete="list" aria-controls="finder-panel" aria-expanded="false">
+            <button type="button" class="finder-clear" hidden aria-label="Clear search">&times;</button>
+          </div>
+          <p class="finder-status sr-only" aria-live="polite"></p>
+          <div class="finder-panel" id="finder-panel" hidden>
+            <p class="finder-empty" hidden>nothing found</p>
+            <div class="finder-groups"></div>
+          </div>
+        </div>`;
+}
+
 function renderDocument({
   title,
   description,
@@ -365,18 +395,22 @@ function renderDocument({
   list,
   catalogVersion,
   entriesHref = "",
+  searchHref = "",
   templates = "",
 }) {
   const styleHref = versionedAsset("styles.css");
   const logoSrc = versionedAsset("logo.gif");
   const scriptSrc = versionedAsset("coverflow.js");
+  const searchSrc = versionedAsset("search.js");
   const flowHtml = flow || "";
-  const preload = entriesHref
-    ? `\n    <link rel="preload" href="${escapeHtml(entriesHref)}" as="fetch" crossorigin>`
-    : "";
-  const csp = entriesHref
-    ? "default-src 'none'; script-src 'self'; connect-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' https:; manifest-src 'self'; base-uri 'none'; form-action 'none'"
-    : "default-src 'none'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' https:; manifest-src 'self'; base-uri 'none'; form-action 'none'";
+  const preloads = [];
+  // Search fetches search.json itself. A preload with a mismatched
+  // credentials mode is ignored and only warns, so it is not linked here.
+  if (entriesHref) preloads.push(`<link rel="preload" href="${escapeHtml(entriesHref)}" as="fetch" crossorigin>`);
+  const preload = preloads.length ? `\n    ${preloads.join("\n    ")}` : "";
+  const csp =
+    "default-src 'none'; script-src 'self'; connect-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' https:; manifest-src 'self'; base-uri 'none'; form-action 'none'";
+  const finder = searchHref ? `\n${renderFinder(searchHref)}` : "";
 
   return `<!DOCTYPE html>
 <html lang="en">
@@ -419,7 +453,7 @@ function renderDocument({
         <div class="count-row">
           <p class="count">${countHtml}</p>
           ${randomButton}
-        </div>
+        </div>${finder}
       </header>
 ${flowHtml}      <main id="crate">
         ${list}
@@ -430,6 +464,7 @@ ${flowHtml}      <main id="crate">
       </footer>
     </div>
 ${templates}    <script src="${scriptSrc}" defer></script>
+    <script type="module" src="${searchSrc}"></script>
   </body>
 </html>
 `;
@@ -495,7 +530,7 @@ function pageParts(catalog, entries, numbers, { entriesHref = "" } = {}) {
   };
 }
 
-export function renderPage(catalog, entriesHref = "") {
+export function renderPage(catalog, entriesHref = "", searchHref = "") {
   const entries = sortNewestFirst(catalog.entries);
   const numbers = acquisitionNumbers(entries);
   const parts = pageParts(catalog, entries, numbers, { entriesHref });
@@ -510,11 +545,12 @@ export function renderPage(catalog, entriesHref = "") {
     list: parts.list,
     catalogVersion: catalog.version,
     entriesHref: parts.entriesHref,
+    searchHref,
     templates: parts.templates,
   });
 }
 
-export function renderPosterPage(catalog, poster, entriesHref = "") {
+export function renderPosterPage(catalog, poster, entriesHref = "", searchHref = "") {
   const allEntries = sortNewestFirst(catalog.entries);
   const numbers = acquisitionNumbers(allEntries);
   const entries = poster.entries;
@@ -533,6 +569,7 @@ export function renderPosterPage(catalog, poster, entriesHref = "") {
     list: parts.list,
     catalogVersion: catalog.version,
     entriesHref: parts.entriesHref,
+    searchHref,
     templates: parts.templates,
   });
 }
@@ -562,6 +599,7 @@ function copyStatic(dist) {
     ".htaccess",
     "styles.css",
     "coverflow.js",
+    "search.js",
     "logo.gif",
     "robots.txt",
     "favicon.ico",
@@ -584,31 +622,75 @@ function jsonHash(payload) {
   return { text, hash };
 }
 
+function section(sections, key) {
+  return sections.find((item) => item.key === key) || null;
+}
+
+// Ranking the real crate checks in the same build CI runs. A person whose
+// first name is the query leads. An artist query lists that artist and the
+// tracks under them. Accent and "$"-for-s folding have to hold.
+function assertSearchWorks(entries) {
+  const index = prepareIndex(searchPayload(entries).entries);
+  const dallas = queryIndex(index, "dallas");
+  const dallasPeople = section(dallas, "people");
+  if (!dallas.length || dallas[0].key !== "people" || !dallasPeople) {
+    throw new Error('search "dallas" should lead with the people section');
+  }
+  if (dallasPeople.people[0].name !== "Dallas" || dallasPeople.people[0].href !== "/p/dallas/") {
+    throw new Error('search "dallas" should open with Dallas at /p/dallas/');
+  }
+  const cure = queryIndex(index, "CuRe");
+  const cureArtists = section(cure, "artists");
+  const theCure = cureArtists && cureArtists.artists.find((artist) => artist.name === "The Cure");
+  if (!theCure) throw new Error('search "cure" should list The Cure under artists');
+  const cureTitles = theCure.tracks.map((track) => track.title);
+  if (!cureTitles.some((title) => title.startsWith("Lovesong")) || !cureTitles.includes("A Forest")) {
+    throw new Error("The Cure search result should include Lovesong and A Forest");
+  }
+  const accent = queryIndex(index, "gyongyhaju");
+  const accentSongs = section(accent, "songs");
+  if (!accentSongs || !accentSongs.songs.some((song) => song.title.includes("Gyöngyhajú"))) {
+    throw new Error('search "gyongyhaju" should find Gyöngyhajú lány');
+  }
+  const asap = queryIndex(index, "asap");
+  const asapArtists = section(asap, "artists");
+  if (!asapArtists || !asapArtists.artists.some((artist) => artist.name.includes("A$AP"))) {
+    throw new Error('search "asap" should find A$AP');
+  }
+  if (queryIndex(index, "zzzzqqq").length !== 0) {
+    throw new Error('search "zzzzqqq" should find nothing');
+  }
+}
+
 function main() {
   const catalog = assertValidCatalog();
   for (const entry of catalog.entries) assertNameIsPublic(entry);
   const posters = groupEntriesByPoster(catalog.entries);
   const homeEntries = sortNewestFirst(catalog.entries);
   const numbers = acquisitionNumbers(homeEntries);
+  assertSearchWorks(homeEntries);
   const homeVirtual = homeEntries.length > VIRTUAL_AT;
   const homeJson = homeVirtual ? jsonHash(entriesPayload(homeEntries, numbers)) : null;
   const homeHref = homeJson ? `/entries.json?v=${homeJson.hash}` : "";
+  const searchJson = jsonHash(searchPayload(homeEntries));
+  const searchHref = `/search.json?v=${searchJson.hash}`;
   const posterBuilt = posters.map((poster) => {
     const virtual = poster.entries.length > VIRTUAL_AT;
     const json = virtual ? jsonHash(entriesPayload(poster.entries, numbers)) : null;
     const href = json ? `/p/${poster.slug}/entries.json?v=${json.hash}` : "";
     return { poster, json, href };
   });
-  const html = renderPage(catalog, homeHref);
+  const html = renderPage(catalog, homeHref, searchHref);
   const dist = path.join(repoRoot, "dist");
   fs.rmSync(dist, { recursive: true, force: true });
   fs.mkdirSync(dist, { recursive: true });
   fs.writeFileSync(path.join(dist, "index.html"), html);
+  fs.writeFileSync(path.join(dist, "search.json"), searchJson.text);
   if (homeJson) fs.writeFileSync(path.join(dist, "entries.json"), homeJson.text);
   for (const { poster, json, href } of posterBuilt) {
     const dir = path.join(dist, "p", poster.slug);
     fs.mkdirSync(dir, { recursive: true });
-    fs.writeFileSync(path.join(dir, "index.html"), renderPosterPage(catalog, poster, href));
+    fs.writeFileSync(path.join(dir, "index.html"), renderPosterPage(catalog, poster, href, searchHref));
     if (json) fs.writeFileSync(path.join(dir, "entries.json"), json.text);
   }
   fs.writeFileSync(path.join(dist, "sitemap.xml"), renderSitemap(posters));
@@ -616,7 +698,7 @@ function main() {
   const slugList = posters.map((poster) => poster.slug).join(", ");
   const homeBytes = homeJson ? homeJson.text.length : 0;
   console.log(
-    `built dist/index.html, ${posters.length} poster pages (${slugList || "none"}), and dist/sitemap.xml (${catalog.entries.length} entries${homeBytes ? `; entries.json ${homeBytes} bytes` : ""})`,
+    `built dist/index.html, ${posters.length} poster pages (${slugList || "none"}), and dist/sitemap.xml (${catalog.entries.length} entries${homeBytes ? `; entries.json ${homeBytes} bytes` : ""}; search.json ${searchJson.text.length} bytes)`,
   );
 }
 

@@ -144,6 +144,188 @@ body {
   font-size: 0.95rem;
 }
 
+.finder {
+  margin: 0.85rem 0 0.15rem;
+}
+
+.finder-bar {
+  display: flex;
+  align-items: center;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.22);
+}
+
+.finder:focus-within .finder-bar {
+  border-bottom-color: #fff;
+}
+
+.finder-input {
+  flex: 1;
+  width: 100%;
+  min-width: 0;
+  min-height: 44px;
+  margin: 0;
+  padding: 0.4rem 0.1rem;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  color: var(--text);
+  font: inherit;
+  font-size: 16px;
+  line-height: 1.3;
+  letter-spacing: -0.01em;
+  -webkit-appearance: none;
+  appearance: none;
+}
+
+.finder-input:focus {
+  outline: none;
+}
+
+.finder-input::-webkit-search-decoration,
+.finder-input::-webkit-search-cancel-button,
+.finder-input::-webkit-search-results-button,
+.finder-input::-webkit-search-results-decoration {
+  display: none;
+  -webkit-appearance: none;
+  appearance: none;
+}
+
+.finder-input::placeholder {
+  color: var(--muted);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  font-size: 0.78rem;
+}
+
+.finder-clear {
+  flex: none;
+  width: 44px;
+  height: 44px;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: var(--muted);
+  font: inherit;
+  font-size: 1.35rem;
+  line-height: 1;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.finder-clear:active {
+  color: var(--text);
+}
+
+.finder-panel {
+  max-height: min(22rem, 46vh);
+  margin: 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  -webkit-overflow-scrolling: touch;
+}
+
+.finder-empty {
+  margin: 0.7rem 0 0.2rem;
+  color: var(--muted);
+  font-size: 0.86rem;
+}
+
+.finder h2.finder-label {
+  margin: 0.85rem 0 0.1rem;
+  color: var(--muted);
+  font-size: 0.68rem;
+  font-weight: 500;
+  letter-spacing: 0.14em;
+  line-height: 1.2;
+  text-transform: uppercase;
+  white-space: normal;
+  overflow: visible;
+}
+
+.finder-list,
+.finder-tracks {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.finder-hit {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  width: 100%;
+  min-height: 44px;
+  margin: 0;
+  padding: 0.4rem 0.1rem;
+  border: 0;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  text-align: left;
+  text-decoration: none;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.finder-title {
+  font-weight: 650;
+  font-size: 0.95rem;
+  line-height: 1.25;
+  letter-spacing: -0.02em;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.finder-sub,
+.finder-more {
+  color: var(--muted);
+  font-size: 0.75rem;
+  line-height: 1.3;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.finder-artist-name {
+  margin: 0.55rem 0 0;
+  font-weight: 650;
+  font-size: 0.95rem;
+  line-height: 1.25;
+  letter-spacing: -0.02em;
+}
+
+.finder-tracks {
+  padding: 0 0 0.15rem 0.85rem;
+}
+
+.finder-tracks .finder-hit {
+  min-height: 40px;
+  padding-top: 0.28rem;
+  padding-bottom: 0.28rem;
+}
+
+.finder-more {
+  margin: 0 0 0.35rem 0.85rem;
+}
+
+.finder-hit:focus-visible,
+.finder-clear:focus-visible {
+  outline: 2px solid #fff;
+  outline-offset: 2px;
+}
+
+@media (hover: hover) {
+  .finder-hit:hover {
+    background: #141414;
+  }
+}
+
+.finder-hit:active {
+  background: #1a1a1a;
+}
+
 .poster-name {
   margin: 1.15rem 0 0;
   font-weight: 650;
@@ -977,6 +1159,14 @@ code {
     padding-top: 0.55rem;
     padding-left: 0.5rem;
     padding-right: 0.5rem;
+  }
+
+  .finder {
+    margin-top: 0.45rem;
+  }
+
+  .finder-panel {
+    max-height: min(18rem, 42vh);
   }
 
   .count-row {

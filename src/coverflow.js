@@ -97,6 +97,14 @@
   });
 
   const root = document.querySelector("[data-coverflow]");
+  // Search asks for a record by id. The handler is a no-op until start() has
+  // the crate, so an early click falls through and the hash opens it on load.
+  let focusEntry = () => false;
+  document.addEventListener("usb-open-entry", (event) => {
+    const id = event.detail && event.detail.id;
+    if (typeof id !== "string" || !id || !focusEntry(id)) return;
+    event.preventDefault();
+  });
   if (!root) return;
   if (root.hasAttribute("data-virtual")) {
     const url = root.getAttribute("data-entries");
@@ -226,6 +234,9 @@
   let wheelSamples = [];
   let ignoreTimer = 0;
   let flipped = null;
+  // Set when search (or a #id link) asks for a record. Cleared if the reader
+  // grabs the row, so a flick does not finish by flipping a sleeve they left.
+  let pendingFlip = null;
   let linkTouch = null;
   let openingLink = false;
   let swallowClicksUntil = 0;
@@ -781,7 +792,12 @@
 
   // The glide is the feature, including on phones with Reduce Motion turned on.
   // prefers-reduced-motion still quiets decorative transitions in the stylesheet.
+  function cancelReveal() {
+    pendingFlip = null;
+  }
+
   function goTo(next) {
+    cancelReveal();
     closeFlip();
     spin = null;
     velocity = 0;
@@ -905,6 +921,7 @@
 
   function onRandom(event) {
     event.preventDefault();
+    cancelReveal();
     closeFlip();
     const choice = pickRandom();
     if (choice === null) return;
@@ -998,6 +1015,11 @@
     else if (phase === "spring") stepSpring(dt);
     else if (phase === "spin") stepSpin(now);
     paint();
+    if (pendingFlip !== null && phase === "idle") {
+      const item = pendingFlip;
+      pendingFlip = null;
+      if (clamp(Math.round(index)) === item) openFlip(item);
+    }
     if (phase === "coast" || phase === "spring" || phase === "spin") {
       raf = requestAnimationFrame(frame);
       return;
@@ -1107,6 +1129,7 @@
   let cancelTimer = 0;
 
   function beginDrag(id, kind, x, y, stamp, now) {
+    cancelReveal();
     const carried = phase === "spin" ? velocity : 0;
     spin = null;
     stopLoop();
@@ -1456,6 +1479,7 @@
       else if (verticalDominant) return;
       if (dx === 0) return;
       event.preventDefault();
+      cancelReveal();
       closeFlip();
       if (event.deltaMode === 1) dx *= 16;
       else if (event.deltaMode === 2) dx *= stage.clientWidth;
@@ -1738,6 +1762,7 @@
     cover._blanked = false;
     const button = cover.querySelector(".flow-select");
     button.dataset.index = String(item);
+    button.dataset.id = entry.id;
     button.dataset.summary = entrySummary(entry);
     button.setAttribute("aria-label", `${entry.title} by ${entry.artist}`);
     button.setAttribute("aria-expanded", "false");
@@ -1823,6 +1848,7 @@
   function lightBind(cover, entry, item) {
     const button = cover._select || (cover._select = cover.querySelector(".flow-select"));
     button.dataset.index = String(item);
+    button.dataset.id = entry.id;
     if (!entry._summary) entry._summary = entrySummary(entry);
     button.dataset.summary = entry._summary;
     button.setAttribute("aria-label", `${entry.title} by ${entry.artist}`);
@@ -2046,27 +2072,61 @@
     window.addEventListener("scroll", schedule, { passive: true });
     window.addEventListener("resize", schedule, { passive: true });
 
-    function itemFromHash() {
-      const id = decodeURIComponent((location.hash || "").replace(/^#/, ""));
-      if (!id) return -1;
-      return virtualEntries.findIndex((entry) => entry.id === id);
-    }
-
-    function scrollToItem(item) {
-      if (item < 0) return;
-      appendUntil(item + 1);
-      const row = list.children[item];
-      if (row) row.scrollIntoView({ block: "start" });
-    }
-
-    if (itemFromHash() >= 0) scrollToItem(itemFromHash());
-    window.addEventListener("hashchange", () => scrollToItem(itemFromHash()));
   }
+
+  function indexOfId(id) {
+    if (virtual) {
+      for (let item = 0; item < virtualEntries.length; item += 1) {
+        if (virtualEntries[item] && virtualEntries[item].id === id) return item;
+      }
+      return -1;
+    }
+    for (let item = 0; item < buttons.length; item += 1) {
+      const button = buttons[item];
+      if (button && button.dataset.id === id) return item;
+    }
+    return -1;
+  }
+
+  function idFromHash() {
+    const raw = (location.hash || "").replace(/^#/, "");
+    if (!raw) return "";
+    try {
+      return decodeURIComponent(raw);
+    } catch {
+      return "";
+    }
+  }
+
+  // Bring that record to the centre and flip it, so the store buttons on the
+  // back are on screen. A hash that is not an entry id (the skip link) no-ops.
+  focusEntry = function (id) {
+    const item = indexOfId(id);
+    if (item < 0) return false;
+    pendingFlip = item;
+    try {
+      stage.scrollIntoView({ block: "start" });
+    } catch {
+      /* The stage is already where the reader can see it. */
+    }
+    armSpin(item);
+    if (pendingFlip === item && phase === "idle") {
+      pendingFlip = null;
+      openFlip(item);
+    }
+    return true;
+  };
 
   syncMounts();
   measure();
   paint();
   if (virtual) bindVirtualList();
+  const fromHash = idFromHash();
+  if (fromHash) focusEntry(fromHash);
+  window.addEventListener("hashchange", () => {
+    const id = idFromHash();
+    if (id) focusEntry(id);
+  });
   window.requestAnimationFrame(() => root.classList.add("is-ready"));
   }
 })();

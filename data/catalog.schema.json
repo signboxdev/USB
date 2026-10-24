@@ -122,6 +122,13 @@
             { "type": "string", "format": "uri", "pattern": "^https://\\S+$" }
           ]
         },
+        "genre": {
+          "description": "Apple Music primary genre. Null means it was looked up and there was no confident match. Omit the field when it has not been looked up yet. Songs without a genre still appear in the crate and are left out of a genre filter.",
+          "anyOf": [
+            { "type": "null" },
+            { "type": "string", "minLength": 1, "maxLength": 80 }
+          ]
+        },
         "notes": {
           "description": "Short note, or null. The exact string \"example\" marks seed data: the page stamps it and it is meant to be deleted.",
           "anyOf": [

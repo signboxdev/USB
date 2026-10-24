@@ -1,6 +1,6 @@
 # Unfamiliar Sound Byte
 
-A public catalog of every song, album, and playlist posted in the Unfamiliar Sound Byte group chat. The site is a static page for [unfamiliarsoundbyte.com](https://unfamiliarsoundbyte.com). There is no sort control and no playlist builder. Newest posts come first, as a cover flow of the artwork and then again as cards. One search box filters that crate as you type.
+A public catalog of every song, album, and playlist posted in the Unfamiliar Sound Byte group chat. The site is a static page for [unfamiliarsoundbyte.com](https://unfamiliarsoundbyte.com). There is no sort control and no playlist builder. Newest posts come first, as a cover flow of the artwork and then again as cards. One search box filters that crate as you type, and a row of genre chips can limit the crate to one Apple Music genre.
 
 `data/catalog.json` is the only source of truth. `npm run build` throws away `dist/` and writes the site again from that file.
 
@@ -25,6 +25,12 @@ Open `data/catalog.json` and add an object to `entries`. Order in the file does 
   "artwork_url": null,
   "notes": null
 }
+```
+
+`genre` is optional. Leave it out of a new row. `npm run genres` fills it from Apple Music's primary genre for every entry that does not have the field yet, including a Spotify-only song when the title, artist, and album match one iTunes result. A row that was looked up and did not match is `genre: null` and stays that way on the next run. To fill one new id after you add it:
+
+```bash
+npm run genres -- --id glass-elevator
 ```
 
 Then check it and rebuild:
@@ -66,6 +72,7 @@ The three shipped entries are fake. Each has `"notes": "example"`, and the page 
 | `apple_music_url` | URL or null | Same recording on Apple Music, or null if that side is missing. |
 | `match_status` | `matched` \| `unmatched` \| `source_only` | See below. |
 | `artwork_url` | https URL or null | Optional art. Null draws a monogram sleeve and makes no extra request. |
+| `genre` | string or null, optional | Apple Music primary genre, such as `Hip-Hop/Rap`. Omit it until `npm run genres` has looked the row up. Null means it was looked up and there was no confident match. The page still shows that song; a genre filter leaves it out. |
 | `notes` | string or null | A short note. The exact value `example` marks seed data. |
 
 `match_status` has to agree with the two store links:
@@ -90,7 +97,9 @@ Serves `dist/` at [http://127.0.0.1:47321](http://127.0.0.1:47321). Set `PORT` t
 
 The cover flow is `src/coverflow.js`, a plain script with no dependencies. It reads the covers the build wrote from `data/catalog.json`, newest in the center. Past 64 entries the HTML keeps the first screen and a fingerprinted `entries.json` (the same file beside a poster page that is also past 64). The script then mounts only the sleeves near the centre, appends list rows in batches as you scroll, and requests artwork for the sleeves and rows it has drawn. Shuffle still glides to any record. A smaller crate stays fully in the HTML. Drag or swipe, scroll horizontally, press the arrow keys, or click a side cover to bring that sleeve to the center. Under the centered cover, the song name is followed by the artist. The artist is smaller, muted, kept in the case stored in the catalog, and limited to one line that ends in an ellipsis when it does not fit. Tap that cover to flip it; the back shows the title, the artist, the album when there is one, who posted it, the date, and the Spotify and Apple Music buttons that exist. Coasting, the settle spring, the shuffle spin, and the flip still run when `prefers-reduced-motion` is set. An entry with no `artwork_url` gets a dark sleeve instead of an image request.
 
-The search box sits under the count. It has no tabs and no category menu. Results group under people, artists, and songs, and an empty group is left out. People are posters matched on first name, linking to the existing `/p/<firstname>/` page. Artists match the artist field and list that artist's tracks underneath. Songs match the title or the album. Matching is case-insensitive and accent-insensitive, and a partial word is enough (`cure` finds The Cure, `gyongyhaju` finds Gyöngyhajú). The index is `search.json`, built from the public catalog fields only. It does not include notes, match status, source links, phone numbers, or emails. Choosing a song brings that sleeve to the centre of the cover flow and flips it, so the Spotify and Apple Music buttons on the back are on screen. On a poster page, a song that person did not post opens on the homepage instead. The random button and the cover flow are unchanged.
+The search box sits under the count. It has no tabs and no category menu. Results group under people, artists, and songs, and an empty group is left out. People are posters matched on first name, linking to the existing `/p/<firstname>/` page. Artists match the artist field and list that artist's tracks underneath. Songs match the title or the album. Matching is case-insensitive and accent-insensitive, and a partial word is enough (`cure` finds The Cure, `gyongyhaju` finds Gyöngyhajú). The index is `search.json`, built from the public catalog fields only. It does not include notes, match status, source links, phone numbers, or emails. Choosing a song brings that sleeve to the centre of the cover flow and flips it, so the Spotify and Apple Music buttons on the back are on screen. On a poster page, a song that person did not post opens on the homepage instead.
+
+Under the search box, one scrolling row of chips lists the genres on the current page, with a count on each chip and an `all` chip for the whole crate. Choosing a genre limits the cover flow and the list to songs Apple tagged with that genre, and the count line shows how many are in view. Songs with no genre stay in `all` and do not appear under a genre. Tap the selected chip or `all` to clear it. The choice is kept in `?genre=` so a reload and the back button return to the same crate. Search follows the same limit: songs, artist tracks, and people are only the ones in that genre. The cover flow still mounts sleeves near the centre and still waits to request artwork until a sleeve or a list row is drawn.
 
 `npm run build` appends `?v=` and a short SHA-256 of the file to `styles.css`, `coverflow.js`, `search.js`, `search.json`, and `logo.gif` in the generated HTML. Hostinger caches those assets for a week; the query string changes when the file does, so a phone picks up the new copy.
 

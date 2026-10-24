@@ -2130,18 +2130,11 @@
     return true;
   };
 
+  // Chips are broad buckets. A handful of songs on this page does not get one.
+  const MIN_GENRE_CHIP = 15;
+
   function genreNames() {
-    const names = new Set();
-    if (virtual) {
-      for (const entry of sourceEntries) if (entry.genre) names.add(entry.genre);
-      return names;
-    }
-    const covers = staticCovers || [...root.querySelectorAll(".flow-cover")];
-    for (const cover of covers) {
-      const genre = cover.getAttribute("data-genre") || "";
-      if (genre) names.add(genre);
-    }
-    return names;
+    return new Set(chipCounts().counts.keys());
   }
 
   function genreCounts() {
@@ -2160,6 +2153,14 @@
       counts.set(genre, (counts.get(genre) || 0) + 1);
     }
     return { total: covers.length, counts };
+  }
+
+  function chipCounts() {
+    const { total, counts } = genreCounts();
+    for (const [name, count] of counts) {
+      if (count < MIN_GENRE_CHIP) counts.delete(name);
+    }
+    return { total, counts };
   }
 
   function paintCount(genre, total) {
@@ -2184,7 +2185,7 @@
     const box = document.querySelector(".genres");
     const row = box && box.querySelector(".genres-row");
     if (!box || !row) return;
-    const { total, counts } = genreCounts();
+    const { total, counts } = chipCounts();
     if (counts.size === 0) {
       box.hidden = true;
       return;

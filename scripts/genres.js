@@ -47,6 +47,103 @@ function artistKey(value) {
     .join("|");
 }
 
+// Apple's primaryGenreName stays on the catalog row. The picker shows one of
+// these buckets. A label that is not listed — including one Apple adds later —
+// joins Other, so a new song is bucketed on the next build without a new rule.
+const BUCKET_OF = {
+  "Hip-Hop/Rap": "Hip-Hop",
+  "Hip-Hop": "Hip-Hop",
+  Rap: "Hip-Hop",
+  "East Coast Rap": "Hip-Hop",
+  "Hardcore Rap": "Hip-Hop",
+
+  Rock: "Rock",
+  "Hard Rock": "Rock",
+  "Glam Rock": "Rock",
+  "Southern Rock": "Rock",
+  Punk: "Rock",
+  "Goth Rock": "Rock",
+  "New Wave": "Rock",
+  "Rock & Roll": "Rock",
+  "Blues-Rock": "Rock",
+  "Soft Rock": "Rock",
+  // Eleven songs, not enough for its own chip.
+  Metal: "Rock",
+
+  Alternative: "Alternative/Indie",
+  "Indie Rock": "Alternative/Indie",
+  "Indie Pop": "Alternative/Indie",
+
+  Electronic: "Electronic/Dance",
+  Dance: "Electronic/Dance",
+  House: "Electronic/Dance",
+  Electronica: "Electronic/Dance",
+  "IDM/Experimental": "Electronic/Dance",
+  Breakbeat: "Electronic/Dance",
+  "Jungle/Drum'n'bass": "Electronic/Dance",
+  Downtempo: "Electronic/Dance",
+  Disco: "Electronic/Dance",
+  Industrial: "Electronic/Dance",
+
+  "R&B/Soul": "R&B/Soul",
+  Soul: "R&B/Soul",
+  "Neo-Soul": "R&B/Soul",
+  Funk: "R&B/Soul",
+
+  Latin: "Latin",
+  "Salsa and Tropical": "Latin",
+  "Regional Mexican": "Latin",
+  "Pop in Spanish": "Latin",
+  "Baladas and Boleros": "Latin",
+  "Latin Urban": "Latin",
+  "Baile Funk": "Latin",
+  Brazilian: "Latin",
+  Sertanejo: "Latin",
+
+  Pop: "Pop",
+  "Vocal Pop": "Pop",
+
+  Country: "Country/Folk",
+  Folk: "Country/Folk",
+  "Traditional Country": "Country/Folk",
+  "Traditional Folk": "Country/Folk",
+  "Folk-Rock": "Country/Folk",
+
+  Soundtrack: "Soundtrack",
+  Musicals: "Soundtrack",
+
+  // Too small to stand alone. A chip appears only once a bucket reaches MIN_GENRE_BUCKET.
+  Reggae: "Other",
+  "Roots Reggae": "Other",
+  "Modern Dancehall": "Other",
+  Jazz: "Other",
+  Blues: "Other",
+  "Latin Jazz": "Other",
+  "Vocal Jazz": "Other",
+  "Singer/Songwriter": "Other",
+  Worldwide: "Other",
+  "Easy Listening": "Other",
+  Classical: "Other",
+  Instrumental: "Other",
+  "New Age": "Other",
+  Vocal: "Other",
+  Comedy: "Other",
+  Holiday: "Other",
+  "Christmas: Pop": "Other",
+  "Musique francophone": "Other",
+  "Punjabi Pop": "Other",
+  Bollywood: "Other",
+};
+
+export const MIN_GENRE_BUCKET = 15;
+
+export function genreBucket(genre) {
+  if (typeof genre !== "string") return null;
+  const name = genre.trim();
+  if (!name) return null;
+  return BUCKET_OF[name] || "Other";
+}
+
 export function appleCatalogId(url) {
   if (typeof url !== "string" || !url) return null;
   let parsed;
@@ -159,6 +256,67 @@ export function assertGenreRules() {
   }
   if (appleCatalogId("https://music.apple.com/ca/album/zilla-single/6825097610") !== "6825097610") {
     throw new Error("album id should come from the path");
+  }
+  const buckets = {
+    "Hip-Hop/Rap": "Hip-Hop",
+    "Hip-Hop": "Hip-Hop",
+    Rap: "Hip-Hop",
+    "East Coast Rap": "Hip-Hop",
+    "Hardcore Rap": "Hip-Hop",
+    Rock: "Rock",
+    "Hard Rock": "Rock",
+    "Glam Rock": "Rock",
+    "Southern Rock": "Rock",
+    Punk: "Rock",
+    "Goth Rock": "Rock",
+    "New Wave": "Rock",
+    "Rock & Roll": "Rock",
+    Metal: "Rock",
+    Alternative: "Alternative/Indie",
+    "Indie Rock": "Alternative/Indie",
+    "Indie Pop": "Alternative/Indie",
+    Electronic: "Electronic/Dance",
+    Dance: "Electronic/Dance",
+    House: "Electronic/Dance",
+    Disco: "Electronic/Dance",
+    "R&B/Soul": "R&B/Soul",
+    Soul: "R&B/Soul",
+    "Neo-Soul": "R&B/Soul",
+    Funk: "R&B/Soul",
+    "Salsa and Tropical": "Latin",
+    Sertanejo: "Latin",
+    Pop: "Pop",
+    Country: "Country/Folk",
+    "Traditional Folk": "Country/Folk",
+    Soundtrack: "Soundtrack",
+    Reggae: "Other",
+    Jazz: "Other",
+    Blues: "Other",
+  };
+  for (const [raw, bucket] of Object.entries(buckets)) {
+    if (genreBucket(raw) !== bucket) throw new Error(`${raw} should bucket to ${bucket}`);
+  }
+  if (genreBucket(null) !== null || genreBucket("") !== null) {
+    throw new Error("a missing genre stays blank");
+  }
+  if (genreBucket("Afrobeats") !== "Other") {
+    throw new Error("a new Apple genre should join Other");
+  }
+}
+
+// Named buckets have to be large enough to stand on the picker. A small one
+// is a mapping mistake; Other may stay under the minimum and then has no chip.
+export function assertGenreBuckets(entries) {
+  const counts = new Map();
+  for (const entry of entries) {
+    const bucket = genreBucket(entry.genre);
+    if (!bucket) continue;
+    counts.set(bucket, (counts.get(bucket) || 0) + 1);
+  }
+  for (const [bucket, count] of counts) {
+    if (bucket !== "Other" && count < MIN_GENRE_BUCKET) {
+      throw new Error(`${bucket} has ${count} songs; fold it into a larger bucket`);
+    }
   }
 }
 

@@ -1,6 +1,6 @@
 # Unfamiliar Sound Byte
 
-A public catalog of every song, album, and playlist posted in the Unfamiliar Sound Byte group chat. The site is a static page for [unfamiliarsoundbyte.com](https://unfamiliarsoundbyte.com). There is no sort control and no playlist builder. Newest posts come first, as a cover flow of the artwork and then again as cards. One search box filters that crate as you type, and a row of genre chips can limit the crate to one Apple Music genre.
+A public catalog of every song, album, and playlist posted in the Unfamiliar Sound Byte group chat. The site is a static page for [unfamiliarsoundbyte.com](https://unfamiliarsoundbyte.com). There is no sort control and no playlist builder. Newest posts come first, as a cover flow of the artwork and then again as cards. One search box filters that crate as you type, and a row of genre chips can limit the crate to one broad genre.
 
 `data/catalog.json` is the only source of truth. `npm run build` throws away `dist/` and writes the site again from that file.
 
@@ -72,7 +72,7 @@ The three shipped entries are fake. Each has `"notes": "example"`, and the page 
 | `apple_music_url` | URL or null | Same recording on Apple Music, or null if that side is missing. |
 | `match_status` | `matched` \| `unmatched` \| `source_only` | See below. |
 | `artwork_url` | https URL or null | Optional art. Null draws a monogram sleeve and makes no extra request. |
-| `genre` | string or null, optional | Apple Music primary genre, such as `Hip-Hop/Rap`. Omit it until `npm run genres` has looked the row up. Null means it was looked up and there was no confident match. The page still shows that song; a genre filter leaves it out. |
+| `genre` | string or null, optional | Apple Music's primary genre, such as `Hip-Hop/Rap`, kept as Apple spelled it. Omit it until `npm run genres` has looked the row up. Null means it was looked up and there was no confident match. The page folds this into a broad bucket (Hip-Hop, Rock, and so on) in `scripts/genres.js`. A song with no genre still appears in the crate and is left out of a genre filter. |
 | `notes` | string or null | A short note. The exact value `example` marks seed data. |
 
 `match_status` has to agree with the two store links:
@@ -99,7 +99,7 @@ The cover flow is `src/coverflow.js`, a plain script with no dependencies. It re
 
 The search box sits under the count. It has no tabs and no category menu. Results group under people, artists, and songs, and an empty group is left out. People are posters matched on first name, linking to the existing `/p/<firstname>/` page. Artists match the artist field and list that artist's tracks underneath. Songs match the title or the album. Matching is case-insensitive and accent-insensitive, and a partial word is enough (`cure` finds The Cure, `gyongyhaju` finds Gyöngyhajú). The index is `search.json`, built from the public catalog fields only. It does not include notes, match status, source links, phone numbers, or emails. Choosing a song brings that sleeve to the centre of the cover flow and flips it, so the Spotify and Apple Music buttons on the back are on screen. On a poster page, a song that person did not post opens on the homepage instead.
 
-Under the search box, one scrolling row of chips lists the genres on the current page, with a count on each chip and an `all` chip for the whole crate. Choosing a genre limits the cover flow and the list to songs Apple tagged with that genre, and the count line shows how many are in view. Songs with no genre stay in `all` and do not appear under a genre. Tap the selected chip or `all` to clear it. The choice is kept in `?genre=` so a reload and the back button return to the same crate. Search follows the same limit: songs, artist tracks, and people are only the ones in that genre. The cover flow still mounts sleeves near the centre and still waits to request artwork until a sleeve or a list row is drawn.
+Under the search box, one scrolling row of chips lists broad genres, ordered by how many songs are on the page, with a count on each chip and an `all` chip for the whole crate. Apple's finer labels are folded in `genreBucket` (`scripts/genres.js`): Hip-Hop/Rap and Rap become Hip-Hop, Metal joins Rock, and a label that is not listed joins Other. A bucket needs at least 15 songs on the page before it gets a chip. Choosing one limits the cover flow and the list to that bucket, and the count line shows how many are in view. Songs with no genre stay in `all` and do not appear under a genre. Tap the selected chip or `all` to clear it. The choice is kept in `?genre=` so a reload and the back button return to the same crate. Search follows the same limit. The cover flow still mounts sleeves near the centre and still waits to request artwork until a sleeve or a list row is drawn.
 
 `npm run build` appends `?v=` and a short SHA-256 of the file to `styles.css`, `coverflow.js`, `search.js`, `search.json`, and `logo.gif` in the generated HTML. Hostinger caches those assets for a week; the query string changes when the file does, so a phone picks up the new copy.
 

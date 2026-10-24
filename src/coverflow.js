@@ -133,12 +133,15 @@
       apple: row[8] || null,
       art: row[9] || null,
       number: String(row[10]),
+      genre: typeof row[11] === "string" && row[11] ? row[11] : "",
     }));
   }
 
-  function start(root, virtualEntries) {
+  function start(root, loadedEntries) {
   const stage = root.querySelector(".flow-stage");
-  const virtual = Array.isArray(virtualEntries) && virtualEntries.length > 0;
+  const virtual = Array.isArray(loadedEntries) && loadedEntries.length > 0;
+  const sourceEntries = virtual ? loadedEntries : null;
+  let virtualEntries = loadedEntries;
   // A large crate keeps a holey list: only sleeves near the centre exist.
   // forEach skips holes, and the index is still the catalog position.
   let buttons = virtual ? new Array(virtualEntries.length) : [...root.querySelectorAll(".flow-select")];
@@ -2072,7 +2075,17 @@
     window.addEventListener("scroll", schedule, { passive: true });
     window.addEventListener("resize", schedule, { passive: true });
 
+    resetList = () => {
+      list.replaceChildren();
+      rendered = 0;
+      appendUntil(Math.min(virtualEntries.length, 48));
+    };
   }
+
+  let resetList = null;
+  let activeGenre = "";
+  let staticCovers = null;
+  let staticRows = null;
 
   function indexOfId(id) {
     if (virtual) {
@@ -2117,10 +2130,216 @@
     return true;
   };
 
+  // Chips are broad buckets. A handful of songs on this page does not get one.
+  const MIN_GENRE_CHIP = 15;
+
+  function genreNames() {
+    return new Set(chipCounts().counts.keys());
+  }
+
+  function genreCounts() {
+    const counts = new Map();
+    if (virtual) {
+      for (const entry of sourceEntries) {
+        if (!entry.genre) continue;
+        counts.set(entry.genre, (counts.get(entry.genre) || 0) + 1);
+      }
+      return { total: sourceEntries.length, counts };
+    }
+    const covers = staticCovers || [...root.querySelectorAll(".flow-cover")];
+    for (const cover of covers) {
+      const genre = cover.getAttribute("data-genre") || "";
+      if (!genre) continue;
+      counts.set(genre, (counts.get(genre) || 0) + 1);
+    }
+    return { total: covers.length, counts };
+  }
+
+  function chipCounts() {
+    const { total, counts } = genreCounts();
+    for (const [name, count] of counts) {
+      if (count < MIN_GENRE_CHIP) counts.delete(name);
+    }
+    return { total, counts };
+  }
+
+  function paintCount(genre, total) {
+    const el = document.querySelector(".count");
+    if (!el) return;
+    if (!el.dataset.home) el.dataset.home = el.innerHTML;
+    if (!genre) {
+      el.innerHTML = el.dataset.home;
+      return;
+    }
+    el.replaceChildren();
+    const num = document.createElement("span");
+    num.className = "num";
+    num.textContent = String(total);
+    const label = document.createElement("span");
+    label.className = "count-genre";
+    label.textContent = ` · ${genre}`;
+    el.append(num, label);
+  }
+
+  function paintChips() {
+    const box = document.querySelector(".genres");
+    const row = box && box.querySelector(".genres-row");
+    if (!box || !row) return;
+    const { total, counts } = chipCounts();
+    if (counts.size === 0) {
+      box.hidden = true;
+      return;
+    }
+    box.hidden = false;
+    if (!row.dataset.wheel) {
+      row.dataset.wheel = "1";
+      row.addEventListener("wheel", (event) => {
+        if (row.scrollWidth <= row.clientWidth + 8) return;
+        if (Math.abs(event.deltaY) <= Math.abs(event.deltaX)) return;
+        row.scrollLeft += event.deltaY;
+        event.preventDefault();
+      }, { passive: false });
+    }
+    row.replaceChildren();
+    const genres = [...counts.entries()].sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0]));
+    row.append(genreChip("", "all", total));
+    for (const [name, count] of genres) row.append(genreChip(name, name, count));
+    const selected = row.querySelector(".genre-chip.is-on");
+    if (selected && row.scrollWidth > row.clientWidth + 8) {
+      const left = selected.offsetLeft - (row.clientWidth - selected.offsetWidth) / 2;
+      row.scrollLeft = Math.max(0, left);
+    }
+  }
+
+  function genreChip(genre, label, count) {
+    const button = document.createElement("button");
+    button.type = "button";
+    button.className = "genre-chip";
+    if (!genre) button.classList.add("is-all");
+    button.dataset.genre = genre;
+    const on = genre === activeGenre;
+    button.classList.toggle("is-on", on);
+    button.setAttribute("aria-pressed", on ? "true" : "false");
+    const name = document.createElement("span");
+    name.className = "genre-name";
+    name.textContent = label;
+    const num = document.createElement("span");
+    num.className = "genre-num";
+    num.textContent = String(count);
+    button.append(name, num);
+    button.addEventListener("click", () => {
+      const next = button.dataset.genre || "";
+      const resolved = next === activeGenre ? "" : next;
+      if (resolved === activeGenre) return;
+      applyGenre(resolved);
+    });
+    return button;
+  }
+
+  function clearVirtualMounts() {
+    ensureVirtual();
+    slots.length = 0;
+    mounted.clear();
+    ssrCovers.clear();
+    if (coversOl) coversOl.replaceChildren();
+  }
+
+  function applyStatic(genre) {
+    const coversOl = root.querySelector(".flow-covers");
+    const list = document.querySelector("#crate ol.crate");
+    if (!staticCovers) staticCovers = [...root.querySelectorAll(".flow-cover")];
+    if (!staticRows && list) staticRows = [...list.children];
+    const keepCovers = [];
+    const keepRows = [];
+    staticCovers.forEach((cover, item) => {
+      const show = !genre || (cover.getAttribute("data-genre") || "") === genre;
+      if (!show) return;
+      keepCovers.push(cover);
+      if (staticRows && staticRows[item]) keepRows.push(staticRows[item]);
+    });
+    if (coversOl) coversOl.replaceChildren(...keepCovers);
+    if (list && staticRows) list.replaceChildren(...keepRows);
+    buttons = keepCovers.map((cover) => cover.querySelector(".flow-select")).filter(Boolean);
+    buttons.forEach((button, item) => {
+      button.dataset.index = String(item);
+    });
+    maxIndex = Math.max(0, buttons.length - 1);
+    index = 0;
+    shown = -1;
+    spin = null;
+    velocity = 0;
+    phase = "idle";
+    pendingFlip = null;
+    recentPicks.length = 0;
+    closeFlip();
+    stopLoop();
+    measure();
+    paint();
+  }
+
+  function writeGenreUrl(genre) {
+    const url = new URL(window.location.href);
+    if (genre) url.searchParams.set("genre", genre);
+    else url.searchParams.delete("genre");
+    if (`${url.pathname}${url.search}${url.hash}` === `${window.location.pathname}${window.location.search}${window.location.hash}`) {
+      return;
+    }
+    history.pushState({ genre }, "", url);
+  }
+
+  function genreFromLocation() {
+    try {
+      return new URLSearchParams(window.location.search).get("genre") || "";
+    } catch {
+      return "";
+    }
+  }
+
+  function applyGenre(genre, options) {
+    const known = genre && genreNames().has(genre) ? genre : "";
+    activeGenre = known;
+    if (virtual) {
+      virtualEntries = known ? sourceEntries.filter((entry) => entry.genre === known) : sourceEntries;
+      maxIndex = Math.max(0, virtualEntries.length - 1);
+      index = 0;
+      shown = -1;
+      spin = null;
+      velocity = 0;
+      phase = "idle";
+      pendingFlip = null;
+      recentPicks.length = 0;
+      closeFlip();
+      stopLoop();
+      clearVirtualMounts();
+      buttons = virtualEntries.length ? new Array(virtualEntries.length) : [];
+      if (resetList) resetList();
+      measure();
+      paint();
+    } else {
+      applyStatic(known);
+    }
+    const shownCount = virtual ? virtualEntries.length : buttons.length;
+    paintCount(known, shownCount);
+    paintChips();
+    if (randomBtn) randomBtn.hidden = shownCount < 2;
+    if (!options || options.history !== false) writeGenreUrl(known);
+    document.dispatchEvent(new CustomEvent("usb-genre", { detail: { genre: known } }));
+  }
+
+  window.addEventListener("popstate", () => {
+    const next = genreFromLocation();
+    const resolved = next && genreNames().has(next) ? next : "";
+    if (resolved === activeGenre) return;
+    applyGenre(next, { history: false });
+  });
+
   syncMounts();
   measure();
   paint();
   if (virtual) bindVirtualList();
+  paintChips();
+  const initialGenre = genreFromLocation();
+  if (initialGenre) applyGenre(initialGenre, { history: false });
   const fromHash = idFromHash();
   if (fromHash) focusEntry(fromHash);
   window.addEventListener("hashchange", () => {

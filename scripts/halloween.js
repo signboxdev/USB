@@ -1,0 +1,52 @@
+// Seasonal dressing for the crate. Set ENABLED to false to take it down
+// immediately. While it is true, the page shows the overlay only from
+// October 15 through November 1 (local time), including on a phone that
+// still has an older copy of the HTML.
+
+export const HALLOWEEN_ENABLED = true;
+export const HALLOWEEN_FROM = { month: 10, day: 15 };
+export const HALLOWEEN_TO = { month: 11, day: 1 };
+
+function monthDay(month, day) {
+  return month * 100 + day;
+}
+
+export function inHalloweenWindow(now) {
+  const key = monthDay(now.getMonth() + 1, now.getDate());
+  const start = monthDay(HALLOWEEN_FROM.month, HALLOWEEN_FROM.day);
+  const end = monthDay(HALLOWEEN_TO.month, HALLOWEEN_TO.day);
+  if (start <= end) return key >= start && key <= end;
+  return key >= start || key <= end;
+}
+
+export function halloweenActive(now = new Date()) {
+  return HALLOWEEN_ENABLED && inHalloweenWindow(now);
+}
+
+export function assertHalloween() {
+  const year = 2026;
+  const on = (month, day) => inHalloweenWindow(new Date(year, month - 1, day, 12));
+  if (!on(10, 15) || !on(10, 31) || !on(11, 1)) {
+    throw new Error("halloween should run from Oct 15 through Nov 1");
+  }
+  if (on(10, 14) || on(11, 2) || on(1, 1) || on(7, 4)) {
+    throw new Error("halloween should be off outside that window");
+  }
+}
+
+const PUMPKIN = `<svg class="spook-pumpkin" viewBox="0 0 32 32" width="26" height="26" aria-hidden="true" focusable="false"><path fill="#e07a24" d="M16.2 7.2c.3-2.4 2-3.8 3.2-4 .1 1.8-.8 3.2-1.8 3.8 3.8.6 6.6 3.6 6.6 7.6 0 5-3.4 9.4-8.2 9.4s-8.2-4.4-8.2-9.4c0-4 2.8-7 6.6-7.6-.9-.6-1.8-2-1.7-3.8 1.2.2 2.9 1.6 3.5 4z"/><path fill="#2c1810" d="M12.4 14.2c.7.4.7 1.4 0 1.8-.6.4-1.4-.1-1.4-.9s.8-1.3 1.4-.9zm7.2 0c.6-.4 1.4.1 1.4.9s-.8 1.3-1.4.9c-.7-.4-.7-1.4 0-1.8zM16 17.1c.6 0 1 .6.7 1.1-.5 1.1-1.9 1.1-2.4 0-.3-.5.1-1.1.7-1.1h1z"/><path fill="#3f7a3a" d="M15.4 6.4c.4-2.2 1.8-3.6 1.8-3.6s1.2 1.4.2 3.4c-.6.2-1.6.4-2-.2z"/></svg>`;
+
+const BAT = `<svg class="spook-bat" viewBox="0 0 64 32" width="36" height="18" aria-hidden="true" focusable="false"><path fill="#c9bdd6" d="M32 16c-1.6-4.2-6.4-6.2-10.2-4.6-1.4-4.6-7.6-6.4-13-3.2 3.4 1.8 5 5 4.2 7.4-3.4.8-5.2 3.4-4.4 5.8 4.2-2.4 7.6-1.6 10.2.8 1.6-3.2 4-4.8 6.6-4.8s5 1.6 6.6 4.8c2.6-2.4 6-3.2 10.2-.8.8-2.4-1-5-4.4-5.8-.8-2.4.8-5.6 4.2-7.4-5.4-3.2-11.6-1.4-13 3.2C38.4 9.8 33.6 11.8 32 16z"/></svg>`;
+
+// Corner cobweb, drawn from the top-left. The other corner mirrors it.
+const WEB = `<svg viewBox="0 0 100 100" aria-hidden="true" focusable="false"><g fill="none" stroke="#ddd6e8" stroke-width="0.8"><path d="M0 0h100M0 0v100M0 0 100 34M0 0 100 68M0 0 64 100M0 0 30 100"/><path d="M24 0c6 8 6 16-2 24M44 0c12 12 12 28-2 42M62 0c16 16 16 40-2 58"/><path d="M0 24c8 6 16 6 24-2M0 44c14 10 30 10 44-4M0 64c20 14 42 14 62-6"/></g></svg>`;
+
+export function halloweenDecor() {
+  if (!HALLOWEEN_ENABLED) return { stage: "", marks: "", attrs: "" };
+  const from = `${HALLOWEEN_FROM.month}-${HALLOWEEN_FROM.day}`;
+  const to = `${HALLOWEEN_TO.month}-${HALLOWEEN_TO.day}`;
+  const attrs = ` data-halloween-from="${from}" data-halloween-to="${to}"`;
+  const stage = `    <div class="spook-stage" aria-hidden="true"><span class="spook-web spook-web-nw">${WEB}</span><span class="spook-web spook-web-ne">${WEB}</span><span class="spook-mote"></span><span class="spook-mote spook-mote-b"></span></div>\n`;
+  const marks = `<span class="spook-marks">${PUMPKIN}${BAT}</span>`;
+  return { stage, marks, attrs };
+}

@@ -4,6 +4,7 @@ import path from "node:path";
 import { pathToFileURL } from "node:url";
 import { prepareIndex, queryIndex } from "../src/search.js";
 import { assertValidCatalog, repoRoot } from "./catalog.js";
+import { assertHalloween, halloweenActive, halloweenDecor } from "./halloween.js";
 
 // Above this, the homepage (and a poster page) stops inlining every sleeve.
 // The shell keeps the first screen; entries.json feeds a window of covers and
@@ -411,9 +412,11 @@ function renderDocument({
   const csp =
     "default-src 'none'; script-src 'self'; connect-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' https:; manifest-src 'self'; base-uri 'none'; form-action 'none'";
   const finder = searchHref ? `\n${renderFinder(searchHref)}` : "";
+  const halloween = halloweenDecor();
+  const halloweenClass = halloween.attrs && halloweenActive() ? ` class="is-halloween"` : "";
 
   return `<!DOCTYPE html>
-<html lang="en">
+<html lang="en"${halloween.attrs}${halloweenClass}>
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -444,11 +447,11 @@ function renderDocument({
   </head>
   <body>
     <a class="skip" href="#crate">skip to the crate</a>
-    <div class="wrap">
+${halloween.stage}    <div class="wrap">
       <header class="mast">
         <a class="logo" href="/">
           <img src="${logoSrc}" alt="Unfamiliar Sound Byte" width="360" height="360">
-        </a>
+        </a>${halloween.marks}
         ${mastHeading}
         <div class="count-row">
           <p class="count">${countHtml}</p>
@@ -669,6 +672,7 @@ function main() {
   const homeEntries = sortNewestFirst(catalog.entries);
   const numbers = acquisitionNumbers(homeEntries);
   assertSearchWorks(homeEntries);
+  assertHalloween();
   const homeVirtual = homeEntries.length > VIRTUAL_AT;
   const homeJson = homeVirtual ? jsonHash(entriesPayload(homeEntries, numbers)) : null;
   const homeHref = homeJson ? `/entries.json?v=${homeJson.hash}` : "";

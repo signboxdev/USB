@@ -1340,6 +1340,117 @@ code {
   }
 }
 
+/* Light seasonal layer. Hidden unless html.is-halloween. The fixed stage
+   does not take clicks, and the two motes are the only animation. */
+.spook-stage,
+.spook-marks {
+  display: none;
+}
+
+html.is-halloween .spook-stage {
+  display: block;
+  position: fixed;
+  inset: 0;
+  z-index: 3;
+  pointer-events: none;
+  background: radial-gradient(ellipse at center, transparent 52%, rgba(255, 126, 32, 0.07) 76%, rgba(52, 18, 86, 0.3) 100%);
+}
+
+html.is-halloween .spook-web {
+  position: absolute;
+  top: 0;
+  width: 104px;
+  height: 104px;
+  opacity: 0.2;
+}
+
+html.is-halloween .spook-web svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+html.is-halloween .spook-web-nw {
+  left: 0;
+}
+
+html.is-halloween .spook-web-ne {
+  right: 0;
+  transform: scaleX(-1);
+}
+
+html.is-halloween .spook-mote {
+  position: absolute;
+  left: 22%;
+  top: 46%;
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: #ffb15e;
+  opacity: 0.4;
+  animation: spook-float 18s ease-in-out infinite;
+}
+
+html.is-halloween .spook-mote-b {
+  left: auto;
+  right: 16%;
+  top: 70%;
+  width: 4px;
+  height: 4px;
+  background: #c9a6ea;
+  animation-duration: 22s;
+  animation-delay: -7s;
+}
+
+html.is-halloween .spook-marks {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  margin-left: 0.65rem;
+  vertical-align: middle;
+  transform: translateY(-8px);
+}
+
+@keyframes spook-float {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0);
+    opacity: 0.28;
+  }
+  50% {
+    transform: translate3d(0, -10px, 0);
+    opacity: 0.55;
+  }
+}
+
+@media (max-width: 600px) {
+  html.is-halloween .spook-web {
+    width: 72px;
+    height: 72px;
+  }
+
+  html.is-halloween .spook-marks {
+    margin-left: 0.4rem;
+    transform: translateY(-4px);
+  }
+
+  html.is-halloween .spook-pumpkin {
+    width: 22px;
+    height: 22px;
+  }
+
+  html.is-halloween .spook-bat {
+    width: 30px;
+    height: 15px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html.is-halloween .spook-mote {
+    animation: none;
+  }
+}
+
 @media print {
   body {
     background: #fff;
@@ -1356,5 +1467,10 @@ code {
   a.icon-btn::after {
     content: "  " attr(href);
     font-weight: 400;
+  }
+
+  .spook-stage,
+  .spook-marks {
+    display: none !important;
   }
 }

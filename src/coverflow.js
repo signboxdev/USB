@@ -1,4 +1,22 @@
 (function () {
+  // Halloween is armed by data-halloween-from/to. The class follows the
+  // visitor's local date, so a cached page goes quiet on November 2.
+  const seasonRoot = document.documentElement;
+  const seasonFrom = seasonRoot.getAttribute("data-halloween-from");
+  const seasonTo = seasonRoot.getAttribute("data-halloween-to");
+  if (seasonFrom && seasonTo) {
+    const stamp = (value) => {
+      const [month, day] = value.split("-").map(Number);
+      return month && day ? month * 100 + day : 0;
+    };
+    const start = stamp(seasonFrom);
+    const end = stamp(seasonTo);
+    const today = new Date();
+    const key = (today.getMonth() + 1) * 100 + today.getDate();
+    const on = start && end && (start <= end ? key >= start && key <= end : key >= start || key <= end);
+    seasonRoot.classList.toggle("is-halloween", Boolean(on));
+  }
+
   // Desktop apps. Phones and tablets keep the plain https href: iOS and Android
   // already open Spotify and Apple Music through universal links. A primary
   // click elsewhere tries the app, then the web URL if the page is still here

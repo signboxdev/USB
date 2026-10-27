@@ -3,6 +3,7 @@ import fs from "node:fs";
 import path from "node:path";
 import { pathToFileURL } from "node:url";
 import { prepareIndex, queryIndex } from "../src/search.js";
+import { assertGenreBuckets, assertGenreRules, genreBucket } from "./genres.js";
 import { assertValidCatalog, repoRoot } from "./catalog.js";
 
 // Above this, the homepage (and a poster page) stops inlining every sleeve.
@@ -169,7 +170,14 @@ function searchPayload(entries) {
   for (const entry of entries) assertNameIsPublic(entry);
   return {
     v: 1,
-    entries: entries.map((entry) => [entry.id, entry.title, entry.artist, entry.album, entry.posted_by]),
+    entries: entries.map((entry) => [
+      entry.id,
+      entry.title,
+      entry.artist,
+      entry.album,
+      entry.posted_by,
+      genreBucket(entry.genre),
+    ]),
   };
 }
 
@@ -189,6 +197,7 @@ function entriesPayload(entries, numbers) {
       entry.apple_music_url,
       entry.artwork_url,
       numbers.get(entry.id),
+      genreBucket(entry.genre),
     ]),
   };
 }
@@ -213,7 +222,7 @@ function renderEntry(entry, number, { listIndex = 0 } = {}) {
   const services = links.length ? `<ul class="services">\n            ${links.join("\n            ")}\n          </ul>` : "";
 
   return `      <li>
-        <article class="card" id="${escapeHtml(entry.id)}" data-type="${escapeHtml(entry.type)}">
+        <article class="card" id="${escapeHtml(entry.id)}" data-type="${escapeHtml(entry.type)}"${genreBucket(entry.genre) ? ` data-genre="${escapeHtml(genreBucket(entry.genre))}"` : ""}>
           <div class="row">
             <div class="thumb"${entry.artwork_url ? "" : ` aria-hidden="true"`}>${artwork}</div>
             <div class="copy">
@@ -324,7 +333,9 @@ function renderCoverFlow(entries, { coverLimit, singlePanel = false, entriesHref
         ? `<span class="flow-reflect" aria-hidden="true">${coverImage(entry, index, true)}</span>`
         : `<span class="flow-reflect is-blank" aria-hidden="true"></span>`;
       const backId = `flow-back-${index}`;
-      return `          <li class="flow-cover">
+      const bucket = genreBucket(entry.genre);
+      const genreAttr = bucket ? ` data-genre="${escapeHtml(bucket)}"` : "";
+      return `          <li class="flow-cover"${genreAttr}>
             <div class="flow-flip">
               <button type="button" class="flow-select" data-index="${index}" data-id="${escapeHtml(entry.id)}" data-summary="${escapeHtml(summary)}" aria-expanded="false" aria-controls="${backId}" aria-label="${escapeHtml(`${entry.title} by ${entry.artist}`)}"${current}>
                 ${sleeve}
@@ -454,6 +465,9 @@ function renderDocument({
           <p class="count">${countHtml}</p>
           ${randomButton}
         </div>${finder}
+        <div class="genres" hidden>
+          <div class="genres-row" role="group" aria-label="genres"></div>
+        </div>
       </header>
 ${flowHtml}      <main id="crate">
         ${list}
@@ -668,6 +682,8 @@ function main() {
   const posters = groupEntriesByPoster(catalog.entries);
   const homeEntries = sortNewestFirst(catalog.entries);
   const numbers = acquisitionNumbers(homeEntries);
+  assertGenreRules();
+  assertGenreBuckets(homeEntries);
   assertSearchWorks(homeEntries);
   const homeVirtual = homeEntries.length > VIRTUAL_AT;
   const homeJson = homeVirtual ? jsonHash(entriesPayload(homeEntries, numbers)) : null;

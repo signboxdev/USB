@@ -320,10 +320,88 @@ body {
   .finder-hit:hover {
     background: #141414;
   }
+
+  .genre-chip:hover {
+    border-color: #fff;
+  }
 }
 
 .finder-hit:active {
   background: #1a1a1a;
+}
+
+.genres {
+  margin: 0.55rem 0 0.1rem;
+}
+
+.genres-row {
+  display: flex;
+  gap: 0.4rem;
+  margin: 0 -0.15rem;
+  padding: 0.05rem 0.15rem 0.35rem;
+  overflow-x: auto;
+  overscroll-behavior-x: contain;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+}
+
+.genres-row::-webkit-scrollbar {
+  display: none;
+}
+
+.genre-chip {
+  flex: none;
+  display: inline-flex;
+  align-items: baseline;
+  gap: 0.4rem;
+  min-height: 40px;
+  margin: 0;
+  padding: 0.4rem 0.72rem;
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  border-radius: 999px;
+  background: transparent;
+  color: var(--text);
+  font: inherit;
+  font-size: 0.78rem;
+  line-height: 1.2;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.genre-chip.is-all .genre-name {
+  font-size: 0.68rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.genre-num {
+  color: var(--muted);
+  font-size: 0.72rem;
+  font-variant-numeric: tabular-nums;
+}
+
+.genre-chip.is-on {
+  background: #fff;
+  border-color: #fff;
+  color: #000;
+}
+
+.genre-chip.is-on .genre-num {
+  color: #3f3f46;
+}
+
+.genre-chip:focus-visible {
+  outline: 2px solid #fff;
+  outline-offset: 2px;
+}
+
+.genre-chip:active {
+  border-color: #fff;
+}
+
+.count-genre {
+  letter-spacing: 0;
+  text-transform: none;
 }
 
 .poster-name {
@@ -1167,6 +1245,10 @@ code {
 
   .finder-panel {
     max-height: min(18rem, 42vh);
+  }
+
+  .genres {
+    margin-top: 0.35rem;
   }
 
   .count-row {

@@ -1340,8 +1340,8 @@ code {
   }
 }
 
-/* Light seasonal layer. Hidden unless html.is-halloween. The fixed stage
-   does not take clicks, and the two motes are the only animation. */
+/* Seasonal layer. Hidden unless html.is-halloween. The fixed stage does not
+   take clicks. Motion is a slow drift only, never a flash. */
 .spook-stage,
 .spook-marks {
   display: none;
@@ -1353,15 +1353,16 @@ html.is-halloween .spook-stage {
   inset: 0;
   z-index: 3;
   pointer-events: none;
-  background: radial-gradient(ellipse at center, transparent 52%, rgba(255, 126, 32, 0.07) 76%, rgba(52, 18, 86, 0.3) 100%);
+  background:
+    radial-gradient(ellipse at center, transparent 46%, rgba(255, 98, 12, 0.16) 72%, rgba(28, 6, 58, 0.62) 100%),
+    radial-gradient(ellipse at top, rgba(92, 28, 140, 0.2), transparent 42%);
 }
 
 html.is-halloween .spook-web {
   position: absolute;
-  top: 0;
-  width: 104px;
-  height: 104px;
-  opacity: 0.2;
+  width: 168px;
+  height: 168px;
+  opacity: 0.55;
 }
 
 html.is-halloween .spook-web svg {
@@ -1371,12 +1372,81 @@ html.is-halloween .spook-web svg {
 }
 
 html.is-halloween .spook-web-nw {
+  top: 0;
   left: 0;
 }
 
 html.is-halloween .spook-web-ne {
+  top: 0;
   right: 0;
   transform: scaleX(-1);
+}
+
+html.is-halloween .spook-web-sw {
+  top: auto;
+  bottom: 0;
+  left: 0;
+  transform: scaleY(-1);
+}
+
+html.is-halloween .spook-web-se {
+  top: auto;
+  right: 0;
+  bottom: 0;
+  transform: scale(-1);
+}
+
+html.is-halloween .spook-fog {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 28vh;
+  background: linear-gradient(to top, rgba(36, 12, 64, 0.42), rgba(255, 120, 30, 0.08) 46%, transparent);
+  animation: spook-fog 28s ease-in-out infinite;
+}
+
+html.is-halloween .spook-flyer {
+  position: absolute;
+  opacity: 0.72;
+  animation: spook-float 20s ease-in-out infinite;
+}
+
+html.is-halloween .spook-flyer .spook-bat {
+  display: block;
+  width: 46px;
+  height: 23px;
+}
+
+html.is-halloween .spook-flyer-a {
+  top: 14%;
+  right: 9%;
+}
+
+html.is-halloween .spook-flyer-b {
+  top: 36%;
+  left: 4%;
+  opacity: 0.5;
+  animation-duration: 26s;
+  animation-delay: -8s;
+}
+
+html.is-halloween .spook-flyer-b .spook-bat {
+  width: 32px;
+  height: 16px;
+}
+
+html.is-halloween .spook-flyer-c {
+  right: 7%;
+  bottom: 18%;
+  opacity: 0.42;
+  animation-duration: 24s;
+  animation-delay: -4s;
+}
+
+html.is-halloween .spook-flyer-c .spook-bat {
+  width: 28px;
+  height: 14px;
 }
 
 html.is-halloween .spook-mote {
@@ -1415,18 +1485,27 @@ html.is-halloween .spook-marks {
   0%,
   100% {
     transform: translate3d(0, 0, 0);
-    opacity: 0.28;
   }
   50% {
-    transform: translate3d(0, -10px, 0);
-    opacity: 0.55;
+    transform: translate3d(0, -12px, 0);
+  }
+}
+
+@keyframes spook-fog {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0);
+  }
+  50% {
+    transform: translate3d(0, -8px, 0);
   }
 }
 
 @media (max-width: 600px) {
   html.is-halloween .spook-web {
-    width: 72px;
-    height: 72px;
+    width: 108px;
+    height: 108px;
+    opacity: 0.48;
   }
 
   html.is-halloween .spook-marks {
@@ -1435,18 +1514,25 @@ html.is-halloween .spook-marks {
   }
 
   html.is-halloween .spook-pumpkin {
-    width: 22px;
-    height: 22px;
+    width: 28px;
+    height: 28px;
   }
 
-  html.is-halloween .spook-bat {
-    width: 30px;
-    height: 15px;
+  html.is-halloween .spook-marks .spook-bat {
+    width: 34px;
+    height: 17px;
+  }
+
+  html.is-halloween .spook-flyer-b,
+  html.is-halloween .spook-flyer-c {
+    display: none;
   }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  html.is-halloween .spook-mote {
+  html.is-halloween .spook-mote,
+  html.is-halloween .spook-flyer,
+  html.is-halloween .spook-fog {
     animation: none;
   }
 }

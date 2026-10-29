@@ -2,6 +2,22 @@
   "version": 1,
   "entries": [
     {
+      "id": "167d622b-fac2-4522-bf21-6053dc990827",
+      "type": "track",
+      "title": "Waters Rising",
+      "artist": "Djrum",
+      "album": "Portrait With Firewood",
+      "posted_by": "Drew",
+      "posted_at": "2026-10-29T11:06:23-04:00",
+      "source_service": "apple_music",
+      "source_url": "https://music.apple.com/ca/album/waters-rising/1400443513?i=1400443911",
+      "spotify_url": "https://open.spotify.com/track/46MTErkMonXd2RURhe2H2q",
+      "apple_music_url": "https://music.apple.com/ca/album/waters-rising/1400443513?i=1400443911",
+      "match_status": "matched",
+      "artwork_url": "https://is1-ssl.mzstatic.com/image/thumb/Music211/v4/b2/0c/2b/b20c2b48-3406-cac0-1a68-fab432f398e4/cover.jpg/600x600bb.jpg",
+      "notes": null
+    },
+    {
       "id": "8c683c40-7644-4fd9-8b36-d976dda67cb1",
       "type": "track",
       "title": "Seconds - ft Ouri & Jonah Yano",

@@ -41,12 +41,14 @@ const BAT = `<svg class="spook-bat" viewBox="0 0 64 32" width="42" height="21" a
 // Corner cobweb, drawn from the top-left. The other corners mirror it.
 const WEB = `<svg viewBox="0 0 100 100" aria-hidden="true" focusable="false"><g fill="none" stroke="#f3eef8" stroke-width="1.25"><path d="M0 0h100M0 0v100M0 0 100 22M0 0 100 48M0 0 100 74M0 0 78 100M0 0 48 100M0 0 22 100"/><path d="M16 0c5 6 6 12-1 18M32 0c8 10 8 20-2 30M50 0c12 14 12 30-2 46M68 0c16 18 16 40-2 60"/><path d="M0 16c6 5 12 6 18-1M0 32c10 8 20 8 30-2M0 50c14 12 30 12 46-2M0 68c18 16 40 16 60-2"/></g></svg>`;
 
+const SPIDER = `<span class="spook-spider-wiggle"><svg viewBox="0 0 32 32" aria-hidden="true" focusable="false"><g fill="none" stroke="#f4eef8" stroke-width="1.15" stroke-linecap="round"><path d="M16 14 7 6M16 14 5 11M16 15 6 18M16 16 8 25M16 14 25 6M16 14 27 11M16 15 26 18M16 16 24 25"/></g><ellipse cx="16" cy="17" rx="3.1" ry="4.2" fill="#f7f2fb" stroke="#2a2030" stroke-width="0.45"/><circle cx="16" cy="12.2" r="2.15" fill="#f7f2fb" stroke="#2a2030" stroke-width="0.45"/></svg></span>`;
+
 export function halloweenDecor() {
   if (!HALLOWEEN_ENABLED) return { stage: "", marks: "", attrs: "" };
   const from = `${HALLOWEEN_FROM.month}-${HALLOWEEN_FROM.day}`;
   const to = `${HALLOWEEN_TO.month}-${HALLOWEEN_TO.day}`;
   const attrs = ` data-halloween-from="${from}" data-halloween-to="${to}"`;
-  const stage = `    <div class="spook-stage" aria-hidden="true"><span class="spook-web spook-web-nw">${WEB}</span><span class="spook-web spook-web-ne">${WEB}</span><span class="spook-web spook-web-sw">${WEB}</span><span class="spook-web spook-web-se">${WEB}</span><span class="spook-fog"></span><span class="spook-flyer spook-flyer-a">${BAT}</span><span class="spook-flyer spook-flyer-b">${BAT}</span><span class="spook-flyer spook-flyer-c">${BAT}</span><span class="spook-mote"></span><span class="spook-mote spook-mote-b"></span></div>\n`;
+  const stage = `    <div class="spook-stage" aria-hidden="true"><span class="spook-web spook-web-nw">${WEB}</span><span class="spook-web spook-web-ne">${WEB}</span><span class="spook-web spook-web-sw">${WEB}</span><span class="spook-web spook-web-se">${WEB}</span><span class="spook-fog"></span><span class="spook-flyer spook-flyer-a">${BAT}</span><span class="spook-flyer spook-flyer-b">${BAT}</span><span class="spook-flyer spook-flyer-c">${BAT}</span><span class="spook-mote"></span><span class="spook-mote spook-mote-b"></span><span class="spook-spider spook-spider-a">${SPIDER}</span><span class="spook-spider spook-spider-b">${SPIDER}</span><span class="spook-spider spook-spider-c">${SPIDER}</span><span class="spook-spider spook-spider-d">${SPIDER}</span></div>\n`;
   const marks = `<span class="spook-marks">${PUMPKIN}${BAT}</span>`;
   return { stage, marks, attrs };
 }

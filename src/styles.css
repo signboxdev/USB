@@ -1340,6 +1340,306 @@ code {
   }
 }
 
+/* Seasonal layer. Hidden unless html.is-halloween. The fixed stage does not
+   take clicks. Motion is a slow drift only, never a flash. */
+.spook-stage,
+.spook-marks {
+  display: none;
+}
+
+html.is-halloween .spook-stage {
+  display: block;
+  position: fixed;
+  inset: 0;
+  z-index: 40;
+  pointer-events: none;
+  background: radial-gradient(ellipse at center, transparent 64%, rgba(255, 148, 48, 0.05) 86%, rgba(72, 32, 112, 0.2) 100%);
+}
+
+html.is-halloween .spook-web {
+  position: absolute;
+  width: 168px;
+  height: 168px;
+  opacity: 0.55;
+}
+
+html.is-halloween .spook-web svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+html.is-halloween .spook-web-nw {
+  top: 0;
+  left: 0;
+}
+
+html.is-halloween .spook-web-ne {
+  top: 0;
+  right: 0;
+  transform: scaleX(-1);
+}
+
+html.is-halloween .spook-web-sw {
+  top: auto;
+  bottom: 0;
+  left: 0;
+  transform: scaleY(-1);
+}
+
+html.is-halloween .spook-web-se {
+  top: auto;
+  right: 0;
+  bottom: 0;
+  transform: scale(-1);
+}
+
+html.is-halloween .spook-fog {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 28vh;
+  background: linear-gradient(to top, rgba(36, 12, 64, 0.42), rgba(255, 120, 30, 0.08) 46%, transparent);
+  animation: spook-fog 28s ease-in-out infinite;
+}
+
+html.is-halloween .spook-flyer {
+  position: absolute;
+  opacity: 0.72;
+  animation: spook-float 20s ease-in-out infinite;
+}
+
+html.is-halloween .spook-flyer .spook-bat {
+  display: block;
+  width: 46px;
+  height: 23px;
+}
+
+html.is-halloween .spook-flyer-a {
+  top: 14%;
+  right: 9%;
+}
+
+html.is-halloween .spook-flyer-b {
+  top: 36%;
+  left: 4%;
+  opacity: 0.5;
+  animation-duration: 26s;
+  animation-delay: -8s;
+}
+
+html.is-halloween .spook-flyer-b .spook-bat {
+  width: 32px;
+  height: 16px;
+}
+
+html.is-halloween .spook-flyer-c {
+  right: 7%;
+  bottom: 18%;
+  opacity: 0.42;
+  animation-duration: 24s;
+  animation-delay: -4s;
+}
+
+html.is-halloween .spook-flyer-c .spook-bat {
+  width: 28px;
+  height: 14px;
+}
+
+html.is-halloween .spook-mote {
+  position: absolute;
+  left: 22%;
+  top: 46%;
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: #ffb15e;
+  opacity: 0.4;
+  animation: spook-float 18s ease-in-out infinite;
+}
+
+html.is-halloween .spook-mote-b {
+  left: auto;
+  right: 16%;
+  top: 70%;
+  width: 4px;
+  height: 4px;
+  background: #c9a6ea;
+  animation-duration: 22s;
+  animation-delay: -7s;
+}
+
+html.is-halloween .spook-spider {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 22px;
+  height: 22px;
+  pointer-events: none;
+  z-index: 2;
+}
+
+html.is-halloween .spook-spider svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+html.is-halloween .spook-spider-wiggle {
+  display: block;
+  animation: spook-wiggle 1.8s ease-in-out infinite;
+}
+
+html.is-halloween .spook-spider-a {
+  animation: spook-crawl-a 38s linear infinite;
+  animation-delay: -9s;
+}
+
+html.is-halloween .spook-spider-b {
+  width: 16px;
+  height: 16px;
+  animation: spook-crawl-b 46s linear infinite;
+  animation-delay: -20s;
+}
+
+html.is-halloween .spook-spider-c {
+  width: 18px;
+  height: 18px;
+  animation: spook-crawl-c 34s linear infinite;
+  animation-delay: -14s;
+}
+
+html.is-halloween .spook-spider-d {
+  width: 14px;
+  height: 14px;
+  animation: spook-crawl-d 52s linear infinite;
+  animation-delay: -30s;
+}
+
+html.is-halloween .spook-marks {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  margin-left: 0.65rem;
+  vertical-align: middle;
+  transform: translateY(-8px);
+}
+
+@keyframes spook-float {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0);
+  }
+  50% {
+    transform: translate3d(0, -12px, 0);
+  }
+}
+
+@keyframes spook-wiggle {
+  0%,
+  100% {
+    transform: rotate(-4deg);
+  }
+  50% {
+    transform: rotate(4deg);
+  }
+}
+
+@keyframes spook-crawl-a {
+  0% {
+    transform: translate3d(-12vw, 22vh, 0) rotate(8deg);
+  }
+  100% {
+    transform: translate3d(108vw, 34vh, 0) rotate(14deg);
+  }
+}
+
+@keyframes spook-crawl-b {
+  0% {
+    transform: translate3d(110vw, 58vh, 0) rotate(188deg);
+  }
+  100% {
+    transform: translate3d(-14vw, 48vh, 0) rotate(196deg);
+  }
+}
+
+@keyframes spook-crawl-c {
+  0% {
+    transform: translate3d(-10vw, 78vh, 0) rotate(6deg);
+  }
+  100% {
+    transform: translate3d(108vw, 88vh, 0) rotate(12deg);
+  }
+}
+
+@keyframes spook-crawl-d {
+  0% {
+    transform: translate3d(104vw, 12vh, 0) rotate(192deg);
+  }
+  100% {
+    transform: translate3d(-12vw, 26vh, 0) rotate(184deg);
+  }
+}
+
+@keyframes spook-fog {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0);
+  }
+  50% {
+    transform: translate3d(0, -8px, 0);
+  }
+}
+
+@media (max-width: 600px) {
+  html.is-halloween .spook-web {
+    width: 108px;
+    height: 108px;
+    opacity: 0.48;
+  }
+
+  html.is-halloween .spook-marks {
+    margin-left: 0.4rem;
+    transform: translateY(-4px);
+  }
+
+  html.is-halloween .spook-pumpkin {
+    width: 28px;
+    height: 28px;
+  }
+
+  html.is-halloween .spook-marks .spook-bat {
+    width: 34px;
+    height: 17px;
+  }
+
+  html.is-halloween .spook-flyer-b,
+  html.is-halloween .spook-flyer-c,
+  html.is-halloween .spook-spider-c,
+  html.is-halloween .spook-spider-d {
+    display: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html.is-halloween .spook-mote,
+  html.is-halloween .spook-flyer,
+  html.is-halloween .spook-fog,
+  html.is-halloween .spook-spider,
+  html.is-halloween .spook-spider-wiggle {
+    animation: none;
+  }
+
+  html.is-halloween .spook-spider-a {
+    transform: translate3d(18vw, 18vh, 0);
+  }
+
+  html.is-halloween .spook-spider-b {
+    transform: translate3d(62vw, 70vh, 0);
+  }
+}
+
 @media print {
   body {
     background: #fff;
@@ -1356,5 +1656,10 @@ code {
   a.icon-btn::after {
     content: "  " attr(href);
     font-weight: 400;
+  }
+
+  .spook-stage,
+  .spook-marks {
+    display: none !important;
   }
 }

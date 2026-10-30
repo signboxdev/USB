@@ -1,0 +1,1665 @@
+:root {
+  --bg: #000;
+  --card: #111;
+  --card-hover: #171717;
+  --text: #f4f4f5;
+  --muted: #a1a1aa;
+  --line: rgba(255, 255, 255, 0.12);
+  --line-strong: rgba(255, 255, 255, 0.28);
+  --sans: Inter, "Segoe UI", "Noto Sans Khmer", system-ui, sans-serif;
+  --mono: "JetBrains Mono", "Cascadia Mono", ui-monospace, "Liberation Mono", monospace;
+  color-scheme: dark;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  background: var(--bg);
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--sans);
+  font-size: 1rem;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+::selection {
+  background: #fff;
+  color: #000;
+}
+
+.skip {
+  position: absolute;
+  left: 1rem;
+  top: -3rem;
+  padding: 0.45rem 0.7rem;
+  background: #fff;
+  color: #000;
+  font-size: 0.8rem;
+  text-decoration: none;
+}
+
+.skip:focus {
+  top: 0.75rem;
+  z-index: 2;
+}
+
+.wrap {
+  max-width: 46rem;
+  margin: 0 auto;
+  padding: 1.75rem 1.15rem 4rem;
+}
+
+.mast {
+  padding-bottom: 0.85rem;
+  margin-bottom: 0.2rem;
+}
+
+.mast-top,
+.colophon {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 0.45rem 1rem;
+  font-size: 0.72rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.mast-top p,
+.colophon p {
+  margin: 0;
+  min-width: 0;
+}
+
+.logo {
+  display: inline-block;
+  line-height: 0;
+  background: #000;
+  text-decoration: none;
+}
+
+.logo img {
+  display: block;
+  width: 100px;
+  height: auto;
+  background: #000;
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
+}
+
+.dek {
+  margin: 1.15rem 0 0;
+  max-width: 34rem;
+  color: var(--muted);
+  font-size: 1.02rem;
+  line-height: 1.55;
+}
+
+.count-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.35rem;
+  margin: 1.4rem 0 0;
+}
+
+.count {
+  margin: 0;
+  min-width: 0;
+  color: var(--muted);
+  font-size: 0.78rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.count .num {
+  color: var(--text);
+  font-weight: 600;
+  letter-spacing: 0;
+  text-transform: none;
+  font-size: 0.95rem;
+}
+
+.finder {
+  margin: 0.85rem 0 0.15rem;
+}
+
+.finder-bar {
+  display: flex;
+  align-items: center;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.22);
+}
+
+.finder:focus-within .finder-bar {
+  border-bottom-color: #fff;
+}
+
+.finder-input {
+  flex: 1;
+  width: 100%;
+  min-width: 0;
+  min-height: 44px;
+  margin: 0;
+  padding: 0.4rem 0.1rem;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  color: var(--text);
+  font: inherit;
+  font-size: 16px;
+  line-height: 1.3;
+  letter-spacing: -0.01em;
+  -webkit-appearance: none;
+  appearance: none;
+}
+
+.finder-input:focus {
+  outline: none;
+}
+
+.finder-input::-webkit-search-decoration,
+.finder-input::-webkit-search-cancel-button,
+.finder-input::-webkit-search-results-button,
+.finder-input::-webkit-search-results-decoration {
+  display: none;
+  -webkit-appearance: none;
+  appearance: none;
+}
+
+.finder-input::placeholder {
+  color: var(--muted);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  font-size: 0.78rem;
+}
+
+.finder-clear {
+  flex: none;
+  width: 44px;
+  height: 44px;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: var(--muted);
+  font: inherit;
+  font-size: 1.35rem;
+  line-height: 1;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.finder-clear:active {
+  color: var(--text);
+}
+
+.finder-panel {
+  max-height: min(22rem, 46vh);
+  margin: 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  -webkit-overflow-scrolling: touch;
+}
+
+.finder-empty {
+  margin: 0.7rem 0 0.2rem;
+  color: var(--muted);
+  font-size: 0.86rem;
+}
+
+.finder h2.finder-label {
+  margin: 0.85rem 0 0.1rem;
+  color: var(--muted);
+  font-size: 0.68rem;
+  font-weight: 500;
+  letter-spacing: 0.14em;
+  line-height: 1.2;
+  text-transform: uppercase;
+  white-space: normal;
+  overflow: visible;
+}
+
+.finder-list,
+.finder-tracks {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.finder-hit {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  width: 100%;
+  min-height: 44px;
+  margin: 0;
+  padding: 0.4rem 0.1rem;
+  border: 0;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  text-align: left;
+  text-decoration: none;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.finder-title {
+  font-weight: 650;
+  font-size: 0.95rem;
+  line-height: 1.25;
+  letter-spacing: -0.02em;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.finder-sub,
+.finder-more {
+  color: var(--muted);
+  font-size: 0.75rem;
+  line-height: 1.3;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.finder-artist-name {
+  margin: 0.55rem 0 0;
+  font-weight: 650;
+  font-size: 0.95rem;
+  line-height: 1.25;
+  letter-spacing: -0.02em;
+}
+
+.finder-tracks {
+  padding: 0 0 0.15rem 0.85rem;
+}
+
+.finder-tracks .finder-hit {
+  min-height: 40px;
+  padding-top: 0.28rem;
+  padding-bottom: 0.28rem;
+}
+
+.finder-more {
+  margin: 0 0 0.35rem 0.85rem;
+}
+
+.finder-hit:focus-visible,
+.finder-clear:focus-visible {
+  outline: 2px solid #fff;
+  outline-offset: 2px;
+}
+
+@media (hover: hover) {
+  .finder-hit:hover {
+    background: #141414;
+  }
+}
+
+.finder-hit:active {
+  background: #1a1a1a;
+}
+
+.poster-name {
+  margin: 1.15rem 0 0;
+  font-weight: 650;
+  font-size: 1.35rem;
+  line-height: 1.15;
+  letter-spacing: -0.02em;
+}
+
+.poster {
+  color: inherit;
+  font-weight: 600;
+  text-decoration: none;
+  text-underline-offset: 0.18em;
+  text-decoration-thickness: 1px;
+  -webkit-tap-highlight-color: transparent;
+}
+
+@media (hover: hover) {
+  .poster:hover {
+    text-decoration: underline;
+  }
+}
+
+.poster:active {
+  text-decoration: underline;
+}
+
+.flow {
+  --cover: clamp(128px, 38vw, 168px);
+  position: relative;
+  z-index: 0;
+  margin: 0.35rem -1.15rem 1.6rem;
+  overflow-x: clip;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+.flow-stage {
+  position: relative;
+  height: calc(var(--cover) * 1.44 + 18px);
+  /* No shared perspective. Each sleeve carries perspective() on its own
+     transform, so a tilted neighbour is a flat layer and cannot cut through
+     the one in front. The stage stays flat for the same reason. */
+  transform-style: flat;
+  -webkit-transform-style: flat;
+  cursor: grab;
+}
+
+/* pan-y has to be on the element the finger hits. iOS ignores an ancestor-only value,
+   including on the button and the image, so every descendant sets it. */
+.flow-stage,
+.flow-stage * {
+  touch-action: pan-y !important;
+}
+
+.flow.is-dragging .flow-stage {
+  cursor: grabbing;
+}
+
+.flow-covers {
+  list-style: none;
+  position: absolute;
+  inset: 0;
+  margin: 0;
+  padding: 0;
+  /* Flat grouping layer. z-index, not translateZ, decides which sleeve is
+     in front, and a transform here stops WebKit promoting the children into
+     an ancestor 3D context. */
+  transform: translate3d(0, 0, 0);
+  transform-style: flat;
+  -webkit-transform-style: flat;
+}
+
+.flow-cover {
+  position: absolute;
+  top: 8px;
+  left: 50%;
+  width: var(--cover);
+  height: var(--cover);
+  margin-left: calc(var(--cover) / -2);
+  /* The box is the artwork, so perspective() turns around the sleeve and
+     not the reflection hanging below it. */
+  transform-origin: 50% 50%;
+  transform: perspective(calc(var(--cover) * 7.6)) translate3d(0, 0, 0) rotateY(0deg) scale(1);
+  transform-style: preserve-3d;
+  -webkit-transform-style: preserve-3d;
+  --shade: 0;
+  --reflect: 1;
+}
+
+/* Sleeves past the visible arc are not painted. */
+.flow-cover.is-culled {
+  visibility: hidden;
+  pointer-events: none;
+}
+
+/* The square's rotateY is written from rAF. No CSS transition: a transition
+   would fight the frames, and WebKit drops backface-visibility on a
+   transitioned preserve-3d layer. */
+.flow-flip {
+  position: relative;
+  transform: rotateY(0deg);
+  -webkit-transform: rotateY(0deg);
+  transform-origin: center center;
+  transform-style: preserve-3d;
+  -webkit-transform-style: preserve-3d;
+}
+
+/* Before script: the same overlapping stack the painter uses, on every
+   screen. First neighbour at 0.55 sleeve-widths, then 0.22, shallow depth,
+   inward tilt so the outer edge sits back (40° then about 45°). Perspective
+   is per sleeve. translate percentages are of the sleeve, and the depth is
+   a multiple of --cover. Sleeves past the near row stay hidden until the
+   painter places them. */
+.flow-cover:nth-child(1) {
+  z-index: 200;
+  --shade: 0;
+  --reflect: 1;
+  transform: perspective(calc(var(--cover) * 7.6)) translate3d(0, 0, 0) rotateY(0deg) scale(1);
+}
+
+.flow-cover:nth-child(2) {
+  z-index: 180;
+  --shade: 0.12;
+  --reflect: 0;
+  transform: perspective(calc(var(--cover) * 7.6)) translate3d(calc(var(--cover) * 0.5218), 0, 0) rotateY(40deg) scale(0.7969);
+}
+
+.flow-cover:nth-child(3) {
+  z-index: 160;
+  --shade: 0.24;
+  --reflect: 0;
+  transform: perspective(calc(var(--cover) * 7.6)) translate3d(calc(var(--cover) * 0.7092), 0, 0) rotateY(44.44deg) scale(0.6498);
+}
+
+.flow-cover:nth-child(4) {
+  z-index: 140;
+  --shade: 0.644;
+  --reflect: 0;
+  transform: perspective(calc(var(--cover) * 7.6)) translate3d(calc(var(--cover) * 0.8821), 0, 0) rotateY(44.94deg) scale(0.5281);
+}
+
+.flow:not(.is-ready) .flow-cover:nth-child(n + 5) {
+  visibility: hidden;
+}
+
+.flow.is-ready:not(.is-dragging):not(.is-gliding):not(.is-instant) .flow-cover {
+  transition: transform 480ms cubic-bezier(0.16, 0.84, 0.3, 1), opacity 480ms ease;
+}
+
+/* Drag, coast, spring, and the random-track spin write transforms from rAF.
+   A CSS transition here replays the move as one fixed 480ms ease and hides the coast. */
+.flow.is-dragging .flow-cover,
+.flow.is-gliding .flow-cover,
+.flow.is-instant .flow-cover {
+  transition: none !important;
+}
+
+.flow-select {
+  display: block;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: #000;
+  color: inherit;
+  font: inherit;
+  text-align: inherit;
+  cursor: pointer;
+  opacity: 1;
+  -webkit-tap-highlight-color: transparent;
+  transform: translateZ(1px);
+  -webkit-transform: translateZ(1px);
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
+}
+
+.flow-cover.is-showing-back .flow-select {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.flow-select:focus {
+  outline: none;
+}
+
+.flow-select:focus-visible .flow-sleeve {
+  outline: 2px solid #fff;
+  outline-offset: 4px;
+}
+
+.flow-sleeve {
+  position: relative;
+  display: block;
+  aspect-ratio: 1;
+  overflow: hidden;
+  border-radius: 3px;
+  background: #000;
+  opacity: 1;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, calc(0.28 * (1 - var(--shade, 0)))),
+    0 0 0 1px rgba(255, 255, 255, calc(0.16 * (1 - var(--shade, 0)))),
+    0 22px 40px rgba(0, 0, 0, calc(0.55 * (1 - var(--shade, 0))));
+}
+
+/* Darkens the art with distance. Opacity on the cover itself would flatten
+   the 3D layer in WebKit and let a far sleeve paint over a near one. */
+.flow-sleeve::after,
+.flow-reflect::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: #000;
+  opacity: var(--shade, 0);
+  pointer-events: none;
+}
+
+.flow-sleeve img,
+.flow-reflect img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  opacity: 1;
+  -webkit-user-drag: none;
+}
+
+.flow-sleeve.is-blank {
+  display: grid;
+  place-items: center;
+  background: radial-gradient(120% 90% at 50% 0%, #2c2c31 0%, #121214 48%, #070708 100%);
+}
+
+.flow-mark {
+  color: rgba(255, 255, 255, 0.72);
+  font-size: 1.05rem;
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  line-height: 1;
+}
+
+.flow-reflect {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: calc(var(--cover) + 5px);
+  display: block;
+  height: calc(var(--cover) * 0.4);
+  overflow: hidden;
+  pointer-events: none;
+  opacity: var(--reflect, 1);
+  -webkit-mask-image: linear-gradient(to bottom, rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0) 76%);
+  mask-image: linear-gradient(to bottom, rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0) 76%);
+}
+
+.flow-reflect img {
+  object-position: center bottom;
+  transform: scaleY(-1);
+}
+
+.flow-reflect.is-blank {
+  border-radius: 3px;
+  background: linear-gradient(to bottom, rgba(255, 255, 255, 0.16), rgba(255, 255, 255, 0) 74%);
+}
+
+.flow:not(.is-dragging):not(.is-gliding):not(.is-instant) .flow-reflect {
+  transition: opacity 280ms ease;
+}
+
+.flow-cover.is-flipped .flow-reflect {
+  opacity: 0;
+}
+
+.flow-back {
+  position: absolute;
+  inset: 0;
+  display: block;
+  visibility: hidden;
+  opacity: 0;
+  transform: rotateY(180deg) translateZ(1px);
+  -webkit-transform: rotateY(180deg) translateZ(1px);
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
+  pointer-events: none;
+  border-radius: 3px;
+}
+
+/* Side covers, and the centre cover until the flip passes 90°, stay out of
+   the render tree. WebKit paints a preserve-3d back face through the art
+   even with backface-visibility: hidden. */
+.flow-back[hidden] {
+  display: none !important;
+}
+
+.flow-cover.is-showing-back .flow-back:not([hidden]) {
+  visibility: visible;
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.flow-back-card {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  overflow: hidden;
+  border-radius: 3px;
+  background: #0c0c0e;
+  color: var(--text);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.28),
+    0 0 0 1px rgba(255, 255, 255, 0.16),
+    0 22px 40px rgba(0, 0, 0, 0.55);
+}
+
+.flow-back-art {
+  position: absolute;
+  inset: -20%;
+  width: 140%;
+  height: 140%;
+  object-fit: cover;
+  opacity: 0.45;
+  transform: scale(1.08);
+  pointer-events: none;
+}
+
+.flow-back-art:not([src]) {
+  display: none;
+}
+
+.flow-cover.is-showing-back .flow-back-art {
+  filter: blur(14px) saturate(0.65);
+}
+
+.flow-back-card::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(180deg, rgba(0, 0, 0, 0.72) 0%, rgba(0, 0, 0, 0.86) 55%, rgba(0, 0, 0, 0.92) 100%);
+  pointer-events: none;
+}
+
+.flow-back-copy {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  max-height: 100%;
+  min-height: 0;
+  padding: 0.4rem 0.35rem;
+  gap: 0.08rem;
+  text-align: center;
+}
+
+.flow-back-title {
+  margin: 0;
+  flex: none;
+  width: 100%;
+  font-weight: 650;
+  font-size: 0.88rem;
+  line-height: 1.15;
+  letter-spacing: -0.02em;
+  text-align: center;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 3;
+  overflow: hidden;
+  overflow-wrap: break-word;
+}
+
+.flow-back-artist,
+.flow-back-album,
+.flow-back-who,
+.flow-back-when {
+  margin: 0;
+  flex: none;
+  width: 100%;
+  min-width: 0;
+  font-size: 0.7rem;
+  line-height: 1.2;
+  text-align: center;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.flow-back-artist {
+  color: #e4e4e7;
+}
+
+.flow-back-album,
+.flow-back-when,
+.flow-back-who {
+  color: #b4b4bc;
+}
+
+.flow-back-who .poster {
+  display: inline;
+  position: relative;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* 44px hit target without opening a gap in "posted by Drew". */
+.flow-back-who .poster::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 44px;
+  height: 44px;
+  transform: translate(-50%, -50%);
+}
+
+.flow-back-services {
+  list-style: none;
+  display: flex;
+  justify-content: center;
+  gap: 0.4rem;
+  margin: 0.15rem 0 0;
+  padding: 0;
+}
+
+.flow-back-services li {
+  flex: none;
+}
+
+.flow-back-services li[hidden] {
+  display: none;
+}
+
+.flow-stage .flow-back a {
+  touch-action: manipulation !important;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.flow-back .icon-btn {
+  width: 44px;
+  height: 44px;
+  min-width: 44px;
+  min-height: 44px;
+  touch-action: manipulation;
+}
+
+.flow-back .icon-btn svg {
+  width: 18px;
+  height: 18px;
+}
+
+.flow-back .icon-btn:active {
+  background: #fff;
+  border-color: #fff;
+  color: #000;
+}
+
+.flow-readout {
+  position: relative;
+  z-index: 2;
+  min-height: 2.5rem;
+  padding: 0.35rem 1.15rem 0;
+  text-align: center;
+}
+
+.flow-title {
+  margin: 0;
+  font-weight: 600;
+  font-size: clamp(1.35rem, 4vw, 1.7rem);
+  line-height: 1.15;
+  letter-spacing: -0.03em;
+  overflow-wrap: anywhere;
+}
+
+.flow-random {
+  display: grid;
+  place-items: center;
+  flex: none;
+  width: 44px;
+  height: 44px;
+  min-width: 44px;
+  min-height: 44px;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  border-radius: 999px;
+  background: transparent;
+  color: var(--muted);
+  cursor: pointer;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+  -webkit-touch-callout: none;
+}
+
+.flow-random svg {
+  display: block;
+  width: 18px;
+  height: 18px;
+}
+
+.flow-random:active {
+  color: var(--text);
+}
+
+.flow-random:focus {
+  outline: none;
+}
+
+.flow-random:focus-visible {
+  outline: 2px solid #fff;
+  outline-offset: 3px;
+}
+
+.flow-artist {
+  margin: 0.2rem 0 0;
+  color: var(--muted);
+  font-size: 0.84rem;
+  font-weight: 400;
+  line-height: 1.25;
+  text-transform: none;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.flow-who {
+  margin: 0.4rem 0 0;
+  color: var(--muted);
+  font-size: 0.86rem;
+}
+
+.flow-who time,
+.posted time {
+  text-transform: none;
+  font-style: normal;
+}
+
+.flow-services {
+  list-style: none;
+  display: flex;
+  justify-content: center;
+  gap: 0.55rem;
+  max-width: 28rem;
+  margin: 0.9rem auto 0;
+  padding: 0;
+}
+
+.flow-services li {
+  flex: 1 1 0;
+  min-width: 0;
+  max-width: 13.5rem;
+}
+
+.flow-services .service {
+  justify-content: center;
+  gap: 0.55rem;
+}
+
+.crate {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.card {
+  background: #000;
+  border: 0;
+  border-radius: 0;
+  padding: 0.55rem 0.55rem;
+  transition: background-color 180ms ease;
+}
+
+/* Subtle zebra bands so each song reads as its own strip. */
+.crate > li:nth-child(even) .card {
+  background: #121212;
+}
+
+.row {
+  display: flex;
+  gap: 0.7rem;
+  align-items: center;
+  min-width: 0;
+}
+
+.thumb {
+  width: 56px;
+  height: 56px;
+  aspect-ratio: 1;
+  flex: none;
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+  border-radius: 4px;
+  background: #000;
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.14);
+}
+
+.monogram {
+  color: var(--text);
+  font-size: 0.82rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  line-height: 1;
+}
+
+.thumb img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.thumb img[hidden] {
+  display: none;
+}
+
+.copy {
+  min-width: 0;
+  flex: 1;
+  padding-top: 0;
+}
+
+.kind {
+  display: none;
+  align-items: baseline;
+  gap: 0.45rem;
+  margin: 0 0 0.12rem;
+  color: var(--muted);
+  font-size: 0.62rem;
+  font-weight: 500;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.kind .no {
+  color: var(--muted);
+  letter-spacing: 0.08em;
+}
+
+h2 {
+  margin: 0;
+  font-weight: 700;
+  font-size: 0.92rem;
+  line-height: 1.2;
+  letter-spacing: -0.02em;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.byline {
+  margin: 0.08rem 0 0;
+  color: var(--muted);
+  font-size: 0.75rem;
+  line-height: 1.25;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.byline .sep {
+  margin: 0 0.3rem;
+}
+
+.album.is-empty {
+  color: var(--muted);
+}
+
+.posted {
+  margin: 0.08rem 0 0;
+  color: var(--muted);
+  font-size: 0.68rem;
+  line-height: 1.25;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.posted .poster,
+.flow-who .poster,
+.flow-back .poster {
+  color: var(--text);
+}
+
+.services {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex: none;
+  flex-direction: row;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+.services li {
+  flex: none;
+  min-width: 0;
+}
+
+.services li[hidden] {
+  display: none;
+}
+
+.icon-btn {
+  display: grid;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  min-width: 36px;
+  min-height: 36px;
+  padding: 0;
+  border: 1px solid var(--line-strong);
+  border-radius: 999px;
+  color: var(--text);
+  background: transparent;
+  text-decoration: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.icon-btn svg {
+  display: block;
+  width: 16px;
+  height: 16px;
+}
+
+.service {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 0.75rem;
+  min-width: 0;
+  min-height: 2.75rem;
+  padding: 0.5rem 0.9rem;
+  border: 1px solid var(--line-strong);
+  border-radius: 0.75rem;
+  color: var(--text);
+  background: transparent;
+  text-decoration: none;
+  font-size: 0.84rem;
+  letter-spacing: 0.01em;
+  transition: background-color 160ms ease, color 160ms ease, border-color 160ms ease;
+}
+
+.service .name {
+  min-width: 0;
+}
+
+@media (hover: hover) {
+  .flow-random:hover {
+    color: var(--text);
+  }
+
+  .crate > li:nth-child(odd) .card:hover {
+    background: #0a0a0a;
+  }
+
+  .crate > li:nth-child(even) .card:hover {
+    background: #1a1a1a;
+  }
+
+  a.service:hover,
+  a.icon-btn:hover {
+    background: #fff;
+    border-color: #fff;
+    color: #000;
+  }
+}
+
+a.service:focus-visible,
+a.icon-btn:focus-visible,
+.logo:focus-visible,
+.skip:focus-visible,
+.poster:focus-visible {
+  outline: 2px solid #fff;
+  outline-offset: 3px;
+}
+
+.example-row {
+  margin: 0.35rem 0 0.15rem;
+}
+
+.stamp {
+  display: inline-block;
+  padding: 0.22rem 0.55rem 0.18rem;
+  border: 1px solid rgba(255, 255, 255, 0.28);
+  border-radius: 999px;
+  color: #d4d4d8;
+  font-size: 0.65rem;
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+
+.notes {
+  margin: 0.28rem 0 0.1rem;
+  color: var(--muted);
+  font-size: 0.75rem;
+  line-height: 1.35;
+}
+
+.empty-crate {
+  margin: 0;
+  padding: 1.5rem 0.15rem;
+  color: var(--muted);
+}
+
+code {
+  font-family: var(--mono);
+  font-size: 0.86em;
+  color: var(--text);
+}
+
+.colophon {
+  margin-top: 2rem;
+  padding-top: 1.1rem;
+  border-top: 1px solid var(--line);
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+@media (max-width: 600px) {
+  .wrap {
+    padding-top: 0.55rem;
+    padding-left: 0.5rem;
+    padding-right: 0.5rem;
+  }
+
+  .finder {
+    margin-top: 0.45rem;
+  }
+
+  .finder-panel {
+    max-height: min(18rem, 42vh);
+  }
+
+  .count-row {
+    margin-top: 0.4rem;
+  }
+
+  .poster-name {
+    margin-top: 0.85rem;
+    font-size: 1.2rem;
+  }
+
+  .mast {
+    padding-bottom: 0;
+  }
+
+  .flow {
+    margin-top: 0.15rem;
+    margin-left: -0.5rem;
+    margin-right: -0.5rem;
+    margin-bottom: 1.7rem;
+  }
+
+  .flow-readout {
+    padding-left: 0.5rem;
+    padding-right: 0.5rem;
+  }
+
+  .card {
+    padding: 0.3rem 0.45rem;
+  }
+
+  .row {
+    gap: 0.45rem;
+  }
+
+  .thumb {
+    width: 52px;
+    height: 52px;
+  }
+
+  .posted {
+    font-size: 0.64rem;
+    letter-spacing: -0.01em;
+  }
+
+  .services {
+    gap: 0.25rem;
+  }
+}
+
+@media (min-width: 601px) {
+  .card {
+    padding: 0.75rem 0.65rem;
+  }
+
+  .row {
+    gap: 0.9rem;
+  }
+
+  .thumb {
+    width: 64px;
+    height: 64px;
+    border-radius: 6px;
+  }
+
+  .kind {
+    display: flex;
+  }
+
+  h2 {
+    font-size: 1.08rem;
+    font-weight: 650;
+  }
+
+  .byline {
+    margin-top: 0.12rem;
+    font-size: 0.86rem;
+  }
+
+  .posted {
+    margin-top: 0.12rem;
+    font-size: 0.75rem;
+  }
+
+  .icon-btn {
+    width: 40px;
+    height: 40px;
+    min-width: 40px;
+    min-height: 40px;
+  }
+
+  .icon-btn svg {
+    width: 18px;
+    height: 18px;
+  }
+}
+
+@media (min-width: 760px) {
+  .wrap {
+    padding: 4rem 1.5rem 5rem;
+  }
+
+  .mast {
+    padding-bottom: 1rem;
+    margin-bottom: 0.25rem;
+  }
+
+  .poster-name {
+    margin-top: 1.5rem;
+    font-size: 1.55rem;
+  }
+
+  .logo img {
+    width: 140px;
+  }
+
+  .flow {
+    --cover: clamp(200px, 28vw, 236px);
+    margin-inline: -1.5rem;
+    margin-bottom: 3.6rem;
+  }
+
+  .flow-readout {
+    padding-inline: 1.5rem;
+  }
+
+  .flow-title {
+    font-size: 1.85rem;
+  }
+
+  .flow-artist {
+    margin-top: 0.28rem;
+    font-size: 1rem;
+  }
+
+  .flow-back-copy {
+    padding: 0.85rem 0.8rem;
+    gap: 0.16rem;
+  }
+
+  .flow-back-title {
+    font-size: 1.08rem;
+    -webkit-line-clamp: 3;
+  }
+
+  .flow-back-artist,
+  .flow-back-album,
+  .flow-back-who,
+  .flow-back-when {
+    font-size: 0.78rem;
+  }
+
+  .thumb {
+    width: 68px;
+    height: 68px;
+  }
+
+  h2 {
+    font-size: 1.12rem;
+  }
+}
+
+/* Cover flow is omitted. Coast, spring, the shuffle spin, and the sleeve flip
+   keep moving when Reduce Motion is on. The flip is rAF-driven rotateY, so
+   this block must not cancel it. */
+@media (prefers-reduced-motion: reduce) {
+  .card,
+  .service,
+  .icon-btn {
+    transition: none;
+  }
+}
+
+/* Seasonal layer. Hidden unless html.is-halloween. The fixed stage does not
+   take clicks. Motion is a slow drift only, never a flash. */
+.spook-stage,
+.spook-marks {
+  display: none;
+}
+
+html.is-halloween .spook-stage {
+  display: block;
+  position: fixed;
+  inset: 0;
+  z-index: 40;
+  pointer-events: none;
+  background: radial-gradient(ellipse at center, transparent 64%, rgba(255, 148, 48, 0.05) 86%, rgba(72, 32, 112, 0.2) 100%);
+}
+
+html.is-halloween .spook-web {
+  position: absolute;
+  width: 168px;
+  height: 168px;
+  opacity: 0.55;
+}
+
+html.is-halloween .spook-web svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+html.is-halloween .spook-web-nw {
+  top: 0;
+  left: 0;
+}
+
+html.is-halloween .spook-web-ne {
+  top: 0;
+  right: 0;
+  transform: scaleX(-1);
+}
+
+html.is-halloween .spook-web-sw {
+  top: auto;
+  bottom: 0;
+  left: 0;
+  transform: scaleY(-1);
+}
+
+html.is-halloween .spook-web-se {
+  top: auto;
+  right: 0;
+  bottom: 0;
+  transform: scale(-1);
+}
+
+html.is-halloween .spook-fog {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 28vh;
+  background: linear-gradient(to top, rgba(36, 12, 64, 0.42), rgba(255, 120, 30, 0.08) 46%, transparent);
+  animation: spook-fog 28s ease-in-out infinite;
+}
+
+html.is-halloween .spook-flyer {
+  position: absolute;
+  opacity: 0.72;
+  animation: spook-float 20s ease-in-out infinite;
+}
+
+html.is-halloween .spook-flyer .spook-bat {
+  display: block;
+  width: 46px;
+  height: 23px;
+}
+
+html.is-halloween .spook-flyer-a {
+  top: 14%;
+  right: 9%;
+}
+
+html.is-halloween .spook-flyer-b {
+  top: 36%;
+  left: 4%;
+  opacity: 0.5;
+  animation-duration: 26s;
+  animation-delay: -8s;
+}
+
+html.is-halloween .spook-flyer-b .spook-bat {
+  width: 32px;
+  height: 16px;
+}
+
+html.is-halloween .spook-flyer-c {
+  right: 7%;
+  bottom: 18%;
+  opacity: 0.42;
+  animation-duration: 24s;
+  animation-delay: -4s;
+}
+
+html.is-halloween .spook-flyer-c .spook-bat {
+  width: 28px;
+  height: 14px;
+}
+
+html.is-halloween .spook-mote {
+  position: absolute;
+  left: 22%;
+  top: 46%;
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: #ffb15e;
+  opacity: 0.4;
+  animation: spook-float 18s ease-in-out infinite;
+}
+
+html.is-halloween .spook-mote-b {
+  left: auto;
+  right: 16%;
+  top: 70%;
+  width: 4px;
+  height: 4px;
+  background: #c9a6ea;
+  animation-duration: 22s;
+  animation-delay: -7s;
+}
+
+html.is-halloween .spook-spider {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 22px;
+  height: 22px;
+  pointer-events: none;
+  z-index: 2;
+}
+
+html.is-halloween .spook-spider svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+html.is-halloween .spook-spider-wiggle {
+  display: block;
+  animation: spook-wiggle 1.8s ease-in-out infinite;
+}
+
+html.is-halloween .spook-spider-a {
+  animation: spook-crawl-a 38s linear infinite;
+  animation-delay: -9s;
+}
+
+html.is-halloween .spook-spider-b {
+  width: 16px;
+  height: 16px;
+  animation: spook-crawl-b 46s linear infinite;
+  animation-delay: -20s;
+}
+
+html.is-halloween .spook-spider-c {
+  width: 18px;
+  height: 18px;
+  animation: spook-crawl-c 34s linear infinite;
+  animation-delay: -14s;
+}
+
+html.is-halloween .spook-spider-d {
+  width: 14px;
+  height: 14px;
+  animation: spook-crawl-d 52s linear infinite;
+  animation-delay: -30s;
+}
+
+html.is-halloween .spook-marks {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  margin-left: 0.65rem;
+  vertical-align: middle;
+  transform: translateY(-8px);
+}
+
+@keyframes spook-float {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0);
+  }
+  50% {
+    transform: translate3d(0, -12px, 0);
+  }
+}
+
+@keyframes spook-wiggle {
+  0%,
+  100% {
+    transform: rotate(-4deg);
+  }
+  50% {
+    transform: rotate(4deg);
+  }
+}
+
+@keyframes spook-crawl-a {
+  0% {
+    transform: translate3d(-12vw, 22vh, 0) rotate(8deg);
+  }
+  100% {
+    transform: translate3d(108vw, 34vh, 0) rotate(14deg);
+  }
+}
+
+@keyframes spook-crawl-b {
+  0% {
+    transform: translate3d(110vw, 58vh, 0) rotate(188deg);
+  }
+  100% {
+    transform: translate3d(-14vw, 48vh, 0) rotate(196deg);
+  }
+}
+
+@keyframes spook-crawl-c {
+  0% {
+    transform: translate3d(-10vw, 78vh, 0) rotate(6deg);
+  }
+  100% {
+    transform: translate3d(108vw, 88vh, 0) rotate(12deg);
+  }
+}
+
+@keyframes spook-crawl-d {
+  0% {
+    transform: translate3d(104vw, 12vh, 0) rotate(192deg);
+  }
+  100% {
+    transform: translate3d(-12vw, 26vh, 0) rotate(184deg);
+  }
+}
+
+@keyframes spook-fog {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0);
+  }
+  50% {
+    transform: translate3d(0, -8px, 0);
+  }
+}
+
+@media (max-width: 600px) {
+  html.is-halloween .spook-web {
+    width: 108px;
+    height: 108px;
+    opacity: 0.48;
+  }
+
+  html.is-halloween .spook-marks {
+    margin-left: 0.4rem;
+    transform: translateY(-4px);
+  }
+
+  html.is-halloween .spook-pumpkin {
+    width: 28px;
+    height: 28px;
+  }
+
+  html.is-halloween .spook-marks .spook-bat {
+    width: 34px;
+    height: 17px;
+  }
+
+  html.is-halloween .spook-flyer-b,
+  html.is-halloween .spook-flyer-c,
+  html.is-halloween .spook-spider-c,
+  html.is-halloween .spook-spider-d {
+    display: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html.is-halloween .spook-mote,
+  html.is-halloween .spook-flyer,
+  html.is-halloween .spook-fog,
+  html.is-halloween .spook-spider,
+  html.is-halloween .spook-spider-wiggle {
+    animation: none;
+  }
+
+  html.is-halloween .spook-spider-a {
+    transform: translate3d(18vw, 18vh, 0);
+  }
+
+  html.is-halloween .spook-spider-b {
+    transform: translate3d(62vw, 70vh, 0);
+  }
+}
+
+@media print {
+  body {
+    background: #fff;
+    color: #000;
+  }
+
+  .card,
+  .crate > li:nth-child(even) .card {
+    break-inside: avoid;
+    background: #fff;
+  }
+
+  a.service::after,
+  a.icon-btn::after {
+    content: "  " attr(href);
+    font-weight: 400;
+  }
+
+  .spook-stage,
+  .spook-marks {
+    display: none !important;
+  }
+}

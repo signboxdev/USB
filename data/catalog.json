@@ -2,6 +2,22 @@
   "version": 1,
   "entries": [
     {
+      "id": "76124a33-727b-4cb3-bc6a-880d850178a6",
+      "type": "track",
+      "title": "Lavender Buds",
+      "artist": "MF DOOM",
+      "album": "Metal Fingers Presents: Special Herbs, The Box Set Vol. 0 - 9",
+      "posted_by": "Basil",
+      "posted_at": "2026-10-29T19:22:18-04:00",
+      "source_service": "spotify",
+      "source_url": "https://open.spotify.com/track/7gMsgre9fYLEzbVAoj5WSH",
+      "spotify_url": "https://open.spotify.com/track/7gMsgre9fYLEzbVAoj5WSH",
+      "apple_music_url": "https://music.apple.com/ca/album/lavender-buds/1654808373?i=1654808385",
+      "match_status": "matched",
+      "artwork_url": "https://is1-ssl.mzstatic.com/image/thumb/Music122/v4/e3/df/d6/e3dfd627-b0a1-b615-6435-94f701fd64b5/36766.jpg/600x600bb.jpg",
+      "notes": null
+    },
+    {
       "id": "167d622b-fac2-4522-bf21-6053dc990827",
       "type": "track",
       "title": "Waters Rising",

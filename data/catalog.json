@@ -2,6 +2,22 @@
   "version": 1,
   "entries": [
     {
+      "id": "79419613-c22c-495f-933c-4020d05a38d3",
+      "type": "track",
+      "title": "Pearl Leaf",
+      "artist": "Jeigo",
+      "album": "You Know It's Alright / Pearl Leaf",
+      "posted_by": "Evan",
+      "posted_at": "2026-11-04T10:20:22-05:00",
+      "source_service": "spotify",
+      "source_url": "https://open.spotify.com/track/7tHr0ZuignrPodrXZWhcJc",
+      "spotify_url": "https://open.spotify.com/track/7tHr0ZuignrPodrXZWhcJc",
+      "apple_music_url": "https://music.apple.com/ca/album/pearl-leaf/1674031432?i=1674031434",
+      "match_status": "matched",
+      "artwork_url": "https://is1-ssl.mzstatic.com/image/thumb/Music116/v4/db/ea/a6/dbeaa606-f3c0-c48d-61b3-c9c4b6a44311/5060581172010_cover.jpg/600x600bb.jpg",
+      "notes": null
+    },
+    {
       "id": "e03d29d1-d52a-47f1-829b-2bfd8a360167",
       "type": "track",
       "title": "From Past to Present",

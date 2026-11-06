@@ -263,6 +263,22 @@ function versionedAsset(filename) {
   return `/${filename}?v=${assetVersion(filename)}`;
 }
 
+// Safari keeps a favicon for the exact URL it first fetched, and it ignores a
+// query string on apple-touch-icon. A new filename is a URL it has not cached.
+// The unversioned names stay on disk too, so a browser that asks for
+// /favicon.ico still receives the blue-green mark.
+const ICON_FILES = ["favicon.ico", "favicon-32.png", "apple-touch-icon.png", "icon-512.png"];
+
+function versionedIconFilename(filename) {
+  const ext = path.extname(filename);
+  const base = path.basename(filename, ext);
+  return `${base}.${assetVersion(filename)}${ext}`;
+}
+
+function versionedIconHref(filename) {
+  return `/${versionedIconFilename(filename)}`;
+}
+
 function sortNewestFirst(entries) {
   return [...entries].sort(
     (a, b) => postedInstant(b.posted_at) - postedInstant(a.posted_at) || a.id.localeCompare(b.id),
@@ -448,9 +464,9 @@ function renderDocument({
     <meta name="theme-color" content="#000000">
     <meta http-equiv="Content-Security-Policy" content="${csp}">${preload}
     <link rel="stylesheet" href="${styleHref}">
-    <link rel="icon" href="/favicon.ico" sizes="any">
-    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png">
-    <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+    <link rel="icon" href="${versionedIconHref("favicon.ico")}" sizes="any">
+    <link rel="icon" type="image/png" sizes="32x32" href="${versionedIconHref("favicon-32.png")}">
+    <link rel="apple-touch-icon" href="${versionedIconHref("apple-touch-icon.png")}">
     <link rel="manifest" href="/site.webmanifest">
   </head>
   <body>
@@ -464,12 +480,14 @@ function renderDocument({
         <div class="count-row">
           <p class="count">${countHtml}</p>
           ${randomButton}
-        </div>${finder}
+        </div>
+      </header>
+${flowHtml}      <div class="browse">${finder}
         <div class="genres" hidden>
           <div class="genres-row" role="group" aria-label="genres"></div>
         </div>
-      </header>
-${flowHtml}      <main id="crate">
+      </div>
+      <main id="crate">
         ${list}
       </main>
       <footer class="colophon">
@@ -627,6 +645,19 @@ function copyStatic(dist) {
     if (!fs.existsSync(from)) throw new Error(`missing src/${name}`);
     fs.copyFileSync(from, path.join(dist, name));
   }
+  for (const name of ICON_FILES) {
+    const from = path.join(repoRoot, "src", name);
+    fs.copyFileSync(from, path.join(dist, versionedIconFilename(name)));
+  }
+  const manifest = JSON.parse(fs.readFileSync(path.join(repoRoot, "src", "site.webmanifest"), "utf8"));
+  manifest.icons = [
+    {
+      src: versionedIconHref("icon-512.png"),
+      sizes: "512x512",
+      type: "image/png",
+    },
+  ];
+  fs.writeFileSync(path.join(dist, "site.webmanifest"), `${JSON.stringify(manifest, null, 2)}\n`);
 }
 
 function jsonHash(payload) {

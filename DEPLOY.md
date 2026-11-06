@@ -30,7 +30,7 @@ npm run build
 
 `search.json` is the public search index (id, title, artist, album, who posted). A crate past 64 entries also writes `entries.json` at the root, and `p/<slug>/entries.json` for a poster page past that size. Those files are the public fields the page windows through. They do not include notes, match status, phone numbers, emails, or `posters.json`.
 
-`index.html`, `.htaccess`, `robots.txt`, `sitemap.xml`, and the icon files have to sit at the site root, not inside a `dist` folder. Do not upload `data/catalog.json`. `.htaccess` sends `Cache-Control: no-cache` for HTML so a deploy is not stuck behind Safari's heuristic cache, and a long cache for the fingerprinted css, js, and gif files. It does not change the host's HTTPS redirect.
+`index.html`, `.htaccess`, `robots.txt`, `sitemap.xml`, and the icon files have to sit at the site root, not inside a `dist` folder. Do not upload `data/catalog.json`. `.htaccess` sends `Cache-Control: no-cache` for HTML, the web manifest, and the stable icon filenames, and a long cache for the fingerprinted css, js, and gif files. The page also links a hashed copy of each icon (`favicon.<hash>.ico` and the same for the png icons) so a browser can fetch the blue-green mark at a URL it has not cached. It does not change the host's HTTPS redirect.
 
 ## hPanel
 

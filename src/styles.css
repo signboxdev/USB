@@ -144,8 +144,12 @@ body {
   font-size: 0.95rem;
 }
 
+.browse {
+  margin: 0.85rem 0 0.9rem;
+}
+
 .finder {
-  margin: 0.85rem 0 0.15rem;
+  margin: 0;
 }
 
 .finder-bar {
@@ -468,7 +472,7 @@ body {
   --cover: clamp(128px, 38vw, 168px);
   position: relative;
   z-index: 0;
-  margin: 0.35rem -1.15rem 1.6rem;
+  margin: 0.35rem -1.15rem 0.2rem;
   overflow-x: clip;
   user-select: none;
   -webkit-user-select: none;
@@ -1272,8 +1276,9 @@ code {
     padding-right: 0.5rem;
   }
 
-  .finder {
-    margin-top: 0.45rem;
+  .browse {
+    margin-top: 0.55rem;
+    margin-bottom: 0.7rem;
   }
 
   .finder-panel {
@@ -1311,7 +1316,7 @@ code {
     margin-top: 0.15rem;
     margin-left: -0.5rem;
     margin-right: -0.5rem;
-    margin-bottom: 1.7rem;
+    margin-bottom: 0.15rem;
   }
 
   .flow-readout {
@@ -1411,7 +1416,7 @@ code {
   .flow {
     --cover: clamp(200px, 28vw, 236px);
     margin-inline: -1.5rem;
-    margin-bottom: 3.6rem;
+    margin-bottom: 0.35rem;
   }
 
   .flow-readout {

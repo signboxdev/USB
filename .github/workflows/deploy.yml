@@ -53,7 +53,16 @@ jobs:
           fi
 
           grep -Ev '^p/' /tmp/dist-files | grep -Ev '^entries\.json$' > /tmp/root-files
-          diff -u /tmp/expected-files /tmp/root-files
+          # Hashed icon names change when the artwork changes. The stable names
+          # stay in the expected list; these copies are what the HTML links.
+          grep -E '^(favicon|favicon-32|apple-touch-icon|icon-512)\.[0-9a-f]{8}\.(ico|png)$' /tmp/root-files | LC_ALL=C sort > /tmp/versioned-icons
+          if [ "$(wc -l < /tmp/versioned-icons)" -ne 4 ]; then
+            echo "expected 4 hashed icon files:" >&2
+            cat /tmp/versioned-icons >&2
+            exit 1
+          fi
+          grep -Ev '^(favicon|favicon-32|apple-touch-icon|icon-512)\.[0-9a-f]{8}\.(ico|png)$' /tmp/root-files > /tmp/root-stable
+          diff -u /tmp/expected-files /tmp/root-stable
 
       - name: Force-publish dist to deploy
         uses: peaceiris/actions-gh-pages@v4

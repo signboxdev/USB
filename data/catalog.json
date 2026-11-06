@@ -15,7 +15,8 @@
       "apple_music_url": "https://music.apple.com/ca/album/fireflies/1571800002?i=1571800007",
       "match_status": "matched",
       "artwork_url": "https://is1-ssl.mzstatic.com/image/thumb/Music115/v4/74/22/6c/74226cc0-0369-31e5-15e6-862b6ba5c51d/045775335520.jpg/600x600bb.jpg",
-      "notes": null
+      "notes": null,
+      "genre": "Ambient"
     },
     {
       "id": "b5a2fd84-cd26-465c-9414-675e16c9057b",
@@ -31,7 +32,8 @@
       "apple_music_url": "https://music.apple.com/ca/album/fact-2/1547970477?i=1547970479",
       "match_status": "matched",
       "artwork_url": "https://is1-ssl.mzstatic.com/image/thumb/Music124/v4/a0/1e/ea/a01eea4a-f50f-2bdf-4688-4c9e3c115ab8/VICL-2070.jpg/600x600bb.jpg",
-      "notes": null
+      "notes": null,
+      "genre": "Dance"
     },
     {
       "id": "79419613-c22c-495f-933c-4020d05a38d3",
@@ -47,7 +49,8 @@
       "apple_music_url": "https://music.apple.com/ca/album/pearl-leaf/1674031432?i=1674031434",
       "match_status": "matched",
       "artwork_url": "https://is1-ssl.mzstatic.com/image/thumb/Music116/v4/db/ea/a6/dbeaa606-f3c0-c48d-61b3-c9c4b6a44311/5060581172010_cover.jpg/600x600bb.jpg",
-      "notes": null
+      "notes": null,
+      "genre": "House"
     },
     {
       "id": "e03d29d1-d52a-47f1-829b-2bfd8a360167",
@@ -63,7 +66,8 @@
       "apple_music_url": "https://music.apple.com/ca/album/from-past-to-present/1849547039?i=1849547043",
       "match_status": "matched",
       "artwork_url": "https://is1-ssl.mzstatic.com/image/thumb/Music211/v4/bb/06/ea/bb06eaa5-9500-d663-a31c-1a8c19f68f19/093155117877_cover.jpg/600x600bb.jpg",
-      "notes": null
+      "notes": null,
+      "genre": "Video Game"
     },
     {
       "id": "18657ecb-fd7f-40fd-8fea-f5db21a6cff2",
@@ -79,7 +83,8 @@
       "apple_music_url": "https://music.apple.com/ca/album/primetime/1440766278?i=1440766624",
       "match_status": "matched",
       "artwork_url": "https://is1-ssl.mzstatic.com/image/thumb/Music124/v4/18/f5/07/18f5070d-b5dc-796c-bce4-42badb41a762/00602527812526.rgb.jpg/600x600bb.jpg",
-      "notes": null
+      "notes": null,
+      "genre": "Hip-Hop/Rap"
     },
     {
       "id": "396d2bf4-360c-469e-8c64-63eca3009353",
@@ -95,7 +100,8 @@
       "apple_music_url": "https://music.apple.com/ca/album/pack-up-ya-bags/1819472831?i=1819472832",
       "match_status": "matched",
       "artwork_url": "https://is1-ssl.mzstatic.com/image/thumb/Music211/v4/f6/8a/7e/f68a7eb4-5e4f-6f71-ebf1-45b2e5053639/25UMGIM79882.rgb.jpg/600x600bb.jpg",
-      "notes": null
+      "notes": null,
+      "genre": "Dance"
     },
     {
       "id": "76124a33-727b-4cb3-bc6a-880d850178a6",
@@ -111,7 +117,8 @@
       "apple_music_url": "https://music.apple.com/ca/album/lavender-buds/1654808373?i=1654808385",
       "match_status": "matched",
       "artwork_url": "https://is1-ssl.mzstatic.com/image/thumb/Music122/v4/e3/df/d6/e3dfd627-b0a1-b615-6435-94f701fd64b5/36766.jpg/600x600bb.jpg",
-      "notes": null
+      "notes": null,
+      "genre": "Hip-Hop/Rap"
     },
     {
       "id": "167d622b-fac2-4522-bf21-6053dc990827",
@@ -127,7 +134,8 @@
       "apple_music_url": "https://music.apple.com/ca/album/waters-rising/1400443513?i=1400443911",
       "match_status": "matched",
       "artwork_url": "https://is1-ssl.mzstatic.com/image/thumb/Music211/v4/b2/0c/2b/b20c2b48-3406-cac0-1a68-fab432f398e4/cover.jpg/600x600bb.jpg",
-      "notes": null
+      "notes": null,
+      "genre": "Electronic"
     },
     {
       "id": "8c683c40-7644-4fd9-8b36-d976dda67cb1",
@@ -143,7 +151,8 @@
       "apple_music_url": "https://music.apple.com/ca/album/seconds-ft-ouri-jonah-yano/6788422995?i=6788422998",
       "match_status": "matched",
       "artwork_url": "https://is1-ssl.mzstatic.com/image/thumb/Music221/v4/e3/1c/d0/e31cd086-8e1a-f877-2a31-68e9d0e6fc0b/5056818810640.png/600x600bb.jpg",
-      "notes": null
+      "notes": null,
+      "genre": "Electronic"
     },
     {
       "id": "937a5b32-c47e-42af-9580-c63e4adc3c42",
@@ -159,7 +168,8 @@
       "apple_music_url": "https://music.apple.com/ca/album/good-morning-prison/1627600248?i=1627600249",
       "match_status": "matched",
       "artwork_url": "https://is1-ssl.mzstatic.com/image/thumb/Music112/v4/9c/1c/a4/9c1ca4c7-faec-3ba0-d2b8-f49f06366472/artwork.jpg/600x600bb.jpg",
-      "notes": null
+      "notes": null,
+      "genre": "Jazz"
     },
     {
       "id": "621d5bac-40d5-45c8-a8e2-d84c2e26023e",
@@ -175,7 +185,8 @@
       "apple_music_url": "https://music.apple.com/ca/album/feelings/1793799399?i=1793799405",
       "match_status": "matched",
       "artwork_url": "https://is1-ssl.mzstatic.com/image/thumb/Music211/v4/08/49/53/0849532c-b868-6954-fb86-c5505b33b152/5053760128274_cover.jpg/600x600bb.jpg",
-      "notes": null
+      "notes": null,
+      "genre": "Garage"
     },
     {
       "id": "78e5775f-4cd8-4305-b8ab-60dbb24e3276",
@@ -191,7 +202,8 @@
       "apple_music_url": "https://music.apple.com/ca/album/dirty-laundry/1701084760?i=1701085111",
       "match_status": "matched",
       "artwork_url": "https://is1-ssl.mzstatic.com/image/thumb/Music116/v4/60/bc/36/60bc360a-05c0-ddbb-9f99-68f36351957c/603497828883.jpg/600x600bb.jpg",
-      "notes": null
+      "notes": null,
+      "genre": "Pop"
     },
     {
       "id": "69eca275-d1e8-4378-a9d8-4d3fffeeb126",
@@ -207,7 +219,8 @@
       "apple_music_url": "https://music.apple.com/ca/album/aligator/1781460347?i=1781460559",
       "match_status": "matched",
       "artwork_url": "https://is1-ssl.mzstatic.com/image/thumb/Music211/v4/52/ee/8d/52ee8dd2-9fd3-2f26-7cb3-617cbb60cef0/artwork.jpg/600x600bb.jpg",
-      "notes": null
+      "notes": null,
+      "genre": "Hip-Hop/Rap"
     },
     {
       "id": "5cd6fc30-7b3f-42ee-a261-252938f0c680",
@@ -223,7 +236,8 @@
       "apple_music_url": "https://music.apple.com/ca/album/daydream/1839967560?i=1839967562",
       "match_status": "matched",
       "artwork_url": "https://is1-ssl.mzstatic.com/image/thumb/Music211/v4/a5/83/6d/a5836d93-af71-c930-623b-87e1ca2d5004/24UM1IM34232.rgb.jpg/600x600bb.jpg",
-      "notes": null
+      "notes": null,
+      "genre": "Pop"
     },
     {
       "id": "1b25fd38-df59-4495-9a9e-c65e14158ef1",
@@ -239,7 +253,8 @@
       "apple_music_url": "https://music.apple.com/ca/album/home-for-a-rest/1799167765?i=1799167787",
       "match_status": "matched",
       "artwork_url": "https://is1-ssl.mzstatic.com/image/thumb/Music211/v4/07/67/54/07675477-ad85-e606-802a-f08e019fd758/090317097121_cover.jpg/600x600bb.jpg",
-      "notes": null
+      "notes": null,
+      "genre": "Folk"
     },
     {
       "id": "8a6d3799-4826-460f-a3e8-d3b5ec55e2e0",
@@ -255,7 +270,8 @@
       "apple_music_url": "https://music.apple.com/ca/album/love-is-the-drug/723878140?i=723878503",
       "match_status": "matched",
       "artwork_url": "https://is1-ssl.mzstatic.com/image/thumb/Music116/v4/54/8f/35/548f35eb-40e7-174a-3583-e81f144a0415/13ULAIM48846.rgb.jpg/600x600bb.jpg",
-      "notes": null
+      "notes": null,
+      "genre": "Rock"
     },
     {
       "id": "59558ed6-938e-4323-8456-ec1152edbc2e",
@@ -13158,7 +13174,7 @@
       "match_status": "unmatched",
       "artwork_url": "https://image-cdn-ak.spotifycdn.com/image/ab67616d0000b27380ab44e51da54976bfeeb1c4",
       "notes": "no iTunes CA result with matching title, artist and duration.",
-      "genre": null
+      "genre": "Trance"
     },
     {
       "id": "181a2529-bb5e-5192-9b02-b813dedc7306",

@@ -123,7 +123,7 @@
           ]
         },
         "genre": {
-          "description": "Apple Music primary genre. Null means it was looked up and there was no confident match. Omit the field when it has not been looked up yet. Songs without a genre still appear in the crate and are left out of a genre filter.",
+          "description": "Set by the inserter. Apple Music primary genre, such as Hip-Hop/Rap, or null when that recording could not be confirmed. Omit the field only before lookup. Songs without a genre still appear in the crate and are left out of a genre filter.",
           "anyOf": [
             { "type": "null" },
             { "type": "string", "minLength": 1, "maxLength": 80 }

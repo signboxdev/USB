@@ -84,6 +84,8 @@ const BUCKET_OF = {
   Downtempo: "Electronic",
   Disco: "Electronic",
   Industrial: "Electronic",
+  Trance: "Electronic",
+  Ambient: "Electronic",
 
   "R&B/Soul": "R&B",
   Soul: "R&B",
@@ -111,6 +113,7 @@ const BUCKET_OF = {
 
   Soundtrack: "Soundtrack",
   Musicals: "Soundtrack",
+  "Video Game": "Soundtrack",
 
   // Too small to stand alone. A chip appears only once a bucket reaches MIN_GENRE_BUCKET.
   Reggae: "Other",
@@ -346,9 +349,9 @@ async function fetchJson(url) {
       await sleep(1000 * 2 ** attempt);
       continue;
     }
-    if (response.status === 429 || response.status >= 500) {
+    if (response.status === 429 || response.status === 403 || response.status >= 500) {
       lastError = `itunes ${response.status}`;
-      await sleep(1000 * 2 ** attempt);
+      await sleep(2000 * 2 ** attempt);
       continue;
     }
     if (!response.ok) throw new Error(`itunes ${response.status} for ${url}`);
@@ -367,30 +370,59 @@ function genreFromLookup(result, id) {
 
 async function lookupGenres(ids) {
   const found = new Map();
-  const unique = [...new Set(ids)];
-  for (let index = 0; index < unique.length; index += LOOKUP_BATCH) {
-    const chunk = unique.slice(index, index + LOOKUP_BATCH);
-    const data = await fetchJson(
-      `https://itunes.apple.com/lookup?id=${chunk.join(",")}&country=${COUNTRY}`,
-    );
-    for (const result of data.results || []) {
-      for (const id of [result.trackId, result.collectionId]) {
-        if (id == null) continue;
-        const genre = genreFromLookup(result, String(id));
-        if (genre && chunk.includes(String(id))) found.set(String(id), genre);
+  let remaining = [...new Set(ids)];
+  // Same Apple id. Canada first, then the US store if that id is missing there.
+  for (const country of [COUNTRY, "us"]) {
+    if (!remaining.length) break;
+    const missed = [];
+    for (let index = 0; index < remaining.length; index += LOOKUP_BATCH) {
+      const chunk = remaining.slice(index, index + LOOKUP_BATCH);
+      const data = await fetchJson(
+        `https://itunes.apple.com/lookup?id=${chunk.join(",")}&country=${country}`,
+      );
+      const hit = new Set();
+      for (const result of data.results || []) {
+        for (const id of [result.trackId, result.collectionId]) {
+          if (id == null) continue;
+          const key = String(id);
+          const genre = genreFromLookup(result, key);
+          if (genre && chunk.includes(key)) {
+            found.set(key, genre);
+            hit.add(key);
+          }
+        }
       }
+      for (const id of chunk) if (!hit.has(id)) missed.push(id);
+      console.log(`lookup ${country} ${Math.min(index + LOOKUP_BATCH, remaining.length)}/${remaining.length}`);
     }
-    console.log(`lookup ${Math.min(index + LOOKUP_BATCH, unique.length)}/${unique.length}`);
+    remaining = missed;
   }
   return found;
 }
 
 async function searchGenre(entry) {
   const entity = entry.type === "album" ? "album" : "song";
-  const term = [entry.title, entry.artist, entry.album].filter(Boolean).join(" ");
-  const url = `https://itunes.apple.com/search?term=${encodeURIComponent(term)}&country=${COUNTRY}&entity=${entity}&limit=10`;
-  const data = await fetchJson(url);
-  return genreFromSearch(entry, data.results);
+  const titleArtist = [entry.title, entry.artist].filter(Boolean).join(" ");
+  const withAlbum = [entry.title, entry.artist, entry.album].filter(Boolean).join(" ");
+  const terms = [titleArtist];
+  if (withAlbum !== titleArtist) terms.push(withAlbum);
+  // A genre is kept only when title, artist, and album all match. The extra
+  // queries are there so a real match is not missed by the search ranking.
+  for (const country of [COUNTRY, "us"]) {
+    for (const term of terms) {
+      const url = `https://itunes.apple.com/search?term=${encodeURIComponent(term)}&country=${country}&entity=${entity}&limit=25`;
+      let data;
+      try {
+        data = await fetchJson(url);
+      } catch (error) {
+        if (!String(error.message || error).includes("403")) throw error;
+        continue;
+      }
+      const genre = genreFromSearch(entry, data.results);
+      if (genre) return genre;
+    }
+  }
+  return null;
 }
 
 function wantedIds() {
@@ -416,11 +448,12 @@ function writeCatalog(catalog) {
 async function main() {
   assertGenreRules();
   const only = wantedIds();
+  const retryBlank = process.argv.includes("--retry-blank");
   const catalog = JSON.parse(fs.readFileSync(catalogPath, "utf8"));
   const pending = catalog.entries.filter((entry) => {
-    if (Object.hasOwn(entry, "genre")) return false;
     if (only && !only.has(entry.id)) return false;
-    return true;
+    if (!Object.hasOwn(entry, "genre")) return true;
+    return retryBlank && entry.genre == null;
   });
   if (only) {
     for (const id of only) {
@@ -441,7 +474,7 @@ async function main() {
       byAppleId.set(appleId, list);
       continue;
     }
-    if (entry.type === "track" || entry.type === "album") {
+    if ((entry.type === "track" && entry.album) || entry.type === "album") {
       searches.push(entry);
       continue;
     }

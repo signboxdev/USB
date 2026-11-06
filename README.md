@@ -27,7 +27,7 @@ Open `data/catalog.json` and add an object to `entries`. Order in the file does 
 }
 ```
 
-`genre` is optional. Leave it out of a new row. `npm run genres` fills it from Apple Music's primary genre for every entry that does not have the field yet, including a Spotify-only song when the title, artist, and album match one iTunes result. A row that was looked up and did not match is `genre: null` and stays that way on the next run. To fill one new id after you add it:
+The script that inserts a row sets `genre`. It is Apple's primary genre for that recording, spelled the way Apple spells it, or `null` when the recording could not be confirmed. Do not guess. `npm run genres` looks the field up from the Apple Music link, or from an iTunes search that matches the title, the artist, and the album. It skips rows that already have `genre`, including `null`. To fill one new id after the row is inserted:
 
 ```bash
 npm run genres -- --id glass-elevator

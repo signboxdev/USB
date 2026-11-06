@@ -1,6 +1,6 @@
 // Client-side catalog search. Public fields only: id, title, artist, album,
-// and the poster's first name. No notes, match status, source links, phone
-// numbers, or emails. The build copies this file; Node imports the pure
+// genre, and the poster's first name. No notes, match status, source links,
+// phone numbers, or emails. The build copies this file; Node imports the pure
 // helpers to check ranking before it writes dist/.
 
 const CAP_SONGS = 30;
@@ -89,12 +89,15 @@ export function prepareIndex(rows) {
     const album = row[3] || "";
     const postedBy = row[4];
     const artistF = fold(artist);
+    const slug = posterSlug(postedBy);
     const entry = {
       id,
       title,
       artist,
       album,
       index,
+      genre: typeof row[5] === "string" && row[5] ? row[5] : "",
+      posterSlug: slug,
       titleF: fold(title),
       albumF: fold(album),
       artistF,
@@ -111,9 +114,8 @@ export function prepareIndex(rows) {
       if (group.tracks.length < CAP_TRACKS) group.tracks.push(entry);
     }
     const name = firstName(postedBy);
-    const slug = posterSlug(postedBy);
     if (!slug || people.has(slug)) continue;
-    people.set(slug, { name, href: `/p/${slug}/`, field: fold(name) });
+    people.set(slug, { name, slug, href: `/p/${slug}/`, field: fold(name) });
   }
   return {
     entries,
@@ -122,12 +124,22 @@ export function prepareIndex(rows) {
   };
 }
 
-export function queryIndex(index, raw) {
+export function queryIndex(index, raw, genre) {
   const query = fold(raw);
   if (!query.spaced) return [];
+  const want = typeof genre === "string" ? genre : "";
+  const inGenre = (entry) => !want || entry.genre === want;
+  let posters = null;
+  if (want) {
+    posters = new Set();
+    for (const entry of index.entries) {
+      if (entry.genre === want && entry.posterSlug) posters.add(entry.posterSlug);
+    }
+  }
 
   const people = [];
   for (const person of index.people) {
+    if (posters && !posters.has(person.slug)) continue;
     const score = scoreField(query, person.field);
     if (!score) continue;
     people.push({ name: person.name, href: person.href, score });
@@ -138,11 +150,27 @@ export function queryIndex(index, raw) {
   for (const group of index.artists) {
     const score = scoreField(query, group.field);
     if (!score) continue;
+    let tracks = group.tracks;
+    let total = group.total;
+    if (want) {
+      const key = group.field.compact || group.field.spaced;
+      const matched = [];
+      for (const entry of index.entries) {
+        if (entry.genre !== want) continue;
+        const entryKey = entry.artistF.compact || entry.artistF.spaced;
+        if (entryKey !== key) continue;
+        matched.push(entry);
+      }
+      if (!matched.length) continue;
+      total = matched.length;
+      tracks = matched.slice(0, CAP_TRACKS);
+    }
+    if (!tracks.length) continue;
     artists.push({
       name: group.name,
       score,
-      total: group.total,
-      tracks: group.tracks.map((entry) => ({
+      total,
+      tracks: tracks.map((entry) => ({
         id: entry.id,
         title: entry.title,
         album: entry.album,
@@ -154,6 +182,7 @@ export function queryIndex(index, raw) {
 
   const songs = [];
   for (const entry of index.entries) {
+    if (!inGenre(entry)) continue;
     const titleScore = scoreField(query, entry.titleF);
     const albumScore = entry.album ? scoreField(query, entry.albumF) : 0;
     const score = Math.max(titleScore, albumScore);
@@ -209,6 +238,16 @@ function boot() {
 
   let index = null;
   let failed = false;
+  let activeGenre = "";
+  try {
+    activeGenre = new URLSearchParams(window.location.search).get("genre") || "";
+  } catch {
+    activeGenre = "";
+  }
+  document.addEventListener("usb-genre", (event) => {
+    activeGenre = (event.detail && event.detail.genre) || "";
+    if (input.value.trim()) onType();
+  });
 
   function closePanel() {
     panel.hidden = true;
@@ -231,11 +270,19 @@ function boot() {
     }
     const path = window.location.pathname;
     const home = path === "/" || path === "/index.html";
+    const genreQuery = activeGenre ? `?genre=${encodeURIComponent(activeGenre)}` : "";
     if (home) {
-      window.location.hash = id;
+      const url = new URL(window.location.href);
+      if (activeGenre) url.searchParams.set("genre", activeGenre);
+      url.hash = id;
+      if (`${url.pathname}${url.search}` === `${window.location.pathname}${window.location.search}`) {
+        window.location.hash = id;
+        return;
+      }
+      window.location.assign(`${url.pathname}${url.search}${url.hash}`);
       return;
     }
-    window.location.assign(`/#${encodeURIComponent(id)}`);
+    window.location.assign(`/${genreQuery}#${encodeURIComponent(id)}`);
   }
 
   function songButton(song, { showArtist }) {
@@ -354,7 +401,7 @@ function boot() {
       return;
     }
     empty.textContent = "nothing found";
-    render(queryIndex(index, query));
+    render(queryIndex(index, query, activeGenre));
   }
 
   input.addEventListener("input", onType);

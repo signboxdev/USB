@@ -10,7 +10,8 @@
   "scripts": {
     "validate": "node scripts/validate.js",
     "build": "node scripts/build.js",
-    "preview": "node scripts/preview.js"
+    "preview": "node scripts/preview.js",
+    "genres": "node scripts/genres.js"
   },
   "devDependencies": {
     "ajv": "^8.17.1",

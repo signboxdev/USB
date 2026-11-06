@@ -144,8 +144,12 @@ body {
   font-size: 0.95rem;
 }
 
+.browse {
+  margin: 0.85rem 0 0.9rem;
+}
+
 .finder {
-  margin: 0.85rem 0 0.15rem;
+  margin: 0;
 }
 
 .finder-bar {
@@ -321,7 +325,7 @@ body {
     background: #141414;
   }
 
-  .genre-chip:hover {
+  .genre-chip:hover::before {
     border-color: #fff;
   }
 }
@@ -350,27 +354,57 @@ body {
 }
 
 .genre-chip {
+  position: relative;
   flex: none;
   display: inline-flex;
-  align-items: baseline;
+  align-items: center;
   gap: 0.4rem;
+  /* The painted pill is shorter than this box. The extra height is the tap target. */
   min-height: 40px;
   margin: 0;
-  padding: 0.4rem 0.72rem;
-  border: 1px solid rgba(255, 255, 255, 0.22);
+  padding: 0 0.72rem;
+  border: 0;
   border-radius: 999px;
   background: transparent;
   color: var(--text);
   font: inherit;
   font-size: 0.78rem;
-  line-height: 1.2;
+  line-height: 1;
+  white-space: nowrap;
   cursor: pointer;
+  -webkit-appearance: none;
+  appearance: none;
   -webkit-tap-highlight-color: transparent;
+}
+
+.genre-chip::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 50%;
+  height: 28px;
+  transform: translateY(-50%);
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  border-radius: 999px;
+  background: transparent;
+  pointer-events: none;
+}
+
+.genre-name,
+.genre-num {
+  position: relative;
+  z-index: 1;
+  display: block;
+  line-height: 1;
 }
 
 .genre-chip.is-all .genre-name {
   font-size: 0.68rem;
   letter-spacing: 0.14em;
+  /* Tracking adds space after the last letter. Pull it back so the
+     gap before the count matches the other chips. */
+  margin-inline-end: -0.14em;
   text-transform: uppercase;
 }
 
@@ -381,9 +415,12 @@ body {
 }
 
 .genre-chip.is-on {
+  color: #000;
+}
+
+.genre-chip.is-on::before {
   background: #fff;
   border-color: #fff;
-  color: #000;
 }
 
 .genre-chip.is-on .genre-num {
@@ -395,7 +432,7 @@ body {
   outline-offset: 2px;
 }
 
-.genre-chip:active {
+.genre-chip:active::before {
   border-color: #fff;
 }
 
@@ -435,7 +472,7 @@ body {
   --cover: clamp(128px, 38vw, 168px);
   position: relative;
   z-index: 0;
-  margin: 0.35rem -1.15rem 1.6rem;
+  margin: 0.35rem -1.15rem 0.2rem;
   overflow-x: clip;
   user-select: none;
   -webkit-user-select: none;
@@ -1239,8 +1276,9 @@ code {
     padding-right: 0.5rem;
   }
 
-  .finder {
-    margin-top: 0.45rem;
+  .browse {
+    margin-top: 0.55rem;
+    margin-bottom: 0.7rem;
   }
 
   .finder-panel {
@@ -1249,6 +1287,16 @@ code {
 
   .genres {
     margin-top: 0.35rem;
+  }
+
+  .genres-row {
+    gap: 0.5rem;
+    margin-inline: 0;
+    padding-inline: 0;
+  }
+
+  .genre-chip {
+    padding-inline: 0.72rem;
   }
 
   .count-row {
@@ -1268,7 +1316,7 @@ code {
     margin-top: 0.15rem;
     margin-left: -0.5rem;
     margin-right: -0.5rem;
-    margin-bottom: 1.7rem;
+    margin-bottom: 0.15rem;
   }
 
   .flow-readout {
@@ -1368,7 +1416,7 @@ code {
   .flow {
     --cover: clamp(200px, 28vw, 236px);
     margin-inline: -1.5rem;
-    margin-bottom: 3.6rem;
+    margin-bottom: 0.35rem;
   }
 
   .flow-readout {

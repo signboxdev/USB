@@ -321,7 +321,7 @@ body {
     background: #141414;
   }
 
-  .genre-chip:hover {
+  .genre-chip:hover::before {
     border-color: #fff;
   }
 }
@@ -350,14 +350,16 @@ body {
 }
 
 .genre-chip {
+  position: relative;
   flex: none;
   display: inline-flex;
   align-items: center;
   gap: 0.4rem;
+  /* The painted pill is shorter than this box. The extra height is the tap target. */
   min-height: 40px;
   margin: 0;
   padding: 0 0.72rem;
-  border: 1px solid rgba(255, 255, 255, 0.22);
+  border: 0;
   border-radius: 999px;
   background: transparent;
   color: var(--text);
@@ -371,8 +373,24 @@ body {
   -webkit-tap-highlight-color: transparent;
 }
 
+.genre-chip::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 50%;
+  height: 28px;
+  transform: translateY(-50%);
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  border-radius: 999px;
+  background: transparent;
+  pointer-events: none;
+}
+
 .genre-name,
 .genre-num {
+  position: relative;
+  z-index: 1;
   display: block;
   line-height: 1;
 }
@@ -393,9 +411,12 @@ body {
 }
 
 .genre-chip.is-on {
+  color: #000;
+}
+
+.genre-chip.is-on::before {
   background: #fff;
   border-color: #fff;
-  color: #000;
 }
 
 .genre-chip.is-on .genre-num {
@@ -407,7 +428,7 @@ body {
   outline-offset: 2px;
 }
 
-.genre-chip:active {
+.genre-chip:active::before {
   border-color: #fff;
 }
 

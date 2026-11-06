@@ -2,6 +2,22 @@
   "version": 1,
   "entries": [
     {
+      "id": "6b1a4497-e8a3-47bb-a9a1-9305c5ed643d",
+      "type": "track",
+      "title": "Fireflies",
+      "artist": "David Borden",
+      "album": "Cayuga Night Music",
+      "posted_by": "Evan",
+      "posted_at": "2026-11-06T10:05:42-05:00",
+      "source_service": "spotify",
+      "source_url": "https://open.spotify.com/track/23vohrvPq799ok1p9dBLiW",
+      "spotify_url": "https://open.spotify.com/track/23vohrvPq799ok1p9dBLiW",
+      "apple_music_url": "https://music.apple.com/ca/album/fireflies/1571800002?i=1571800007",
+      "match_status": "matched",
+      "artwork_url": "https://is1-ssl.mzstatic.com/image/thumb/Music115/v4/74/22/6c/74226cc0-0369-31e5-15e6-862b6ba5c51d/045775335520.jpg/600x600bb.jpg",
+      "notes": null
+    },
+    {
       "id": "b5a2fd84-cd26-465c-9414-675e16c9057b",
       "type": "track",
       "title": "FACT 2",

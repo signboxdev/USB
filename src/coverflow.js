@@ -2205,9 +2205,23 @@
     row.append(genreChip("", "all", total));
     for (const [name, count] of genres) row.append(genreChip(name, name, count));
     const selected = row.querySelector(".genre-chip.is-on");
-    if (selected && row.scrollWidth > row.clientWidth + 8) {
-      const left = selected.offsetLeft - (row.clientWidth - selected.offsetWidth) / 2;
-      row.scrollLeft = Math.max(0, left);
+    if (selected) revealChip(row, selected);
+  }
+
+  // Keep the selected pill fully inside the scroller. offsetLeft is relative
+  // to a positioned ancestor, not this row, so it scrolled the pill off the edge.
+  function revealChip(row, chip) {
+    if (row.scrollWidth <= row.clientWidth + 8) {
+      row.scrollLeft = 0;
+      return;
+    }
+    const pad = 12;
+    const rowBox = row.getBoundingClientRect();
+    const chipBox = chip.getBoundingClientRect();
+    if (chipBox.left < rowBox.left + pad) {
+      row.scrollLeft -= rowBox.left + pad - chipBox.left;
+    } else if (chipBox.right > rowBox.right - pad) {
+      row.scrollLeft += chipBox.right - (rowBox.right - pad);
     }
   }
 

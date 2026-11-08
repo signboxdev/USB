@@ -725,7 +725,8 @@
     const type = parts[0];
     const id = parts[1];
     if (!/^(track|album|playlist)$/.test(type) || !/^[A-Za-z0-9]+$/.test(id)) return "";
-    return `https://open.spotify.com/embed/${type}/${id}?utm_source=generator`;
+    // theme=0 is the dark player from Spotify's own embed code.
+    return `https://open.spotify.com/embed/${type}/${id}?utm_source=generator&theme=0`;
   }
 
   function appleEmbed(href) {
@@ -738,6 +739,8 @@
     if (url.protocol !== "https:" || url.hostname !== "music.apple.com") return "";
     if (!/^\/[a-z]{2}\/(song|album|playlist)\//.test(url.pathname)) return "";
     url.hostname = "embed.music.apple.com";
+    // Apple's player accepts theme=light|dark|auto. Missing or unknown stays light.
+    url.searchParams.set("theme", "dark");
     return url.toString();
   }
 

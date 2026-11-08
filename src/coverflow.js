@@ -707,6 +707,143 @@
     if (live && summary) live.textContent = summary;
   }
 
+  // One official embed for the centred song, created only after a tap.
+  // Changing songs removes it, so a previous preview cannot keep playing.
+  let playFrame = null;
+
+  function spotifyEmbed(href) {
+    let url;
+    try {
+      url = new URL(href);
+    } catch {
+      return "";
+    }
+    if (url.protocol !== "https:" || url.hostname !== "open.spotify.com") return "";
+    const parts = url.pathname.split("/").filter(Boolean);
+    if (parts[0] && /^intl-[a-z]{2}$/i.test(parts[0])) parts.shift();
+    if (parts.length < 2) return "";
+    const type = parts[0];
+    const id = parts[1];
+    if (!/^(track|album|playlist)$/.test(type) || !/^[A-Za-z0-9]+$/.test(id)) return "";
+    return `https://open.spotify.com/embed/${type}/${id}?utm_source=generator`;
+  }
+
+  function appleEmbed(href) {
+    let url;
+    try {
+      url = new URL(href);
+    } catch {
+      return "";
+    }
+    if (url.protocol !== "https:" || url.hostname !== "music.apple.com") return "";
+    if (!/^\/[a-z]{2}\/(song|album|playlist)\//.test(url.pathname)) return "";
+    url.hostname = "embed.music.apple.com";
+    return url.toString();
+  }
+
+  function playSource(active) {
+    const button = buttons[active];
+    if (!button) return null;
+    return {
+      id: button.dataset.id || "",
+      spotify: spotifyEmbed(button.dataset.spotify || ""),
+      apple: appleEmbed(button.dataset.apple || ""),
+    };
+  }
+
+  function closePlay() {
+    const slot = root.querySelector(".flow-play-slot");
+    if (slot) slot.replaceChildren();
+    playFrame = null;
+  }
+
+  function syncPlay(active) {
+    const box = root.querySelector(".flow-play");
+    if (!box) return;
+    const source = playSource(active);
+    if (!source || (!source.spotify && !source.apple)) {
+      closePlay();
+      box.hidden = true;
+      return;
+    }
+    if (playFrame && playFrame.id !== source.id) closePlay();
+    box.hidden = false;
+    const row = box.querySelector(".flow-play-row");
+    const key = `${source.id}|${source.spotify ? 1 : 0}|${source.apple ? 1 : 0}`;
+    if (!row || row.dataset.key === key) {
+      markPlayButtons(row);
+      return;
+    }
+    row.dataset.key = key;
+    row.replaceChildren();
+    if (source.spotify) row.append(playButton("spotify"));
+    if (source.apple) row.append(playButton("apple"));
+    const stop = document.createElement("button");
+    stop.type = "button";
+    stop.className = "flow-play-stop";
+    stop.textContent = "close";
+    stop.setAttribute("aria-label", "Close the preview");
+    stop.hidden = true;
+    stop.addEventListener("click", () => {
+      closePlay();
+      syncPlay(clamp(Math.round(index)));
+    });
+    row.append(stop);
+    markPlayButtons(row);
+  }
+
+  function markPlayButtons(row) {
+    if (!row) return;
+    const stop = row.querySelector(".flow-play-stop");
+    if (stop) stop.hidden = !playFrame;
+    row.querySelectorAll(".flow-play-btn").forEach((button) => {
+      const on = Boolean(playFrame && playFrame.svc === button.dataset.svc);
+      button.classList.toggle("is-on", on);
+      button.setAttribute("aria-pressed", on ? "true" : "false");
+    });
+  }
+
+  function playButton(svc) {
+    const button = document.createElement("button");
+    button.type = "button";
+    button.className = "flow-play-btn";
+    button.dataset.svc = svc;
+    button.textContent = svc === "spotify" ? "spotify" : "apple";
+    button.setAttribute("aria-label", svc === "spotify" ? "Open the Spotify preview" : "Open the Apple Music preview");
+    button.addEventListener("click", () => openPlay(svc));
+    return button;
+  }
+
+  function openPlay(svc) {
+    const active = clamp(Math.round(index));
+    const source = playSource(active);
+    if (!source) return;
+    const href = svc === "spotify" ? source.spotify : source.apple;
+    if (!href) return;
+    if (playFrame && playFrame.id === source.id && playFrame.svc === svc) {
+      closePlay();
+      syncPlay(active);
+      return;
+    }
+    const slot = root.querySelector(".flow-play-slot");
+    if (!slot) return;
+    slot.replaceChildren();
+    const frame = document.createElement("iframe");
+    frame.className = svc === "apple" ? "flow-play-frame is-apple" : "flow-play-frame";
+    frame.title = svc === "spotify" ? "Spotify preview" : "Apple Music preview";
+    frame.allow = "autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture";
+    if (svc === "apple") {
+      frame.setAttribute(
+        "sandbox",
+        "allow-forms allow-popups allow-same-origin allow-scripts allow-storage-access-by-user-activation allow-top-navigation-by-user-activation",
+      );
+    }
+    frame.src = href;
+    slot.append(frame);
+    playFrame = { id: source.id, svc };
+    syncPlay(active);
+  }
+
   function paint() {
     syncMounts();
     if (!coverWidth) measure();
@@ -746,7 +883,9 @@
       cover.style.pointerEvents = spot.shade > 0.97 ? "none" : "";
       if (virtual && wantsArt(item)) refreshArt(item, button);
     });
-    syncCaption(clamp(Math.round(index)));
+    const activeSong = clamp(Math.round(index));
+    syncCaption(activeSong);
+    syncPlay(activeSong);
   }
 
   function stopLoop() {
@@ -1766,6 +1905,10 @@
     const button = cover.querySelector(".flow-select");
     button.dataset.index = String(item);
     button.dataset.id = entry.id;
+    if (entry.spotify) button.dataset.spotify = entry.spotify;
+    else delete button.dataset.spotify;
+    if (entry.apple) button.dataset.apple = entry.apple;
+    else delete button.dataset.apple;
     button.dataset.summary = entrySummary(entry);
     button.setAttribute("aria-label", `${entry.title} by ${entry.artist}`);
     button.setAttribute("aria-expanded", "false");

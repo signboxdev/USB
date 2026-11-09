@@ -2,6 +2,23 @@
   "version": 1,
   "entries": [
     {
+      "id": "579d3cc7-a801-45e7-9139-9e090419752b",
+      "type": "track",
+      "title": "Bizarre Love Triangle - 2024 Digital Master",
+      "artist": "New Order",
+      "album": "Brotherhood (Definitive Edition)",
+      "posted_by": "Dallas",
+      "posted_at": "2026-11-09T17:17:17-05:00",
+      "source_service": "spotify",
+      "source_url": "https://open.spotify.com/track/28qfj544k6pDavkWkyzvWz",
+      "spotify_url": "https://open.spotify.com/track/28qfj544k6pDavkWkyzvWz",
+      "apple_music_url": "https://music.apple.com/ca/album/bizarre-love-triangle-2024-digital-master/1779784027?i=1779784183",
+      "match_status": "matched",
+      "artwork_url": "https://is1-ssl.mzstatic.com/image/thumb/Music211/v4/f8/c1/4e/f8c14ed3-3824-fc96-083a-b73abd3865ff/5021732551726.jpg/600x600bb.jpg",
+      "notes": null,
+      "genre": "Electronic"
+    },
+    {
       "id": "7a62dfe0-6242-4054-a259-3ff5e938dfce",
       "type": "track",
       "title": "Daysleeper",

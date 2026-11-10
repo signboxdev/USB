@@ -353,7 +353,7 @@ function renderCoverFlow(entries, { coverLimit, singlePanel = false, entriesHref
       const genreAttr = bucket ? ` data-genre="${escapeHtml(bucket)}"` : "";
       return `          <li class="flow-cover"${genreAttr}>
             <div class="flow-flip">
-              <button type="button" class="flow-select" data-index="${index}" data-id="${escapeHtml(entry.id)}" data-summary="${escapeHtml(summary)}" aria-expanded="false" aria-controls="${backId}" aria-label="${escapeHtml(`${entry.title} by ${entry.artist}`)}"${current}>
+              <button type="button" class="flow-select" data-index="${index}" data-id="${escapeHtml(entry.id)}"${entry.spotify_url ? ` data-spotify="${escapeHtml(entry.spotify_url)}"` : ""}${entry.apple_music_url ? ` data-apple="${escapeHtml(entry.apple_music_url)}"` : ""} data-summary="${escapeHtml(summary)}" aria-expanded="false" aria-controls="${backId}" aria-label="${escapeHtml(`${entry.title} by ${entry.artist}`)}"${current}>
                 ${sleeve}
               </button>
               <div class="flow-back" id="${backId}" aria-hidden="true" inert hidden>
@@ -391,6 +391,10 @@ ${covers}
         <div class="flow-readout">
           <p class="sr-only" id="flow-live" aria-live="polite" aria-atomic="true">${live}</p>
 ${panels}
+          <div class="flow-play" hidden>
+            <div class="flow-play-row"></div>
+            <div class="flow-play-slot"></div>
+          </div>
         </div>
       </section>
 `;
@@ -436,7 +440,7 @@ function renderDocument({
   if (entriesHref) preloads.push(`<link rel="preload" href="${escapeHtml(entriesHref)}" as="fetch" crossorigin>`);
   const preload = preloads.length ? `\n    ${preloads.join("\n    ")}` : "";
   const csp =
-    "default-src 'none'; script-src 'self'; connect-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' https:; manifest-src 'self'; base-uri 'none'; form-action 'none'";
+    "default-src 'none'; script-src 'self'; connect-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' https:; frame-src https://open.spotify.com https://embed.music.apple.com; manifest-src 'self'; base-uri 'none'; form-action 'none'";
   const finder = searchHref ? `\n${renderFinder(searchHref)}` : "";
 
   return `<!DOCTYPE html>

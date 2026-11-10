@@ -908,6 +908,71 @@ body {
   text-align: center;
 }
 
+.flow-play {
+  max-width: 28rem;
+  margin: 0.75rem auto 0;
+}
+
+.flow-play[hidden] {
+  display: none;
+}
+
+.flow-play-row {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.flow-play-btn,
+.flow-play-stop {
+  min-height: 32px;
+  margin: 0;
+  padding: 0 0.7rem;
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  border-radius: 999px;
+  background: transparent;
+  color: var(--muted);
+  font: inherit;
+  font-size: 0.68rem;
+  letter-spacing: 0.14em;
+  line-height: 1;
+  text-transform: uppercase;
+  cursor: pointer;
+  -webkit-appearance: none;
+  appearance: none;
+}
+
+.flow-play-btn.is-on {
+  background: #fff;
+  border-color: #fff;
+  color: #000;
+}
+
+.flow-play-stop[hidden] {
+  display: none;
+}
+
+.flow-play-frame {
+  display: block;
+  width: 100%;
+  height: 152px;
+  margin-top: 0.55rem;
+  border: 0;
+  border-radius: 12px;
+  background: #111;
+}
+
+.flow-play-frame.is-apple {
+  height: 175px;
+}
+
+.flow-play-btn:focus-visible,
+.flow-play-stop:focus-visible {
+  outline: 2px solid #fff;
+  outline-offset: 2px;
+}
+
 .flow-title {
   margin: 0;
   font-weight: 600;

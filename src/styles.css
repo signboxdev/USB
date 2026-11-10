@@ -1132,17 +1132,17 @@ h2 {
 
 .likes,
 .flow-likes {
-  margin: 0.08rem 0 0;
+  margin: 0;
   color: var(--muted);
   font-size: 0.68rem;
-  line-height: 1.25;
+  line-height: 1.2;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 }
 
 .flow-likes {
-  margin-top: 0.28rem;
+  margin-top: 0.16rem;
 }
 
 .services {

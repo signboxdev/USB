@@ -1130,6 +1130,21 @@ h2 {
   color: var(--text);
 }
 
+.likes,
+.flow-likes {
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.68rem;
+  line-height: 1.2;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.flow-likes {
+  margin-top: 0.16rem;
+}
+
 .services {
   list-style: none;
   margin: 0;
@@ -1345,7 +1360,9 @@ code {
     height: 52px;
   }
 
-  .posted {
+  .posted,
+  .likes,
+  .flow-likes {
     font-size: 0.64rem;
     letter-spacing: -0.01em;
   }

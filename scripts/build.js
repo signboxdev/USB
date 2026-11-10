@@ -5,6 +5,7 @@ import { pathToFileURL } from "node:url";
 import { prepareIndex, queryIndex } from "../src/search.js";
 import { assertGenreBuckets, assertGenreRules, genreBucket } from "./genres.js";
 import { assertValidCatalog, repoRoot } from "./catalog.js";
+import { assertValidLikes, likesLine } from "./likes.js";
 
 // Above this, the homepage (and a poster page) stops inlining every sleeve.
 // The shell keeps the first screen; entries.json feeds a window of covers and
@@ -15,6 +16,7 @@ const VIRTUAL_ROWS = 8;
 // Posted-by is a name. A phone number or email in that field must not ship.
 const PHONE_IN_NAME = /(?:\+\d[\d\s().-]{8,}\d)|\b\d{3}[\s.-]\d{3}[\s.-]\d{4}\b/;
 const EMAIL_IN_NAME = /@/;
+let tapbacks = new Map();
 
 const SITE_ORIGIN = "https://unfamiliarsoundbyte.com";
 const CANONICAL_URL = `${SITE_ORIGIN}/`;
@@ -183,6 +185,11 @@ function searchPayload(entries) {
 
 function entriesPayload(entries, numbers) {
   for (const entry of entries) assertNameIsPublic(entry);
+  const lines = {};
+  for (const entry of entries) {
+    const line = likesLine(tapbacks.get(entry.id));
+    if (line) lines[entry.id] = [line.text, line.title];
+  }
   return {
     v: 1,
     entries: entries.map((entry) => [
@@ -199,6 +206,7 @@ function entriesPayload(entries, numbers) {
       numbers.get(entry.id),
       genreBucket(entry.genre),
     ]),
+    likes: lines,
   };
 }
 
@@ -230,6 +238,7 @@ function renderEntry(entry, number, { listIndex = 0 } = {}) {
               <h2>${escapeHtml(entry.title)}</h2>
               ${byline(entry)}
               <p class="posted">posted by ${posterLink(entry.posted_by)} · <time datetime="${escapeHtml(entry.posted_at)}">${formatPostedAt(entry.posted_at)}</time></p>
+              ${likesMarkup(entry, "likes")}
             </div>
             ${services}
           </div>
@@ -335,6 +344,15 @@ function coverImage(entry, index, reflect) {
   return `<img src="${httpsUrl(entry.artwork_url, "artwork")}" alt="" width="600" height="600" draggable="false" decoding="async"${priority}${lazy}>`;
 }
 
+function likesMarkup(entry, className, { placeholder = false } = {}) {
+  const line = likesLine(tapbacks.get(entry.id));
+  if (!line) {
+    if (!placeholder) return "";
+    return `<p class="${className}" hidden></p>`;
+  }
+  return `<p class="${className}" title="${escapeHtml(line.title)}">${escapeHtml(line.text)}</p>`;
+}
+
 function renderCoverFlow(entries, { coverLimit, singlePanel = false, entriesHref = "" } = {}) {
   if (entries.length === 0) return "";
   const shown = Number.isFinite(coverLimit) ? entries.slice(0, coverLimit) : entries;
@@ -371,6 +389,7 @@ function renderCoverFlow(entries, { coverLimit, singlePanel = false, entriesHref
       return `          <div class="flow-panel"${hidden}>
             <p class="flow-title">${escapeHtml(entry.title)}</p>
             <p class="flow-artist">${escapeHtml(entry.artist)}</p>
+            ${likesMarkup(entry, "flow-likes", { placeholder: singlePanel })}
           </div>`;
     })
     .join("\n");
@@ -709,6 +728,7 @@ function assertSearchWorks(entries) {
 
 function main() {
   const catalog = assertValidCatalog();
+  tapbacks = assertValidLikes(catalog);
   for (const entry of catalog.entries) assertNameIsPublic(entry);
   const posters = groupEntriesByPoster(catalog.entries);
   const homeEntries = sortNewestFirst(catalog.entries);

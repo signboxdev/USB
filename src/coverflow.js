@@ -121,20 +121,29 @@
 
   function decodeEntries(data) {
     if (!data || !Array.isArray(data.entries)) throw new Error("entries");
-    return data.entries.map((row) => ({
-      id: row[0],
-      type: row[1],
-      title: row[2],
-      artist: row[3],
-      album: row[4] || null,
-      postedBy: row[5],
-      postedAt: row[6],
-      spotify: row[7] || null,
-      apple: row[8] || null,
-      art: row[9] || null,
-      number: String(row[10]),
-      genre: typeof row[11] === "string" && row[11] ? row[11] : "",
-    }));
+    const lines = data.likes && typeof data.likes === "object" ? data.likes : {};
+    return data.entries.map((row) => {
+      const raw = lines[row[0]];
+      const likes =
+        Array.isArray(raw) && typeof raw[0] === "string"
+          ? { text: raw[0], title: typeof raw[1] === "string" ? raw[1] : raw[0] }
+          : null;
+      return {
+        id: row[0],
+        type: row[1],
+        title: row[2],
+        artist: row[3],
+        album: row[4] || null,
+        postedBy: row[5],
+        postedAt: row[6],
+        spotify: row[7] || null,
+        apple: row[8] || null,
+        art: row[9] || null,
+        number: String(row[10]),
+        genre: typeof row[11] === "string" && row[11] ? row[11] : "",
+        likes,
+      };
+    });
   }
 
   function start(root, loadedEntries) {
@@ -671,6 +680,24 @@
     return raw;
   }
 
+  function showLikes(parent, className, likes) {
+    if (!parent) return;
+    let line = parent.querySelector(`:scope > .${className}`);
+    if (!likes || !likes.text) {
+      if (line) line.remove();
+      return;
+    }
+    if (!line) {
+      line = document.createElement("p");
+      line.className = className;
+      parent.appendChild(line);
+    }
+    line.hidden = false;
+    if (line.textContent !== likes.text) line.textContent = likes.text;
+    if (likes.title) line.title = likes.title;
+    else line.removeAttribute("title");
+  }
+
   function syncCaption(active) {
     if (active === shown) return;
     shown = active;
@@ -683,6 +710,7 @@
         const artist = panel.querySelector(".flow-artist");
         if (title.textContent !== entry.title) title.textContent = entry.title;
         if (artist.textContent !== entry.artist) artist.textContent = entry.artist;
+        showLikes(panel, "flow-likes", entry.likes);
       }
       for (const item of mounted) {
         const button = buttons[item];
@@ -2029,6 +2057,7 @@
       const time = li.querySelector("time");
       time.setAttribute("datetime", entry.postedAt);
       time.textContent = formatPostedAt(entry.postedAt);
+      showLikes(li.querySelector(".copy"), "likes", entry.likes);
       setService(li.querySelector('[data-svc="spotify"]'), httpsOnly(entry.spotify));
       setService(li.querySelector('[data-svc="apple"]'), httpsOnly(entry.apple));
     }

@@ -2,6 +2,23 @@
   "version": 1,
   "entries": [
     {
+      "id": "546be0a5-0219-4bfe-a425-13e5b8f9b6d4",
+      "type": "track",
+      "title": "The White River",
+      "artist": "Jeremy Soule",
+      "album": "The Elder Scrolls V: Skyrim (Original Game Soundtrack)",
+      "posted_by": "Luke",
+      "posted_at": "2026-11-11T10:49:00-05:00",
+      "source_service": "spotify",
+      "source_url": "https://open.spotify.com/track/336vmFan89Rsu86JcjDCMM",
+      "spotify_url": "https://open.spotify.com/track/336vmFan89Rsu86JcjDCMM",
+      "apple_music_url": "https://music.apple.com/ca/album/the-white-river/1849547039?i=1849547621",
+      "match_status": "matched",
+      "artwork_url": "https://is1-ssl.mzstatic.com/image/thumb/Music211/v4/bb/06/ea/bb06eaa5-9500-d663-a31c-1a8c19f68f19/093155117877_cover.jpg/600x600bb.jpg",
+      "notes": null,
+      "genre": "Video Game"
+    },
+    {
       "id": "ae33755d-47f3-4cf5-b68c-00268eb93424",
       "type": "track",
       "title": "Made You Look",

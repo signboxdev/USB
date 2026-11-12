@@ -348,7 +348,8 @@ function likesMarkup(entry, className, { placeholder = false } = {}) {
   const line = likesLine(tapbacks.get(entry.id));
   if (!line) {
     if (!placeholder) return "";
-    return `<p class="${className}" hidden></p>`;
+    // Keep the caption line in the flow so a song with no tapback is the same height.
+    return `<p class="${className} is-empty"></p>`;
   }
   return `<p class="${className}" title="${escapeHtml(line.title)}">${escapeHtml(line.text)}</p>`;
 }
@@ -389,7 +390,7 @@ function renderCoverFlow(entries, { coverLimit, singlePanel = false, entriesHref
       return `          <div class="flow-panel"${hidden}>
             <p class="flow-title">${escapeHtml(entry.title)}</p>
             <p class="flow-artist">${escapeHtml(entry.artist)}</p>
-            ${likesMarkup(entry, "flow-likes", { placeholder: singlePanel })}
+            ${likesMarkup(entry, "flow-likes", { placeholder: true })}
           </div>`;
     })
     .join("\n");

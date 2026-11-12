@@ -917,34 +917,32 @@ body {
 }
 
 .flow-panel {
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-start;
-  align-items: stretch;
+  display: block;
   /* Tallest caption: two title lines, the artist, and the tapback line.
-     A one-line title leaves the spare room under the tapback line. */
+     A one-line title leaves the spare room under the tapback line.
+     A block, not a flex box: WebKit sizes a -webkit-line-clamp title to the
+     text, centers it, and the panel clips both ends until a later layout. */
+  width: 100%;
   height: calc(
     var(--flow-title-size) * var(--flow-title-lh) * 2
     + var(--flow-artist-gap) + var(--flow-artist-size) * var(--flow-artist-lh)
     + var(--flow-likes-gap) + var(--flow-likes-size) * var(--flow-likes-lh)
   );
   overflow: hidden;
+  text-rendering: auto;
 }
 
 .flow-title {
   margin: 0;
-  flex: none;
+  width: 100%;
+  max-width: 100%;
   font-weight: 600;
   font-size: var(--flow-title-size);
   line-height: var(--flow-title-lh);
   letter-spacing: -0.03em;
-  overflow-wrap: anywhere;
-  display: -webkit-box;
-  -webkit-box-orient: vertical;
-  -webkit-box-pack: start;
-  -webkit-box-align: start;
-  -webkit-line-clamp: 2;
-  line-clamp: 2;
+  overflow-wrap: break-word;
+  display: block;
+  max-height: calc(var(--flow-title-lh) * 2em);
   overflow: hidden;
 }
 
@@ -989,7 +987,8 @@ body {
 
 .flow-artist {
   margin: var(--flow-artist-gap) 0 0;
-  flex: none;
+  width: 100%;
+  max-width: 100%;
   color: var(--muted);
   font-size: var(--flow-artist-size);
   font-weight: 400;
@@ -1174,8 +1173,9 @@ h2 {
 }
 
 .flow-likes {
-  flex: none;
   margin-top: var(--flow-likes-gap);
+  width: 100%;
+  max-width: 100%;
   font-size: var(--flow-likes-size);
   line-height: var(--flow-likes-lh);
   height: calc(var(--flow-likes-lh) * 1em);

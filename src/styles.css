@@ -906,24 +906,46 @@ body {
   min-height: 2.5rem;
   padding: 0.35rem 1.15rem 0;
   text-align: center;
+  --flow-title-size: clamp(1.35rem, 4vw, 1.7rem);
+  --flow-title-lh: 1.15;
+  --flow-artist-size: 0.84rem;
+  --flow-artist-lh: 1.25;
+  --flow-artist-gap: 0.2rem;
+  --flow-likes-size: 0.68rem;
+  --flow-likes-lh: 1.2;
+  --flow-likes-gap: 0.16rem;
+}
+
+.flow-panel {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: stretch;
+  /* Tallest caption: two title lines, the artist, and the tapback line.
+     A one-line title leaves the spare room under the tapback line. */
+  height: calc(
+    var(--flow-title-size) * var(--flow-title-lh) * 2
+    + var(--flow-artist-gap) + var(--flow-artist-size) * var(--flow-artist-lh)
+    + var(--flow-likes-gap) + var(--flow-likes-size) * var(--flow-likes-lh)
+  );
+  overflow: hidden;
 }
 
 .flow-title {
   margin: 0;
+  flex: none;
   font-weight: 600;
-  font-size: clamp(1.35rem, 4vw, 1.7rem);
-  line-height: 1.15;
+  font-size: var(--flow-title-size);
+  line-height: var(--flow-title-lh);
   letter-spacing: -0.03em;
   overflow-wrap: anywhere;
-  /* Two lines, always. A short title leaves the second line blank so the
-     artist, the tapback line, and the search stay put. */
   display: -webkit-box;
   -webkit-box-orient: vertical;
+  -webkit-box-pack: start;
+  -webkit-box-align: start;
   -webkit-line-clamp: 2;
   line-clamp: 2;
   overflow: hidden;
-  height: calc(1.15em * 2);
-  max-height: calc(1.15em * 2);
 }
 
 .flow-random {
@@ -966,16 +988,16 @@ body {
 }
 
 .flow-artist {
-  margin: 0.2rem 0 0;
+  margin: var(--flow-artist-gap) 0 0;
+  flex: none;
   color: var(--muted);
-  font-size: 0.84rem;
+  font-size: var(--flow-artist-size);
   font-weight: 400;
-  line-height: 1.25;
+  line-height: var(--flow-artist-lh);
   text-transform: none;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  height: 1.25em;
 }
 
 .flow-who {
@@ -1152,9 +1174,12 @@ h2 {
 }
 
 .flow-likes {
-  margin-top: 0.16rem;
-  height: 1.2em;
-  min-height: 1.2em;
+  flex: none;
+  margin-top: var(--flow-likes-gap);
+  font-size: var(--flow-likes-size);
+  line-height: var(--flow-likes-lh);
+  height: calc(var(--flow-likes-lh) * 1em);
+  min-height: calc(var(--flow-likes-lh) * 1em);
 }
 
 .flow-likes.is-empty {
@@ -1376,6 +1401,10 @@ code {
     height: 52px;
   }
 
+  .flow-readout {
+    --flow-likes-size: 0.64rem;
+  }
+
   .posted,
   .likes,
   .flow-likes {
@@ -1462,15 +1491,9 @@ code {
 
   .flow-readout {
     padding-inline: 1.5rem;
-  }
-
-  .flow-title {
-    font-size: 1.85rem;
-  }
-
-  .flow-artist {
-    margin-top: 0.28rem;
-    font-size: 1rem;
+    --flow-title-size: 1.85rem;
+    --flow-artist-size: 1rem;
+    --flow-artist-gap: 0.28rem;
   }
 
   .flow-back-copy {

@@ -915,6 +915,15 @@ body {
   line-height: 1.15;
   letter-spacing: -0.03em;
   overflow-wrap: anywhere;
+  /* Two lines, always. A short title leaves the second line blank so the
+     artist, the tapback line, and the search stay put. */
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  overflow: hidden;
+  height: calc(1.15em * 2);
+  max-height: calc(1.15em * 2);
 }
 
 .flow-random {
@@ -966,6 +975,7 @@ body {
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  height: 1.25em;
 }
 
 .flow-who {
@@ -1143,6 +1153,12 @@ h2 {
 
 .flow-likes {
   margin-top: 0.16rem;
+  height: 1.2em;
+  min-height: 1.2em;
+}
+
+.flow-likes.is-empty {
+  visibility: hidden;
 }
 
 .services {

@@ -698,6 +698,28 @@
     else line.removeAttribute("title");
   }
 
+  // The caption keeps its tapback line either way. Removing it would pull the
+  // search and the list up. The list rows still drop the line when it is empty.
+  function paintCaptionLikes(panel, likes) {
+    if (!panel) return;
+    let line = panel.querySelector(":scope > .flow-likes");
+    if (!line) {
+      line = document.createElement("p");
+      line.className = "flow-likes is-empty";
+      panel.appendChild(line);
+    }
+    if (!likes || !likes.text) {
+      line.textContent = "";
+      line.classList.add("is-empty");
+      line.removeAttribute("title");
+      return;
+    }
+    line.classList.remove("is-empty");
+    if (line.textContent !== likes.text) line.textContent = likes.text;
+    if (likes.title) line.title = likes.title;
+    else line.removeAttribute("title");
+  }
+
   function syncCaption(active) {
     if (active === shown) return;
     shown = active;
@@ -710,7 +732,7 @@
         const artist = panel.querySelector(".flow-artist");
         if (title.textContent !== entry.title) title.textContent = entry.title;
         if (artist.textContent !== entry.artist) artist.textContent = entry.artist;
-        showLikes(panel, "flow-likes", entry.likes);
+        paintCaptionLikes(panel, entry.likes);
       }
       for (const item of mounted) {
         const button = buttons[item];

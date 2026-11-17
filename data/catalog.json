@@ -2,6 +2,23 @@
   "version": 1,
   "entries": [
     {
+      "id": "c78b2929-4290-4a83-95b1-f9cfa7650bf6",
+      "type": "track",
+      "title": "Lonely",
+      "artist": "Akon",
+      "album": "Trouble (Deluxe Edition)",
+      "posted_by": "Evan",
+      "posted_at": "2026-11-17T18:01:45-05:00",
+      "source_service": "spotify",
+      "source_url": "https://open.spotify.com/track/4v7DCN09hgXkKazefkznDQ",
+      "spotify_url": "https://open.spotify.com/track/4v7DCN09hgXkKazefkznDQ",
+      "apple_music_url": "https://music.apple.com/ca/album/lonely/1446019188?i=1446019275",
+      "match_status": "matched",
+      "artwork_url": "https://is1-ssl.mzstatic.com/image/thumb/Music112/v4/05/cd/f8/05cdf871-c9a7-e29c-d00b-3214173806d4/14UMGIM28691.rgb.jpg/600x600bb.jpg",
+      "notes": "",
+      "genre": "R&B/Soul"
+    },
+    {
       "id": "87eae601-144e-4d64-bab0-ec4fe85930d7",
       "type": "track",
       "title": "Homeless",

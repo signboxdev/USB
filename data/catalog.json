@@ -2,6 +2,23 @@
   "version": 1,
   "entries": [
     {
+      "id": "e2f7e395-96b6-4859-bcfb-6c8fb368981f",
+      "type": "track",
+      "title": "Never Gonna Get It",
+      "artist": "Sean Biggs, Akon, Topic",
+      "album": "Trouble (Deluxe Edition)",
+      "posted_by": "Luke",
+      "posted_at": "2026-11-18T11:06:44-05:00",
+      "source_service": "spotify",
+      "source_url": "https://open.spotify.com/track/26VURHihb1CQV00vXU9kU8",
+      "spotify_url": "https://open.spotify.com/track/26VURHihb1CQV00vXU9kU8",
+      "apple_music_url": "https://music.apple.com/ca/album/never-gonna-get-it-feat-akon-topic/1446019188?i=1446019294",
+      "match_status": "matched",
+      "artwork_url": "https://is1-ssl.mzstatic.com/image/thumb/Music112/v4/05/cd/f8/05cdf871-c9a7-e29c-d00b-3214173806d4/14UMGIM28691.rgb.jpg/600x600bb.jpg",
+      "notes": "",
+      "genre": "R&B/Soul"
+    },
+    {
       "id": "3e9eaf2c-8842-4897-9277-ef8a3337e045",
       "type": "track",
       "title": "テク2Walking",

@@ -2,6 +2,23 @@
   "version": 1,
   "entries": [
     {
+      "id": "13a0182a-e98f-40c8-8b1e-6f269cb3ccaa",
+      "type": "track",
+      "title": "Creepers",
+      "artist": "Kid Cudi",
+      "album": "Kanye West Presents Good Music Cruel Summer",
+      "posted_by": "Basil",
+      "posted_at": "2026-11-18T19:21:51-05:00",
+      "source_service": "spotify",
+      "source_url": "https://open.spotify.com/track/6vO5OZ18h33ZO40S9plFDx",
+      "spotify_url": "https://open.spotify.com/track/6vO5OZ18h33ZO40S9plFDx",
+      "apple_music_url": "https://music.apple.com/ca/album/creepers/1443478391?i=1443479005",
+      "match_status": "matched",
+      "artwork_url": "https://is1-ssl.mzstatic.com/image/thumb/Music128/v4/fb/89/da/fb89da0d-1920-2cef-a965-8421d11e28cc/00602537164431.rgb.jpg/600x600bb.jpg",
+      "notes": "",
+      "genre": "Hip-Hop/Rap"
+    },
+    {
       "id": "e2f7e395-96b6-4859-bcfb-6c8fb368981f",
       "type": "track",
       "title": "Never Gonna Get It",

@@ -2,6 +2,23 @@
   "version": 1,
   "entries": [
     {
+      "id": "72faedf4-b630-4dd0-9ac5-b4887f455461",
+      "type": "track",
+      "title": "An Arc Of Doves - Remastered 2004",
+      "artist": "Harold Budd, Brian Eno",
+      "album": "Ambient 2: The Plateaux Of Mirror (Remastered 2004)",
+      "posted_by": "Evan",
+      "posted_at": "2026-11-20T13:31:52-05:00",
+      "source_service": "spotify",
+      "source_url": "https://open.spotify.com/track/244AfRQzVwSOzkkRHGPWge",
+      "spotify_url": "https://open.spotify.com/track/244AfRQzVwSOzkkRHGPWge",
+      "apple_music_url": "https://music.apple.com/ca/album/an-arc-of-doves/724653175?i=724653305",
+      "match_status": "matched",
+      "artwork_url": "https://is1-ssl.mzstatic.com/image/thumb/Music124/v4/77/34/cb/7734cb44-688f-0a0f-6d09-ed12977f4c5e/00724386649751.rgb.jpg/600x600bb.jpg",
+      "notes": "",
+      "genre": "Electronic"
+    },
+    {
       "id": "5b9d8a22-0a35-4f4b-b46b-906bfc5926d4",
       "type": "track",
       "title": "2TONE BRABUS",

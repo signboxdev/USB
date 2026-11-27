@@ -2,6 +2,23 @@
   "version": 1,
   "entries": [
     {
+      "id": "f5cf7e3f-cdca-405e-af28-afbe523ac381",
+      "type": "track",
+      "title": "Planisphere",
+      "artist": "Justice",
+      "album": "Audio, Video, Disco.",
+      "posted_by": "Evan",
+      "posted_at": "2026-11-27T12:23:37-05:00",
+      "source_service": "spotify",
+      "source_url": "https://open.spotify.com/track/18IARgL5t0TkfCvARd8Ndn",
+      "spotify_url": "https://open.spotify.com/track/18IARgL5t0TkfCvARd8Ndn",
+      "apple_music_url": "https://music.apple.com/ca/album/planisphere/469202499?i=469202552",
+      "match_status": "matched",
+      "artwork_url": "https://is1-ssl.mzstatic.com/image/thumb/Music124/v4/45/a7/26/45a72600-3b23-1586-37d1-12868837bf70/mzi.mhmawwpw.jpg/600x600bb.jpg",
+      "notes": "",
+      "genre": "Electronic"
+    },
+    {
       "id": "bf5a388d-0e9f-41a7-ae32-87afee013c0b",
       "type": "track",
       "title": "OUT OF MY MIND",
